@@ -18,16 +18,16 @@ class FileToMediaReferenceTransformer implements DataTransformerInterface
     /**
      * @var MediaClientManager
      */
-    private $mediaClient;
+    private $mediaClientManager;
 
     /**
      * Constructor
      *
-     * @param MediaClientManager $mediaClient
+     * @param MediaClientManager $mediaClientManager
      */
-    public function __construct(MediaClientManager $mediaClient)
+    public function __construct(MediaClientManager $mediaClientManager)
     {
-        $this->mediaClient = $mediaClient;
+        $this->mediaClientManager = $mediaClientManager;
     }
 
     /**
@@ -42,7 +42,7 @@ class FileToMediaReferenceTransformer implements DataTransformerInterface
             return null;
         }
 
-        return $this->mediaClient->getFile($mediaReference);
+        return $this->mediaClientManager->getFile($mediaReference);
     }
 
     /**
@@ -59,7 +59,7 @@ class FileToMediaReferenceTransformer implements DataTransformerInterface
         }
 
         try {
-            $reference = $this->mediaClient->send($file);
+            $reference = $this->mediaClientManager->send($file);
         } catch (\Exception $e) {
             throw new TransformationFailedException(sprintf(
                 'An error occured during File to media transformation: %s',

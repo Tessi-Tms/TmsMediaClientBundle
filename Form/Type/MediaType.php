@@ -18,21 +18,21 @@ class MediaType extends AbstractType
     /**
      * @var MediaClientManager
      */
-    private $mediaClient;
+    private $mediaClientManager;
 
     /**
      * Constructor
      *
-     * @param MediaClientManager $mediaClient
+     * @param MediaClientManager $mediaClientManager
      */
-    public function __construct(MediaClientManager $mediaClient)
+    public function __construct(MediaClientManager $mediaClientManager)
     {
-        $this->mediaClient = $mediaClient;
+        $this->mediaClientManager = $mediaClientManager;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $transformer = new FileToMediaReferenceTransformer($this->mediaClient);
+        $transformer = new FileToMediaReferenceTransformer($this->mediaClientManager);
         $builder->addModelTransformer($transformer);
     }
 

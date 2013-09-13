@@ -41,16 +41,22 @@ class MediaClientManager
      * Get a file from the media manager
      *
      * @param string $mediaReference
-     * @return File
+     * @return File|null
      */
     public function getFile($mediaReference)
     {
         $tmpMediaDir = sys_get_temp_dir();
         $tmpMediaPath = sprintf('%s/%s', $tmpMediaDir, $mediaReference);
 
-        $fp = fopen($tmpMediaPath, 'w');
-        fwrite($fp, $this->getMediaApiClient()->get('/media/'.$mediaReference));
-        fclose($fp);
+        try {
+            $fp = fopen($tmpMediaPath, 'w');
+            fwrite($fp, $this->getMediaApiClient()->get('/media/'.$mediaReference));
+            fclose($fp);
+        } catch(\Exception $e) {
+            unlink($tmpMediaPath);
+
+            return null;
+        }
 
         return new File($tmpMediaPath);
     }

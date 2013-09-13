@@ -8,3 +8,9 @@ services:
         arguments: [@tms_media_client.manager]
         tags:
             - { name: form.type, alias: media }
+
+    tms_media_client.twig.website_extension:
+        class: Tms\Bundle\MediaClientBundle\Twig\MediaExtension
+        arguments: [@tms_media_client.manager]
+        tags:
+            - { name: twig.extension }
