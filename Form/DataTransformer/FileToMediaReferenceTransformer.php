@@ -10,38 +10,39 @@ namespace Tms\Bundle\MediaClientBundle\Form\DataTransformer;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Tms\Bundle\MediaClientBundle\Manager\MediaClientManager;
 
 class FileToMediaReferenceTransformer implements DataTransformerInterface
 {
     /**
-     * @var RestApiClientInterface
+     * @var MediaClientManager
      */
-    private $mediaApiClient;
+    private $mediaClient;
 
     /**
      * Constructor
      *
-     * @param RestApiClientInterface $mediaApiClient
+     * @param MediaClientManager $mediaClient
      */
-    public function __construct($mediaApiClient)
+    public function __construct(MediaClientManager $mediaClient)
     {
-        $this->mediaApiClient = $mediaApiClient;
+        $this->mediaClient = $mediaClient;
     }
 
     /**
      * Transforms a string (Media reference) to another (URL).
      *
      * @param  string $mediaReference
-     * @return string
+     * @return File|null
      */
     public function transform($mediaReference)
     {
-        var_dump($mediaReference); die();
         if (null === $mediaReference) {
-            return "";
+            return null;
         }
 
-        return 'todo';
+        return $this->mediaClient->getFile($mediaReference);
     }
 
     /**
@@ -53,15 +54,12 @@ class FileToMediaReferenceTransformer implements DataTransformerInterface
      */
     public function reverseTransform($file)
     {
-        var_dump($file); die();
-        if (!$file) {
+        if (! $file instanceof UploadedFile) {
             return null;
         }
 
         try {
-            $reference = $this->mediaApiClient
-                ->post('/media')
-            ;
+            $reference = $this->mediaClient->send($file);
         } catch (\Exception $e) {
             throw new TransformationFailedException(sprintf(
                 'An error occured during File to media transformation: %s',

@@ -8,29 +8,31 @@
 namespace Tms\Bundle\MediaClientBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Tms\Bundle\MediaClientBundle\Form\DataTransformer\FileToMediaReferenceTransformer;
+use Tms\Bundle\MediaClientBundle\Manager\MediaClientManager;
 
 class MediaType extends AbstractType
 {
     /**
-     * @var mediaApiClient
+     * @var MediaClientManager
      */
-    private $mediaApiClient;
+    private $mediaClient;
 
     /**
      * Constructor
      *
-     * @param RestApiClientInterface $mediaApiClient
+     * @param MediaClientManager $mediaClient
      */
-    public function __construct($mediaApiClient)
+    public function __construct(MediaClientManager $mediaClient)
     {
-        $this->mediaApiClient = $mediaApiClient;
+        $this->mediaClient = $mediaClient;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $transformer = new FileToMediaReferenceTransformer($this->mediaApiClient);
+        $transformer = new FileToMediaReferenceTransformer($this->mediaClient);
         $builder->addModelTransformer($transformer);
     }
 

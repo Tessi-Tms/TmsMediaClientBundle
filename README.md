@@ -46,4 +46,12 @@ public function registerBundles()
 }
 ```
 
-Now the Bundle is installed.
+Now import the bundle configuration in your `app/config.yml`
+
+```yml
+imports:
+    ...
+    - { resource: @TmsMediaClientBundle/Resources/config/config.yml }
+```
+
+Now the Bundle is installed and configured.
