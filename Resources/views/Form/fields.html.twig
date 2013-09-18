@@ -13,7 +13,10 @@
 {% endblock %}
 #}
 
-{#
 {% block related_to_one_media_widget %}
+    {% spaceless %}
+
+    {{ block('form_widget') }}
+
+    {% endspaceless %}
 {% endblock %}
-#}

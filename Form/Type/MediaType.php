@@ -20,7 +20,13 @@ class MediaType extends AbstractType
     {
         $builder
             ->add('providerName', 'provider_choices')
-            ->add('providerReference', null, array(
+            ->add('url', 'hidden', array(
+                'required' => false
+            ))
+            ->add('mimeType', 'hidden', array(
+                'required' => false
+            ))
+            ->add('providerReference', 'hidden', array(
                 'required' => false
             ))
             ->add('uploadedFile', 'file', array(

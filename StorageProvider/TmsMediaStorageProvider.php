@@ -55,14 +55,19 @@ class TmsMediaStorageProvider implements StorageProviderInterface
      */
     public function add(Media & $media)
     {
-        $reference = $this
+        $data = $this
             ->getMediaApiClient()
             ->post('/media', array(
                 'media' => '@'.$media->getUploadedFilePath()
             ))
         ;
 
-        $media->setProviderReference($reference);
+        $apiMedia = json_decode($data, true);
+
+        $media->setProviderReference($apiMedia['reference']);
+        $media->setMimeType($apiMedia['mimeType']);
+        $media->setUrl($this->getMediaPublicUrl($media));
+        $media->setMetadata($apiMedia);
         unlink($media->getUploadedFilePath());
         $media->setUploadedFilePath(null);
     }

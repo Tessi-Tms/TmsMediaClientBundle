@@ -28,6 +28,20 @@ class Media
     /**
      * @var string
      *
+     * @ORM\Column(name="url", type="string")
+     */
+    private $url;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="mimeType", type="string")
+     */
+    private $mimeType;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="provider_name", type="string")
      */
     private $providerName;
@@ -42,7 +56,7 @@ class Media
     /**
      * @var string
      *
-     * @ORM\Column(name="provider_metadata", type="json_array", nullable=true)
+     * @ORM\Column(name="metadata", type="json_array", nullable=true)
      */
     private $metadata;
 
@@ -173,6 +187,52 @@ class Media
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set url
+     *
+     * @param string $url
+     * @return Media
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+    
+        return $this;
+    }
+
+    /**
+     * Get url
+     *
+     * @return string 
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * Set mimeType
+     *
+     * @param string $mimeType
+     * @return Media
+     */
+    public function setMimeType($mimeType)
+    {
+        $this->mimeType = $mimeType;
+    
+        return $this;
+    }
+
+    /**
+     * Get mimeType
+     *
+     * @return string 
+     */
+    public function getMimeType()
+    {
+        return $this->mimeType;
     }
 
     /**
