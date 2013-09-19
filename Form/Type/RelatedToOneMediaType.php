@@ -7,8 +7,36 @@
 
 namespace Tms\Bundle\MediaClientBundle\Form\Type;
 
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
 class RelatedToOneMediaType extends MediaType
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        parent::buildForm($builder, $options);
+        $builder
+            ->add('uploadedFile', 'file')
+        ;
+    }
+
+    /**
+     * @param OptionsResolverInterface $resolver
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        parent::setDefaultOptions($resolver);
+        $resolver->setDefaults(array(
+            'cascade_validation' => true,
+            'attr' => array(
+                'class' => sprintf('tms_media_client__%s', $this->getName())
+            ),
+        ));
+    }
+
     /**
      * {@inheritdoc}
      */

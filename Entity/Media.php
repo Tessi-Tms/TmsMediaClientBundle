@@ -61,6 +61,27 @@ class Media
     private $metadata;
 
     /**
+     * @var Datetime
+     *
+     * @ORM\Column(name="created_at", type="datetime")
+     */
+    private $createdAt;
+
+    /**
+     * @var Datetime
+     *
+     * @ORM\Column(name="updated_at", type="datetime", nullable=true)
+     */
+    private $updatedAt;
+
+    /**
+     * @var Datetime
+     *
+     * @ORM\Column(name="uploaded_at", type="datetime", nullable=true)
+     */
+    private $uploadedAt;
+
+    /**
      * @var string
      */
     private $uploadedFilePath;
@@ -115,6 +136,8 @@ class Media
     public function upload()
     {
         if (null === $this->getUploadedFile()) {
+            $this->setUploadedAt($this->getUpdatedAt());
+
             return;
         }
 
@@ -123,14 +146,38 @@ class Media
             $this->getUploadedFile()->getClientOriginalName()
         );
 
-        $this->setUploadedFilePath(
-            sprintf('%s/%s',
-                $this->getUploadRootDir(),
-                $this->getUploadedFile()->getClientOriginalName()
-            )
-        );
+        $this->setUploadedFilePath(sprintf('%s/%s',
+            $this->getUploadRootDir(),
+            $this->getUploadedFile()->getClientOriginalName()
+       ));
 
-        $this->uploadedFile = null;
+        // To get the right uploaded date time
+        $this->setUploadedAt(new \DateTime('now'));
+
+       $this->uploadedFile = null;
+    }
+
+    /**
+     * onCreate
+     *
+     * @ORM\PrePersist()
+     */
+    public function onCreate()
+    {
+        $date = new \DateTime('now');
+        $this->setCreatedAt($date);
+        $this->setUpdatedAt($date);
+    }
+
+    /**
+     * onUpdate
+     *
+     * @ORM\PreUpdate()
+     */
+    public function onUpdate()
+    {
+        $date = new \DateTime('now');
+        $this->setUpdatedAt($date);
     }
 
     /**
@@ -302,5 +349,74 @@ class Media
     public function getMetadata()
     {
         return $this->metadata;
+    }
+
+    /**
+     * Set created at
+     *
+     * @param Datetime $createdAt
+     * @return Media
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+    
+        return $this;
+    }
+
+    /**
+     * Get created at
+     *
+     * @return Datetime 
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * Set updated at
+     *
+     * @param Datetime $updatedAt
+     * @return Media
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+    
+        return $this;
+    }
+
+    /**
+     * Get updated at
+     *
+     * @return Datetime 
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * Set uploaded at
+     *
+     * @param Datetime $uploadedAt
+     * @return Media
+     */
+    public function setUploadedAt($uploadedAt)
+    {
+        $this->uploadedAt = $uploadedAt;
+    
+        return $this;
+    }
+
+    /**
+     * Get uploaded at
+     *
+     * @return Datetime 
+     */
+    public function getUploadedAt()
+    {
+        return $this->uploadedAt;
     }
 }

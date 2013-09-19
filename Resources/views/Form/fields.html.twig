@@ -1,22 +1,50 @@
 {% extends 'form_div_layout.html.twig' %}
 
-{#
-{% block media_reference_widget %}
+{% block related_to_many_media_widget %}
     {% spaceless %}
-
-    {{ block('form_widget') }}
-    {% if media_reference is defined %}
-        <img src="{{ mediaUrl(media_reference) }}"/>
-    {% endif %}
-
+        {{ block('collection_widget') }}
     {% endspaceless %}
+
+    <script type="text/javascript">
+        var collectionHolder = $('.tms_media_client__related_to_many_media');
+        var $addMediaLink = $('<a href="#" class="btn add_media_link">Add media</a>');
+        var $newLink = $('<div></div>').append($addMediaLink);
+
+        jQuery(document).ready(function() {
+            collectionHolder.append($newLink);
+
+            $addMediaLink.on('click', function(e) {
+                e.preventDefault();
+                addMediaForm(collectionHolder, $newLink);
+            });
+
+            collectionHolder.find('.tms_media_client__related_to_one_media').each(function() {
+                addMediaFormDeleteLink($(this));
+            });
+        });
+
+        function addMediaForm(collectionHolder, $newLink) {
+            var prototype = collectionHolder.attr('data-prototype');
+            var newForm = prototype.replace(/__name__/g, collectionHolder.children().length);
+            var $newFormDiv = $('<div></div>').append(newForm);
+            $newLink.before($newFormDiv);
+            addMediaFormDeleteLink($newFormDiv);
+        }
+
+        function addMediaFormDeleteLink($mediaFormDiv) {
+            var $removeFormA = $('<a href="#" class="btn">Delete media</a>');
+            $mediaFormDiv.append($removeFormA);
+
+            $removeFormA.on('click', function(e) {
+                e.preventDefault();
+                $mediaFormDiv.remove();
+            });
+        }
+    </script>
 {% endblock %}
-#}
 
 {% block related_to_one_media_widget %}
     {% spaceless %}
-
-    {{ block('form_widget') }}
-
+        {{ block('form_widget') }}
     {% endspaceless %}
 {% endblock %}

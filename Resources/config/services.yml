@@ -20,3 +20,8 @@ services:
         class: Tms\Bundle\MediaClientBundle\Form\Type\RelatedToOneMediaType
         tags:
             - { name: form.type, alias: related_to_one_media }
+
+    tms_media_client.form_type.related_to_many_media:
+        class: Tms\Bundle\MediaClientBundle\Form\Type\RelatedToManyMediaType
+        tags:
+            - { name: form.type, alias: related_to_many_media }

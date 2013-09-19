@@ -32,6 +32,11 @@ class MediaType extends AbstractType
             ->add('uploadedFile', 'file', array(
                 'required' => false
             ))
+            ->add('uploadedAt', 'datetime', array(
+                'data'       => $builder->getData() ? new \DateTime('now') : null,
+                'attr'       => array('style'=>'display:none;'),
+                'label_attr' => array('style'=>'display:none;'),
+            ))
         ;
     }
 
