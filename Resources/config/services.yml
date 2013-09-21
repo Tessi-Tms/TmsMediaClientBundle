@@ -6,7 +6,7 @@ services:
 
     tms_media_client.storage_provider.tms_media:
         class: Tms\Bundle\MediaClientBundle\StorageProvider\TmsMediaStorageProvider
-        arguments: [@da_api_client.api.media]
+        arguments: [@da_api_client.api.media, %tms_media_client.api.source_name%]
         tags:
             - { name: tms_media_client.storage_provider, alias: tms_media_provider }
 

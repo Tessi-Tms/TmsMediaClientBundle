@@ -28,14 +28,14 @@ class Media
     /**
      * @var string
      *
-     * @ORM\Column(name="url", type="string")
+     * @ORM\Column(type="string")
      */
     private $url;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="mimeType", type="string")
+     * @ORM\Column(name="mime_type", type="string")
      */
     private $mimeType;
 
@@ -54,11 +54,18 @@ class Media
     private $providerReference;
 
     /**
+     * @var array
+     *
+     * @ORM\Column(name="provider_data", type="json_array", nullable=true)
+     */
+    private $providerData;
+
+    /**
      * @var string
      *
-     * @ORM\Column(name="metadata", type="json_array", nullable=true)
+     * @ORM\Column(type="string")
      */
-    private $metadata;
+    private $extension;
 
     /**
      * @var Datetime
@@ -245,7 +252,7 @@ class Media
     public function setUrl($url)
     {
         $this->url = $url;
-    
+
         return $this;
     }
 
@@ -268,7 +275,7 @@ class Media
     public function setMimeType($mimeType)
     {
         $this->mimeType = $mimeType;
-    
+
         return $this;
     }
 
@@ -291,7 +298,7 @@ class Media
     public function setProviderName($providerName)
     {
         $this->providerName = $providerName;
-    
+
         return $this;
     }
 
@@ -314,14 +321,14 @@ class Media
     public function setProviderReference($providerReference)
     {
         $this->providerReference = $providerReference;
-    
+
         return $this;
     }
 
     /**
      * Get providerReference
      *
-     * @return string 
+     * @return string
      */
     public function getProviderReference()
     {
@@ -329,26 +336,49 @@ class Media
     }
 
     /**
-     * Set metadata
+     * Set providerData
      *
-     * @param array $metadata
+     * @param array $providerData
      * @return Media
      */
-    public function setMetadata($metadata)
+    public function setProviderData($providerData)
     {
-        $this->metadata = $metadata;
-    
+        $this->providerData = $providerData;
+
         return $this;
     }
 
     /**
-     * Get metadata
+     * Get providerData
      *
      * @return array 
      */
-    public function getMetadata()
+    public function getProviderData()
     {
-        return $this->metadata;
+        return $this->providerData;
+    }
+
+    /**
+     * Set extension
+     *
+     * @param string $extension
+     * @return Media
+     */
+    public function setExtension($extension)
+    {
+        $this->extension = $extension;
+
+        return $this;
+    }
+
+    /**
+     * Get extension
+     *
+     * @return string
+     */
+    public function getExtension()
+    {
+        return $this->extension;
     }
 
     /**
@@ -360,7 +390,7 @@ class Media
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
-    
+
         return $this;
     }
 
@@ -383,7 +413,7 @@ class Media
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
-    
+
         return $this;
     }
 
@@ -406,7 +436,7 @@ class Media
     public function setUploadedAt($uploadedAt)
     {
         $this->uploadedAt = $uploadedAt;
-    
+
         return $this;
     }
 

@@ -17,13 +17,20 @@ class TmsMediaStorageProvider implements StorageProviderInterface
     private $mediaApiClient;
 
     /**
+     * @var string
+     */
+    private $sourceName;
+
+    /**
      * Constructor
      *
      * @param RestApiClientInterface $mediaApiClient
+     * @param string $sourceName
      */
-    public function __construct($mediaApiClient)
+    public function __construct($mediaApiClient, $sourceName)
     {
         $this->mediaApiClient = $mediaApiClient;
+        $this->sourceName = $sourceName;
     }
 
     /**
@@ -34,6 +41,16 @@ class TmsMediaStorageProvider implements StorageProviderInterface
     public function getMediaApiClient()
     {
         return $this->mediaApiClient;
+    }
+
+    /**
+     * Get SourceName
+     *
+     * @return string
+     */
+    public function getSourceName()
+    {
+        return $this->sourceName;
     }
 
     /**
@@ -65,16 +82,18 @@ class TmsMediaStorageProvider implements StorageProviderInterface
             $data = $this
                 ->getMediaApiClient()
                 ->post('/media', array(
+                    'source' => $this->getSourceName(),
                     'media' => '@'.$media->getUploadedFilePath()
                 ))
             ;
 
             $apiMedia = json_decode($data, true);
 
-            $media->setProviderReference($apiMedia['reference']);
+            $media->setProviderData($apiMedia);
             $media->setMimeType($apiMedia['mimeType']);
+            $media->setProviderReference($apiMedia['reference']);
+            $media->setExtension($apiMedia['extension']);
             $media->setUrl($this->getMediaPublicUrl($media));
-            $media->setMetadata($apiMedia);
 
             unlink($media->getUploadedFilePath());
             $media->setUploadedFilePath(null);
@@ -110,9 +129,10 @@ class TmsMediaStorageProvider implements StorageProviderInterface
      */
     public function getMediaPublicUrl(Media $media)
     {
-        return sprintf('%s/media/%s',
+        return sprintf('%s/media/%s.%s',
             $this->getMediaApiClient()->getEndpointRoot(),
-            $media->getProviderReference()
+            $media->getProviderReference(),
+            $media->getExtension()
         );
     }
 }

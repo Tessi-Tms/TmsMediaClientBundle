@@ -2,7 +2,7 @@
 da_api_client:
     api:
         media:
-            endpoint_root: %media_http_client_endpoint_root%
+            endpoint_root: %api_client_media_endpoint_root%
             cache_enabled: true
 
 twig:
