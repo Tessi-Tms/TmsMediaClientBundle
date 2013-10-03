@@ -122,7 +122,12 @@ public function buildForm(FormBuilderInterface $builder, array $options)
 In your entity:
 
 ```php
-
+/**
+ * @var string
+ *
+ * @ORM\Column(name="image", type="string", length=255)
+ */
+private $image;
 ```
 
 In this entity form type:
