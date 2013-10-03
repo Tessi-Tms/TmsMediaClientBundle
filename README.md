@@ -55,3 +55,86 @@ imports:
 ```
 
 Now the Bundle is installed and configured.
+
+
+How to use
+----------
+
+### OneToOne Relation with a media:
+
+In your entity:
+
+```php
+/**
+ * @var Media
+ *
+ * @ORM\OneToOne(targetEntity="Tms\Bundle\MediaClientBundle\Entity\Media", cascade={"all"})
+ * @ORM\JoinColumn(name="logo_id", referencedColumnName="id", onDelete="SET NULL", nullable=true)
+ */
+private $logo;
+```
+
+In this entity form type:
+
+```php
+public function buildForm(FormBuilderInterface $builder, array $options)
+{
+    $builder
+        ...
+        ->add('logo', 'related_to_one_media')
+        ...
+    ;
+}
+```
+
+### ManyToMany Relation with a media:
+
+In your entity:
+
+```php
+/**
+ * @var array<Media>
+ *
+ * @ORM\ManyToMany(targetEntity="Tms\Bundle\MediaClientBundle\Entity\Media", cascade={"all"})
+ * @ORM\JoinTable(name="offer_media",
+ *     joinColumns={@ORM\JoinColumn(name="my_entity_id", referencedColumnName="id", onDelete="cascade")},
+ *     inverseJoinColumns={@ORM\JoinColumn(name="media_id", referencedColumnName="id", unique=true, onDelete="cascade")}
+ * )
+ */
+private $images;
+```
+
+In this entity form type:
+
+```php
+public function buildForm(FormBuilderInterface $builder, array $options)
+{
+    $builder
+        ...
+        ->add('images', 'related_to_many_media')
+        ...
+    ;
+}
+```
+
+### Without media entity relation:
+
+In your entity:
+
+```php
+
+```
+
+In this entity form type:
+
+```php
+public function buildForm(FormBuilderInterface $builder, array $options)
+{
+    $builder
+        ...
+        ->add('image', 'direct_link_media')
+        ...
+    ;
+}
+```
+
