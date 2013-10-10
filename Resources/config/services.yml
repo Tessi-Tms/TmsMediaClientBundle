@@ -8,7 +8,7 @@ services:
         class: Tms\Bundle\MediaClientBundle\StorageProvider\TmsMediaStorageProvider
         arguments: [@da_api_client.api.media, %tms_media_client.api.source_name%]
         tags:
-            - { name: tms_media_client.storage_provider, alias: tms_media_provider }
+            - { name: tms_media_client.storage_provider, alias: Tms Media }
 
     tms_media_client.form_type.provider_choices:
         class: Tms\Bundle\MediaClientBundle\Form\Type\ProviderChoicesType

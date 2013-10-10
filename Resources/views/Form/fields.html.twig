@@ -7,7 +7,7 @@
 
     <script type="text/javascript">
         var collectionHolder = $('.tms_media_client__related_to_many_media');
-        var $addMediaLink = $('<a href="#" class="btn add_media_link">Add media</a>');
+        var $addMediaLink = $('<a href="#" class="btn btn-default add_media_link">Add media</a>');
         var $newLink = $('<div></div>').append($addMediaLink);
 
         jQuery(document).ready(function() {
@@ -32,7 +32,7 @@
         }
 
         function addMediaFormDeleteLink($mediaFormDiv) {
-            var $removeFormA = $('<a href="#" class="btn">Delete media</a>');
+            var $removeFormA = $('<a href="#" class="btn btn-default">Delete media</a>');
             $mediaFormDiv.append($removeFormA);
 
             $removeFormA.on('click', function(e) {
