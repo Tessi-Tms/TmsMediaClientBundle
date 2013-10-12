@@ -81,7 +81,9 @@ public function buildForm(FormBuilderInterface $builder, array $options)
 {
     $builder
         ...
-        ->add('logo', 'related_to_one_media')
+        ->add('logo', 'related_to_one_media', array(
+            'data' => $builder->getData()->getLogo()
+        ))
         ...
     ;
 }

@@ -18,9 +18,10 @@ class RelatedToOneMediaType extends MediaType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);
-        $builder
-            ->add('uploadedFile', 'file')
-        ;
+
+        if(!$builder->getData()) {
+            $builder->add('uploadedFile', 'file', array('required' => true));
+        }
     }
 
     /**
