@@ -46,7 +46,7 @@ public function registerBundles()
 }
 ```
 
-Now import the bundle configuration in your `app/config.yml`
+Now import the bundle configuration in your `app/config/config.yml`
 
 ```yml
 imports:
