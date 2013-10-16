@@ -72,34 +72,34 @@ class TmsMediaStorageProvider implements StorageProviderInterface
      */
     public function add(Media & $media)
     {
-        if($media->getUploadedFilePath()) {
-            // Update case
-            if ($media->getProviderReference()) {
-                // Remove the previous associated media
-                $this->remove($media);
-            }
-
-            $data = $this
-                ->getMediaApiClient()
-                ->post('/media', array(
-                    'source' => $this->getSourceName(),
-                    'media' => '@'.$media->getUploadedFilePath()
-                ))
-            ;
-
-            $apiMedia = json_decode($data, true);
-
-            $media->setProviderData($apiMedia);
-            $media->setMimeType($apiMedia['mimeType']);
-            $media->setProviderReference($apiMedia['reference']);
-            $media->setExtension($apiMedia['extension']);
-            $media->setUrl($this->getMediaPublicUrl($media));
-
-            unlink($media->getUploadedFilePath());
-            $media->setUploadedFilePath(null);
-
-            return;
+        if(!$media->getUploadedFilePath()) {
+            return false;
         }
+
+        // Update case
+        if ($media->getProviderReference()) {
+            // Remove the previous associated media
+            $this->remove($media);
+        }
+
+        $data = $this
+            ->getMediaApiClient()
+            ->post('/media', array(
+                'source' => $this->getSourceName(),
+                'media' => '@'.$media->getUploadedFilePath()
+            ))
+        ;
+
+        $apiMedia = json_decode($data, true);
+
+        $media->setProviderData($apiMedia);
+        $media->setMimeType($apiMedia['mimeType']);
+        $media->setProviderReference($apiMedia['reference']);
+        $media->setExtension($apiMedia['extension']);
+        $media->setUrl($this->getMediaPublicUrl($media));
+
+        unlink($media->getUploadedFilePath());
+        $media->setUploadedFilePath(null);
     }
 
     /**
