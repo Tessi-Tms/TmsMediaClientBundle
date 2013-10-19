@@ -5,7 +5,7 @@
  * @license: MIT
  */
 
-namespace Tms\Bundle\MediaClientBundle\Form\Type;
+namespace Tms\Bundle\MediaClientBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;

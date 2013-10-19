@@ -69,9 +69,9 @@ In your entity:
  * @var Media
  *
  * @ORM\OneToOne(targetEntity="Tms\Bundle\MediaClientBundle\Entity\Media", cascade={"all"})
- * @ORM\JoinColumn(name="logo_id", referencedColumnName="id", onDelete="SET NULL", nullable=true)
+ * @ORM\JoinColumn(name="media_id", referencedColumnName="id", onDelete="SET NULL", nullable=true)
  */
-private $logo;
+private $media;
 ```
 
 In this entity form type:
@@ -81,8 +81,8 @@ public function buildForm(FormBuilderInterface $builder, array $options)
 {
     $builder
         ...
-        ->add('logo', 'related_to_one_media', array(
-            'data' => $builder->getData()->getLogo()
+        ->add('media', 'related_to_one_media', array(
+            'data' => $builder->getData()->getMedia()
         ))
         ...
     ;
@@ -98,7 +98,7 @@ In your entity:
  * @var array<Media>
  *
  * @ORM\ManyToMany(targetEntity="Tms\Bundle\MediaClientBundle\Entity\Media", cascade={"all"})
- * @ORM\JoinTable(name="offer_media",
+ * @ORM\JoinTable(name="my_entity_media",
  *     joinColumns={@ORM\JoinColumn(name="my_entity_id", referencedColumnName="id", onDelete="cascade")},
  *     inverseJoinColumns={@ORM\JoinColumn(name="media_id", referencedColumnName="id", unique=true, onDelete="cascade")}
  * )
