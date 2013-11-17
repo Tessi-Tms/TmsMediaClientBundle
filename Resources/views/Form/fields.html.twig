@@ -44,10 +44,16 @@
 {% endblock %}
 
 {% block related_to_one_media_widget %}
-    {% if data and data.url %}
-        <img src="{{ data.url }}" alt="{{ data }}" title="{{ data }}" />
-    {% endif %}
     {% spaceless %}
-        {{ block('form_widget') }}
+    <div {{ block('widget_container_attributes') }}>
+        {% if data and data.url %}
+            <img src="{{ data.url }}" alt="{{ data }}" title="{{ data }}" />
+        {% endif %}
+        {% if form.parent is empty %}
+            {{ form_errors(form) }}
+        {% endif %}
+        {{ block('form_rows') }}
+        {{ form_rest(form) }}
+    </div>
     {% endspaceless %}
 {% endblock %}
