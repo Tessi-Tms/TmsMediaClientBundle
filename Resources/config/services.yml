@@ -16,6 +16,12 @@ services:
         tags:
             - { name: form.type, alias: provider_choices }
 
+    tms_media_client.form_type.media:
+        class: Tms\Bundle\MediaClientBundle\Form\Type\MediaType
+        arguments: [@tms_media_client.storage_provider_handler]
+        tags:
+            - { name: form.type, alias: media }
+
     tms_media_client.form_type.related_to_one_media:
         class: Tms\Bundle\MediaClientBundle\Form\Type\RelatedToOneMediaType
         tags:

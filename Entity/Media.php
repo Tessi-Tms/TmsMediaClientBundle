@@ -82,18 +82,6 @@ class Media
     private $updatedAt;
 
     /**
-     * @var Datetime
-     *
-     * @ORM\Column(name="uploaded_at", type="datetime", nullable=true)
-     */
-    private $uploadedAt;
-
-    /**
-     * @var string
-     */
-    private $uploadedFilePath;
-
-    /**
      * @var UploadedFile
      */
     private $uploadedFile;
@@ -109,59 +97,6 @@ class Media
             $this->getProviderName(),
             $this->getProviderReference()
         );
-    }
-
-    /**
-     * Get upload directory
-     *
-     * @return string
-     */
-    protected function getUploadDir()
-    {
-        return 'media_uploads';
-    }
-
-    /**
-     * Get upload root directory
-     *
-     * @return string
-     */
-    protected function getUploadRootDir()
-    {
-        return sprintf('%s/%s',
-            sys_get_temp_dir(),
-            $this->getUploadDir()
-        );
-    }
-
-    /**
-     * Upload
-     *
-     * @ORM\PrePersist()
-     * @ORM\PreUpdate()
-     */
-    public function upload()
-    {
-        if (null === $this->getUploadedFile()) {
-            $this->setUploadedAt($this->getUpdatedAt());
-
-            return;
-        }
-
-        $this->getUploadedFile()->move(
-            $this->getUploadRootDir(),
-            $this->getUploadedFile()->getClientOriginalName()
-        );
-
-        $this->setUploadedFilePath(sprintf('%s/%s',
-            $this->getUploadRootDir(),
-            $this->getUploadedFile()->getClientOriginalName()
-       ));
-
-        // To get the right uploaded date time
-        $this->setUploadedAt(new \DateTime('now'));
-
-       $this->uploadedFile = null;
     }
 
     /**
@@ -188,29 +123,6 @@ class Media
     }
 
     /**
-     * Set uploaded file path
-     *
-     * @param string $uploadedFilePath
-     * @return Media
-     */
-    public function setUploadedFilePath($uploadedFilePath)
-    {
-        $this->uploadedFilePath = $uploadedFilePath;
-
-        return $this;
-    }
-
-    /**
-     * Get uploaded file path
-     *
-     * @return string
-     */
-    public function getUploadedFilePath()
-    {
-        return $this->uploadedFilePath;
-    }
-
-    /**
      * Set uploaded file
      *
      * @param UploadedFile $uploadedFile
@@ -231,6 +143,19 @@ class Media
     public function getUploadedFile()
     {
         return $this->uploadedFile;
+    }
+
+    /**
+     * Remove uploaded file
+     *
+     * @return Media
+     */
+    public function removeUploadedFile()
+    {
+        unlink($this->uploadedFile->getPathName());
+        $this->uploadedFile = null;
+
+        return $this;
     }
 
     /**
@@ -425,28 +350,5 @@ class Media
     public function getUpdatedAt()
     {
         return $this->updatedAt;
-    }
-
-    /**
-     * Set uploaded at
-     *
-     * @param Datetime $uploadedAt
-     * @return Media
-     */
-    public function setUploadedAt($uploadedAt)
-    {
-        $this->uploadedAt = $uploadedAt;
-
-        return $this;
-    }
-
-    /**
-     * Get uploaded at
-     *
-     * @return Datetime 
-     */
-    public function getUploadedAt()
-    {
-        return $this->uploadedAt;
     }
 }

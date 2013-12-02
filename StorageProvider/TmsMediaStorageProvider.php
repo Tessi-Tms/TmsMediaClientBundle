@@ -72,7 +72,8 @@ class TmsMediaStorageProvider implements StorageProviderInterface
      */
     public function add(Media & $media)
     {
-        if(!$media->getUploadedFilePath()) {
+        if (null === $media->getUploadedFile() ||
+            !$media->getUploadedFile()->getPathName()) {
             return false;
         }
 
@@ -86,7 +87,8 @@ class TmsMediaStorageProvider implements StorageProviderInterface
             ->getMediaApiClient()
             ->post('/media', array(
                 'source' => $this->getSourceName(),
-                'media' => '@'.$media->getUploadedFilePath()
+                'media' => '@'.$media->getUploadedFile()->getPathName(),
+                'name' => $media->getUploadedFile()->getClientOriginalName()
             ))
         ;
 
@@ -98,8 +100,7 @@ class TmsMediaStorageProvider implements StorageProviderInterface
         $media->setExtension($apiMedia['extension']);
         $media->setUrl($this->getMediaPublicUrl($media));
 
-        unlink($media->getUploadedFilePath());
-        $media->setUploadedFilePath(null);
+        $media->removeUploadedFile();
     }
 
     /**

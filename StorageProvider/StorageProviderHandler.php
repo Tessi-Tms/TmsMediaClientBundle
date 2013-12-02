@@ -77,11 +77,6 @@ class StorageProviderHandler implements EventSubscriber
         if ($entity instanceof Media) {
             $provider = $this->getStorageProvider($entity->getProviderName());
             $provider->add($entity);
-
-            // To take care about entity changes
-            $unitOfWork = $entityManager->getUnitOfWork();
-            $meta = $entityManager->getClassMetadata(get_class($entity));
-            $unitOfWork->recomputeSingleEntityChangeSet($meta, $entity);
         }
     }
 
