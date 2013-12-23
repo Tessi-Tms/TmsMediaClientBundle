@@ -184,11 +184,27 @@ class Media
     /**
      * Get url
      *
-     * @return string 
+     * @param string $extension
+     * @return string
      */
-    public function getUrl()
+    public function getUrl($extension = null)
     {
-        return $this->url;
+        if (null === $extension || $extension == $this->getExtension()) {
+            return $this->url;
+        }
+
+        $parsedUrl = parse_url($this->url);
+        $scheme   = isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : '';
+        $host     = isset($parsedUrl['host']) ? $parsedUrl['host'] : '';
+        $port     = isset($parsedUrl['port']) ? ':' . $parsedUrl['port'] : '';
+        $user     = isset($parsedUrl['user']) ? $parsedUrl['user'] : '';
+        $pass     = isset($parsedUrl['pass']) ? ':' . $parsedUrl['pass']  : '';
+        $pass     = ($user || $pass) ? "$pass@" : '';
+        $path     = isset($parsedUrl['path']) ? str_replace($this->getExtension(), $extension, $parsedUrl['path']) : '';
+        $query    = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : '';
+        $fragment = isset($parsedUrl['fragment']) ? '#' . $parsedUrl['fragment'] : '';
+
+        return "$scheme$user$pass$host$port$path$query$fragment";
     }
 
     /**
