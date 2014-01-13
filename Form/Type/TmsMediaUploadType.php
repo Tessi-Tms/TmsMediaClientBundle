@@ -9,9 +9,11 @@ namespace Tms\Bundle\MediaClientBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Validator\Constraints\Null;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Tms\Bundle\MediaClientBundle\StorageProvider\TmsMediaStorageProvider;
-use Tms\Bundle\MediaClientBundle\Form\DataTransformer\FileToMediaReferenceTransformer;
 
 class TmsMediaUploadType extends AbstractType
 {
@@ -35,16 +37,45 @@ class TmsMediaUploadType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $transformer = new FileToMediaReferenceTransformer($this->storageProvider);
-        $builder->addModelTransformer($transformer);
+        $builder
+            ->add('url', 'hidden', array(
+                'required' => false
+            ))
+            ->add('mimeType', 'hidden', array(
+                'required' => false
+            ))
+            ->add('providerReference', 'hidden', array(
+                'required' => false
+            ))
+            ->add('uploadedFile', 'file', array(
+                'required' => false
+            ))
+        ;
+
+        $provider = $this->storageProvider;
+        $builder->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function(FormEvent $event) use ($provider) {
+                $media = $event->getForm()->getData();
+                if (null === $media) {
+                    return false;
+                };
+                $provider->add($media);
+            }
+        );
     }
 
     /**
-     * {@inheritdoc}
+     * @param OptionsResolverInterface $resolver
      */
-    public function getParent()
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        return 'file';
+        $resolver->setDefaults(array(
+            'data_class' => 'Tms\Bundle\MediaClientBundle\Model\Media',
+            'constraints' => array(new Null(array(
+                'groups' => array('create', 'update')
+            )))
+        ));
     }
 
     /**
