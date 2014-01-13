@@ -7,7 +7,7 @@
 
 namespace Tms\Bundle\MediaClientBundle\StorageProvider;
 
-use Tms\Bundle\MediaClientBundle\Entity\Media;
+use Tms\Bundle\MediaClientBundle\Model\Media;
 
 class TmsMediaStorageProvider implements StorageProviderInterface
 {

@@ -8,96 +8,61 @@ namespace Tms\Bundle\MediaClientBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Tms\Bundle\MediaClientBundle\Model\Media as BaseMedia;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="media")
  * @ORM\HasLifecycleCallbacks()
  */
-class Media
+class Media extends BaseMedia
 {
     /**
-     * @var integer
-     *
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /**
-     * @var string
-     *
      * @ORM\Column(type="string")
      */
-    private $url;
+    protected $url;
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="mime_type", type="string")
      */
-    private $mimeType;
+    protected $mimeType;
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="provider_name", type="string")
      */
-    private $providerName;
+    protected $providerName;
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="provider_reference", type="string")
      */
-    private $providerReference;
+    protected $providerReference;
 
     /**
-     * @var array
-     *
      * @ORM\Column(name="provider_data", type="json_array", nullable=true)
      */
-    private $providerData;
+    protected $providerData;
 
     /**
-     * @var string
-     *
      * @ORM\Column(type="string")
      */
-    private $extension;
+    protected $extension;
 
     /**
-     * @var Datetime
-     *
      * @ORM\Column(name="created_at", type="datetime")
      */
-    private $createdAt;
+    protected $createdAt;
 
     /**
-     * @var Datetime
-     *
      * @ORM\Column(name="updated_at", type="datetime", nullable=true)
      */
-    private $updatedAt;
-
-    /**
-     * @var UploadedFile
-     */
-    private $uploadedFile;
-
-    /**
-     * toString
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return sprintf('[%s] %s',
-            $this->getProviderName(),
-            $this->getProviderReference()
-        );
-    }
+    protected $updatedAt;
 
     /**
      * onCreate
@@ -120,251 +85,5 @@ class Media
     {
         $date = new \DateTime('now');
         $this->setUpdatedAt($date);
-    }
-
-    /**
-     * Set uploaded file
-     *
-     * @param UploadedFile $uploadedFile
-     * @return Media
-     */
-    public function setUploadedFile(UploadedFile $uploadedFile)
-    {
-        $this->uploadedFile = $uploadedFile;
-
-        return $this;
-    }
-
-    /**
-     * Get uploaded file
-     *
-     * @return UploadedFile
-     */
-    public function getUploadedFile()
-    {
-        return $this->uploadedFile;
-    }
-
-    /**
-     * Remove uploaded file
-     *
-     * @return Media
-     */
-    public function removeUploadedFile()
-    {
-        unlink($this->uploadedFile->getPathName());
-        $this->uploadedFile = null;
-
-        return $this;
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set url
-     *
-     * @param string $url
-     * @return Media
-     */
-    public function setUrl($url)
-    {
-        $this->url = $url;
-
-        return $this;
-    }
-
-    /**
-     * Get url
-     *
-     * @param string $extension
-     * @return string
-     */
-    public function getUrl($extension = null)
-    {
-        if (null === $extension || $extension == $this->getExtension()) {
-            return $this->url;
-        }
-
-        $parsedUrl = parse_url($this->url);
-        $scheme   = isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : '';
-        $host     = isset($parsedUrl['host']) ? $parsedUrl['host'] : '';
-        $port     = isset($parsedUrl['port']) ? ':' . $parsedUrl['port'] : '';
-        $user     = isset($parsedUrl['user']) ? $parsedUrl['user'] : '';
-        $pass     = isset($parsedUrl['pass']) ? ':' . $parsedUrl['pass']  : '';
-        $pass     = ($user || $pass) ? "$pass@" : '';
-        $path     = isset($parsedUrl['path']) ? str_replace($this->getExtension(), $extension, $parsedUrl['path']) : '';
-        $query    = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : '';
-        $fragment = isset($parsedUrl['fragment']) ? '#' . $parsedUrl['fragment'] : '';
-
-        return "$scheme$user$pass$host$port$path$query$fragment";
-    }
-
-    /**
-     * Set mimeType
-     *
-     * @param string $mimeType
-     * @return Media
-     */
-    public function setMimeType($mimeType)
-    {
-        $this->mimeType = $mimeType;
-
-        return $this;
-    }
-
-    /**
-     * Get mimeType
-     *
-     * @return string 
-     */
-    public function getMimeType()
-    {
-        return $this->mimeType;
-    }
-
-    /**
-     * Set providerName
-     *
-     * @param string $providerName
-     * @return Media
-     */
-    public function setProviderName($providerName)
-    {
-        $this->providerName = $providerName;
-
-        return $this;
-    }
-
-    /**
-     * Get providerName
-     *
-     * @return string 
-     */
-    public function getProviderName()
-    {
-        return $this->providerName;
-    }
-
-    /**
-     * Set providerReference
-     *
-     * @param string $providerReference
-     * @return Media
-     */
-    public function setProviderReference($providerReference)
-    {
-        $this->providerReference = $providerReference;
-
-        return $this;
-    }
-
-    /**
-     * Get providerReference
-     *
-     * @return string
-     */
-    public function getProviderReference()
-    {
-        return $this->providerReference;
-    }
-
-    /**
-     * Set providerData
-     *
-     * @param array $providerData
-     * @return Media
-     */
-    public function setProviderData($providerData)
-    {
-        $this->providerData = $providerData;
-
-        return $this;
-    }
-
-    /**
-     * Get providerData
-     *
-     * @return array 
-     */
-    public function getProviderData()
-    {
-        return $this->providerData;
-    }
-
-    /**
-     * Set extension
-     *
-     * @param string $extension
-     * @return Media
-     */
-    public function setExtension($extension)
-    {
-        $this->extension = $extension;
-
-        return $this;
-    }
-
-    /**
-     * Get extension
-     *
-     * @return string
-     */
-    public function getExtension()
-    {
-        return $this->extension;
-    }
-
-    /**
-     * Set created at
-     *
-     * @param Datetime $createdAt
-     * @return Media
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * Get created at
-     *
-     * @return Datetime 
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * Set updated at
-     *
-     * @param Datetime $updatedAt
-     * @return Media
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * Get updated at
-     *
-     * @return Datetime 
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
     }
 }

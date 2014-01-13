@@ -9,7 +9,7 @@ namespace Tms\Bundle\MediaClientBundle\StorageProvider;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use Tms\Bundle\MediaClientBundle\Entity\Media;
+use Tms\Bundle\MediaClientBundle\Model\Media;
 
 class StorageProviderHandler implements EventSubscriber
 {

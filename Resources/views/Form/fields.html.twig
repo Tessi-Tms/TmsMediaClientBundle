@@ -57,3 +57,14 @@
     </div>
     {% endspaceless %}
 {% endblock %}
+
+{% block tms_media_upload_widget %}
+    {% spaceless %}
+        {{ block('collection_widget') }}
+    {% endspaceless %}
+    <script type="text/javascript">
+        $('document').ready(function() {
+            console.log('do the upload once file selected');
+        });
+    </script>
+{% endblock %}

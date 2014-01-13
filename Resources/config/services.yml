@@ -32,8 +32,8 @@ services:
         tags:
             - { name: form.type, alias: related_to_many_media }
 
-    tms_media_client.form_type.direct_link_media:
-        class: Tms\Bundle\MediaClientBundle\Form\Type\DirectLinkMediaType
+    tms_media_client.form_type.tms_media_upload:
+        class: Tms\Bundle\MediaClientBundle\Form\Type\TmsMediaUploadType
         arguments: [@tms_media_client.storage_provider.tms_media]
         tags:
-            - { name: form.type, alias: direct_link_media }
+            - { name: form.type, alias: tms_media_upload }

@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Tms\Bundle\MediaClientBundle\StorageProvider\TmsMediaStorageProvider;
 use Tms\Bundle\MediaClientBundle\Form\DataTransformer\FileToMediaReferenceTransformer;
 
-class DirectLinkMediaType extends AbstractType
+class TmsMediaUploadType extends AbstractType
 {
     /**
      * @var TmsMediaStorageProvider
@@ -52,6 +52,6 @@ class DirectLinkMediaType extends AbstractType
      */
     public function getName()
     {
-        return 'direct_link_media';
+        return 'tms_media_upload';
     }
 }
