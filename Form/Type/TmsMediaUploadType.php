@@ -48,7 +48,7 @@ class TmsMediaUploadType extends AbstractType
                 'required' => false
             ))
             ->add('uploadedFile', 'file', array(
-                'required' => false
+                'required' => $options['required']
             ))
         ;
 
@@ -72,9 +72,6 @@ class TmsMediaUploadType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => 'Tms\Bundle\MediaClientBundle\Model\Media',
-            'constraints' => array(new Null(array(
-                'groups' => array('create', 'update')
-            )))
         ));
     }
 
