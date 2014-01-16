@@ -11,6 +11,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Validator\Constraints\Null;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Tms\Bundle\MediaClientBundle\StorageProvider\TmsMediaStorageProvider;
@@ -48,7 +50,8 @@ class TmsMediaUploadType extends AbstractType
                 'required' => false
             ))
             ->add('uploadedFile', 'file', array(
-                'required' => false
+                'label'    => ' ',
+                'required' => $options['required']
             ))
         ;
 

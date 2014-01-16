@@ -59,12 +59,18 @@
 {% endblock %}
 
 {% block tms_media_upload_widget %}
+    {% if data and data.url %}
+        <img src="{{ data.url }}?resize=1&height=150" alt="{{ data }}" title="{{ data }}" />
+    {% endif %}
     {% spaceless %}
         {{ block('collection_widget') }}
     {% endspaceless %}
     <script type="text/javascript">
         $('document').ready(function() {
-            console.log('do the upload once file selected');
+            $inputFile = $('#{{ id }}_uploadedFile');
+            $inputFile.on('change', function(event) {
+                console.log('TODO: start upload');
+            });
         });
     </script>
 {% endblock %}
