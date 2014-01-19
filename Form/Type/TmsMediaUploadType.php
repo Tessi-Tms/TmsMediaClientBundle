@@ -39,6 +39,12 @@ class TmsMediaUploadType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $isUploadedFileRequired = $options['required'];
+
+        if (null !== $builder->getData() && $builder->getData()->getProviderReference()) {
+            $isUploadedFileRequired = false;
+        }
+
         $builder
             ->add('url', 'hidden', array(
                 'required' => false
@@ -51,7 +57,7 @@ class TmsMediaUploadType extends AbstractType
             ))
             ->add('uploadedFile', 'file', array(
                 'label'    => ' ',
-                'required' => $options['required']
+                'required' => $isUploadedFileRequired
             ))
         ;
 
