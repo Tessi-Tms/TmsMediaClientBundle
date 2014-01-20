@@ -138,11 +138,14 @@ class Media
      * @param string $extension
      * @return string
      */
-    public function getUrl($extension = null)
+    public function getUrl($extension = null, $query = array())
     {
-        if (null === $extension || $extension == $this->getExtension()) {
-            return $this->url;
+        foreach ($query as $k => $param) {
+            if (!$param) {
+                unset($query[$k]);
+            }
         }
+        $query = http_build_query($query);
 
         $parsedUrl = parse_url($this->url);
         $scheme   = isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : '';
@@ -152,7 +155,7 @@ class Media
         $pass     = isset($parsedUrl['pass']) ? ':' . $parsedUrl['pass']  : '';
         $pass     = ($user || $pass) ? "$pass@" : '';
         $path     = isset($parsedUrl['path']) ? str_replace($this->getExtension(), $extension, $parsedUrl['path']) : '';
-        $query    = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : '';
+        $query    = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'].'&'.$query : '?'.$query;
         $fragment = isset($parsedUrl['fragment']) ? '#' . $parsedUrl['fragment'] : '';
 
         return "$scheme$user$pass$host$port$path$query$fragment";

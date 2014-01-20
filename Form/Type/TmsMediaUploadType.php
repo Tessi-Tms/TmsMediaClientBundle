@@ -75,6 +75,25 @@ class TmsMediaUploadType extends AbstractType
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars = array_merge($view->vars, array(
+            'resize'     => $options['resize'],
+            'scale'      => $options['scale'],
+            'grayscale'  => $options['grayscale'],
+            'rotate'     => $options['rotate'],
+            'width'      => $options['width'],
+            'height'     => $options['height'],
+            'maxwidth'   => $options['maxwidth'],
+            'maxheight'  => $options['maxheight'],
+            'minwidth'   => $options['minwidth'],
+            'minheight'  => $options['minheight'],
+        ));
+    }
+
+    /**
      * @param OptionsResolverInterface $resolver
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
