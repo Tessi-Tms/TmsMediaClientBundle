@@ -60,7 +60,17 @@
 
 {% block tms_media_upload_widget %}
     {% if data and data.url %}
-        <img src="{{ data.url }}?resize=1&height=150" alt="{{ data }}" title="{{ data }}" />
+        <img src="{{ data.getUrl('png', {
+            'resize':    resize,
+            'scale':     scale,
+            'grayscale': grayscale,
+            'rotate':    rotate,
+            'width':     width,
+            'height':    height,
+            'maxwidth':  maxwidth,
+            'maxheight': maxheight,
+            'minwidth':  minwidth
+        }) }}" alt="{{ data }}" title="{{ data }}" />
     {% endif %}
     {% spaceless %}
         {{ block('collection_widget') }}
