@@ -81,6 +81,16 @@ class TmsMediaUploadType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => 'Tms\Bundle\MediaClientBundle\Model\Media',
+            'resize'     => false,
+            'scale'      => null,
+            'grayscale'  => null,
+            'rotate'     => null,
+            'width'      => null,
+            'height'     => null,
+            'maxwidth'   => null,
+            'maxheight'  => null,
+            'minwidth'   => null,
+            'minheight'  => null,
         ));
     }
 
