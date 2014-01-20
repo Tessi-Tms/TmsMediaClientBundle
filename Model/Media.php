@@ -140,6 +140,10 @@ class Media
      */
     public function getUrl($extension = null, $query = array())
     {
+        if (empty($query) && (null === $extension || $extension == $this->getExtension())) {
+            return $this->url;
+        }
+
         foreach ($query as $k => $param) {
             if (!$param) {
                 unset($query[$k]);
