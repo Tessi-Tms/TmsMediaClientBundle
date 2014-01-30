@@ -144,6 +144,10 @@ class Media
             return $this->url;
         }
 
+        if (null === $extension) {
+            $extension = $this->getExtension();
+        }
+
         foreach ($query as $k => $param) {
             if (!$param) {
                 unset($query[$k]);
