@@ -100,10 +100,19 @@ In your entity:
  * @ORM\ManyToMany(targetEntity="Tms\Bundle\MediaClientBundle\Entity\Media", cascade={"all"})
  * @ORM\JoinTable(name="my_entity_media",
  *     joinColumns={@ORM\JoinColumn(name="my_entity_id", referencedColumnName="id", onDelete="cascade")},
- *     inverseJoinColumns={@ORM\JoinColumn(name="media_id", referencedColumnName="id", unique=true, onDelete="cascade")}
+ *     inverseJoinColumns={@ORM\JoinColumn(name="media_id", referencedColumnName="id", onDelete="cascade")}
  * )
  */
 private $images;
+```
+
+Additional information:
+
+If you want a ManyToOne behavior, just add a UNIQUE constraint to the media key.
+Replace the inverseJoinColumns line with:
+
+```php
+inverseJoinColumns={@ORM\JoinColumn(name="media_id", referencedColumnName="id", unique=true, onDelete="cascade")}
 ```
 
 In this entity form type:
