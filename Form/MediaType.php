@@ -30,7 +30,8 @@ class MediaType extends AbstractType
                 'required' => false
             ))
             ->add('uploadedFile', 'file', array(
-                'required' => false
+                'required'    => false,
+                'constraints' => $options['constraints']
             ))
         ;
     }

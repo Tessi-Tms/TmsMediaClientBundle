@@ -34,6 +34,6 @@ services:
 
     tms_media_client.form_type.tms_media_upload:
         class: Tms\Bundle\MediaClientBundle\Form\Type\TmsMediaUploadType
-        arguments: [@tms_media_client.storage_provider.tms_media]
+        arguments: [@tms_media_client.storage_provider.tms_media, @validator]
         tags:
             - { name: form.type, alias: tms_media_upload }
