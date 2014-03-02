@@ -65,10 +65,8 @@ class TmsMediaUploadType extends AbstractType
                 'required' => false
             ))
             ->add('uploadedFile', 'file', array(
-                'label'          => ' ',
-                'required'       => $isUploadedFileRequired,
-                'error_bubbling' => true,
-                'constraints'    => $options['constraints']
+                'label'    => ' ',
+                'required' => $isUploadedFileRequired
             ))
         ;
 
@@ -79,10 +77,8 @@ class TmsMediaUploadType extends AbstractType
             function(FormEvent $event) use ($provider, $validator) {
                 $form = $event->getForm();
                 $violations = $validator->validate($form);
-                foreach ($violations as $violation) {
-                    if($violation->getPropertyPath() == "children[uploadedFile].data") {
-                        return false;
-                    }
+                if (count($violations) > 0) {
+                    return false;
                 }
                 $media = $form->getData();
                 if (null === $media) {
@@ -119,17 +115,18 @@ class TmsMediaUploadType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Tms\Bundle\MediaClientBundle\Model\Media',
-            'resize'     => false,
-            'scale'      => null,
-            'grayscale'  => null,
-            'rotate'     => null,
-            'width'      => null,
-            'height'     => null,
-            'maxwidth'   => null,
-            'maxheight'  => null,
-            'minwidth'   => null,
-            'minheight'  => null,
+            'data_class'     => 'Tms\Bundle\MediaClientBundle\Model\Media',
+            'error_bubbling' => false,
+            'resize'         => false,
+            'scale'          => null,
+            'grayscale'      => null,
+            'rotate'         => null,
+            'width'          => null,
+            'height'         => null,
+            'maxwidth'       => null,
+            'maxheight'      => null,
+            'minwidth'       => null,
+            'minheight'      => null,
         ));
     }
 
