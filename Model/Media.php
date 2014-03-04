@@ -61,6 +61,14 @@ class Media
     protected $uploadedFile;
 
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->url = null;
+    }
+
+    /**
      * toString
      *
      * @return string
@@ -140,6 +148,10 @@ class Media
      */
     public function getUrl($extension = null, $query = array())
     {
+        if (null === $this->url) {
+            return null;
+        }
+
         if (empty($query) && (null === $extension || $extension == $this->getExtension())) {
             return $this->url;
         }
