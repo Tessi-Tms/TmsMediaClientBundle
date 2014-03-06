@@ -14,7 +14,6 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Extension\Validator\Constraints\Form;
-use Symfony\Component\Validator\Constraints\Null;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\ValidatorInterface;
 use Tms\Bundle\MediaClientBundle\StorageProvider\TmsMediaStorageProvider;
@@ -91,25 +90,6 @@ class TmsMediaUploadType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-        $view->vars = array_merge($view->vars, array(
-            'resize'     => $options['resize'],
-            'scale'      => $options['scale'],
-            'grayscale'  => $options['grayscale'],
-            'rotate'     => $options['rotate'],
-            'width'      => $options['width'],
-            'height'     => $options['height'],
-            'maxwidth'   => $options['maxwidth'],
-            'maxheight'  => $options['maxheight'],
-            'minwidth'   => $options['minwidth'],
-            'minheight'  => $options['minheight'],
-        ));
-    }
-
-    /**
      * @param OptionsResolverInterface $resolver
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
@@ -117,16 +97,6 @@ class TmsMediaUploadType extends AbstractType
         $resolver->setDefaults(array(
             'data_class'     => 'Tms\Bundle\MediaClientBundle\Model\Media',
             'error_bubbling' => false,
-            'resize'         => false,
-            'scale'          => null,
-            'grayscale'      => null,
-            'rotate'         => null,
-            'width'          => null,
-            'height'         => null,
-            'maxwidth'       => null,
-            'maxheight'      => null,
-            'minwidth'       => null,
-            'minheight'      => null,
         ));
     }
 

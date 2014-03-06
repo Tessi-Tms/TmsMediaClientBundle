@@ -63,35 +63,43 @@
         {{ block('collection_widget') }}
     {% endspaceless %}
 
-    {% set url = data ?
-        data.getUrl('png', {
-            'resize':    resize,
-            'scale':     scale,
-            'grayscale': grayscale,
-            'rotate':    rotate,
-            'width':     width,
-            'height':    height,
-            'maxwidth':  maxwidth,
-            'maxheight': maxheight,
-            'minwidth':  minwidth
-        }) : null
-    %}
-    {% set mimeType = data ? data.mimeType : null %}
+    {% set url       = data ? data.getUrl('png') : null %}
+    {% set mimeType  = data ? data.mimeType : null %}
     {% set reference = data ? data.providerReference : null %}
 
     <script type="text/javascript">
         $.fn.loadUploadedArea = function(url, mimeType, name) {
             var $uploadedArea = $(this).siblings('.uploaded_area');
+            var $that = $(this);
             if ($uploadedArea.length == 0) {
                 $uploadedArea = $('<div class="uploaded_area"></div>');
                 $(this).after($uploadedArea);
             }
 
             $uploadedArea.empty();
+            var $uploadedElement = $('<div class="item"></div>');
+            $uploadedArea.append($uploadedElement);
+
             if (mimeType.match('image.*')) {
                 $img = $('<img src="'+url+'" title="'+name+'" />');
-                $uploadedArea.append($img);
+                $uploadedElement.append($img);
             }
+            $data = $('\
+                <div class="file_data">\
+                    <p class="name"><strong>Nom:</strong> '+name+'</p>\
+                    <p class="mime_type"><strong>Type:</strong> '+mimeType+'</p>\
+                </div>\
+            ');
+            $uploadedElement.append($data);
+
+/*
+            $deleteLink = $('<a href="#" class="btn btn-xs btn-danger">{% trans %}Delete{% endtrans %}</a>');
+            $deleteLink.on("click", function(event) {
+                event.preventDefault();
+                $that.attr('value', '');
+            });
+            $uploadedElement.after($deleteLink);
+*/
         };
 
         $('document').ready(function() {
@@ -121,12 +129,4 @@
 
         });
     </script>
-{% endblock %}
-
-{% block tms_media_upload_widget_image %}
-    <img src="{{ url }}" alt="{{ data }}" title="{{ data }}" />
-{% endblock %}
-
-{% block tms_media_upload_widget_other %}
-    <p>{{ url }}</p>
 {% endblock %}
