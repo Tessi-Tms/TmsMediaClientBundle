@@ -102,13 +102,14 @@
 */
         };
 
+        {% set cleanId = id | replace({'-': ''}) %}
         $('document').ready(function() {
-            var $url_{{ id }} = "{{ url }}";
-            var $mimeType_{{ id }} = "{{ mimeType }}";
-            var $reference_{{ id }} = "{{ reference }}";
+            var $url_{{ cleanId }} = "{{ url }}";
+            var $mimeType_{{ cleanId }} = "{{ mimeType }}";
+            var $reference_{{ cleanId }} = "{{ reference }}";
 
             var $inputFile = $('#{{ id }}_uploadedFile');
-            $inputFile.loadUploadedArea($url_{{ id }}, $mimeType_{{ id }}, $reference_{{ id }});
+            $inputFile.loadUploadedArea($url_{{ cleanId }}, $mimeType_{{ cleanId }}, $reference_{{ cleanId }});
 
             $inputFile.on('change', function(event) {
                 var files = event.target.files;
