@@ -91,15 +91,6 @@
                 </div>\
             ');
             $uploadedElement.append($data);
-
-/*
-            $deleteLink = $('<a href="#" class="btn btn-xs btn-danger">{% trans %}Delete{% endtrans %}</a>');
-            $deleteLink.on("click", function(event) {
-                event.preventDefault();
-                $that.attr('value', '');
-            });
-            $uploadedElement.after($deleteLink);
-*/
         };
 
         {% set cleanId = id | replace({'-': ''}) %}
