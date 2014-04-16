@@ -7,6 +7,7 @@
 
 namespace Tms\Bundle\MediaClientBundle\StorageProvider;
 
+use Da\ApiClientBundle\Exception\ApiHttpResponseException;
 use Tms\Bundle\MediaClientBundle\Model\Media;
 
 class TmsMediaStorageProvider implements StorageProviderInterface
@@ -83,35 +84,30 @@ class TmsMediaStorageProvider implements StorageProviderInterface
             $this->remove($media);
         }
 
-        $data = $this
-            ->getMediaApiClient()
-            ->post('/media', array(
-                'source' => $this->getSourceName(),
-                'media' => '@'.$media->getUploadedFile()->getPathName(),
-                'name' => $media->getUploadedFile()->getClientOriginalName()
-            ))
-        ;
+        try {
+            $data = $this
+                ->getMediaApiClient()
+                ->post('/media', array(
+                    'source' => $this->getSourceName(),
+                    'media' => '@'.$media->getUploadedFile()->getPathName(),
+                    'name' => $media->getUploadedFile()->getClientOriginalName()
+                ))
+            ;
 
-        $apiMedia = json_decode($data, true);
+            $apiMedia = json_decode($data, true);
 
-        $media->setProviderData($apiMedia);
-        $media->setMimeType($apiMedia['mimeType']);
-        $media->setProviderReference($apiMedia['reference']);
-        $media->setExtension($apiMedia['extension']);
-        $media->setUrl($this->getMediaPublicUrl($media));
+            $media->setProviderData($apiMedia);
+            $media->setMimeType($apiMedia['mimeType']);
+            $media->setProviderReference($apiMedia['reference']);
+            $media->setExtension($apiMedia['extension']);
+            $media->setUrl($this->getMediaPublicUrl($media));
 
-        $media->removeUploadedFile();
-    }
+            $media->removeUploadedFile();
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get(Media $media)
-    {
-        $this
-            ->getMediaApiClient()
-            ->get('/media/'.$media->getProviderReference())
-        ;
+            return true;
+        } catch(ApiHttpResponseException $e) {
+            return false;
+        }
     }
 
     /**
@@ -119,10 +115,16 @@ class TmsMediaStorageProvider implements StorageProviderInterface
      */
     public function remove(Media $media)
     {
-        $this
-            ->getMediaApiClient()
-            ->delete('/media/'.$media->getProviderReference())
-        ;
+        try {
+            $this
+                ->getMediaApiClient()
+                ->delete('/media/'.$media->getProviderReference())
+            ;
+        } catch(ApiHttpResponseException $e) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
