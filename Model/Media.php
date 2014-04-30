@@ -10,6 +10,21 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class Media
 {
+    /*
+     * @var string
+     */
+    const REMOVE_ACTION = 'remove';
+
+    /*
+     * @var string
+     */
+    const CREATE_ACTION = 'create';
+
+    /*
+     * @var string
+     */
+    const UPDATE_ACTION = 'update';
+
     /**
      * @var integer
      */
@@ -62,9 +77,9 @@ class Media
 
 
     /**
-     * @var Safe
+     * @var array synchronizedActions
      */
-    protected $safe;
+    protected $synchronizedActions;
 
     /**
      * Constructor
@@ -72,7 +87,83 @@ class Media
     public function __construct()
     {
         $this->url = null;
-        $this->setSafe(false);
+        $this->initSynchronizedActionsValues();
+    }
+
+    /**
+     * initialize synchronized actions values
+     */
+    protected function initSynchronizedActionsValues(){
+        $this->synchronizedActions = array();
+        $this->synchronizedActions[self::REMOVE_ACTION] = true;
+        $this->synchronizedActions[self::CREATE_ACTION] = true;
+        $this->synchronizedActions[self::UPDATE_ACTION] = true;
+    }
+
+    /**
+     * enable synchronization for a given action
+     * @param string $key synchornized action
+     */
+    public function enableSynchronizedAction($key)
+    {
+        $this->setSynchronizedActionValue($key, true);
+    }
+
+    /**
+     * disable synchronization for a given action
+     * @param string $key synchornized action
+     */
+    public function disableSynchronizedAction($key)
+    {
+        $this->setSynchronizedActionValue($key, false);
+    }
+
+    /**
+     * check if a given action is synchronized or not
+     * @param string $key synchornized action
+     */
+    public function isSynchronizedAction($key)
+    {
+        return $this->getSynchronizedActionValue($key);
+    }
+
+    /**
+     * check if a given action exists
+     * @throw Exception when action does'nt exist
+     * @param string synchornized action
+     */
+    private function existsSynchronizedAction($key)
+    {
+
+        if(array_key_exists($key, $this->synchronizedActions)) {
+            return true;
+        } else {
+            //TODO create specific exception
+            $throw new \Exception($key . " is not an existing action.");
+        }
+    }
+
+    /**
+     * set synchronism's value of a given action
+     * @param string $key synchornized action
+     * @param string $value synchornized action
+     */
+    protected function setSynchronizedActionValue($key, $value)
+    {
+        if(existsSynchronizedAction($key)) {
+            $this->synchronizedActions[$key] = $value;
+        }
+    }
+
+    /**
+     * get synchronism's value of a given action
+     * @param string $key synchornized action
+     */
+    protected function getSynchronizedActionValue($key)
+    {
+        if(existsSynchronizedAction($key)) {
+            return $this->synchronizedActions[$key];
+        }
     }
 
     /**
