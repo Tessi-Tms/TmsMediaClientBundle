@@ -60,12 +60,19 @@ class Media
      */
     protected $uploadedFile;
 
+
+    /**
+     * @var Safe
+     */
+    protected $safe;
+
     /**
      * Constructor
      */
     public function __construct()
     {
         $this->url = null;
+        $this->setSafe(false);
     }
 
     /**
@@ -340,5 +347,27 @@ class Media
     public function getUpdatedAt()
     {
         return $this->updatedAt;
+    }
+
+    /**
+     * Set safe
+     *
+     * @param boolean safe
+     * @return Media
+     */
+    public function setSafe($safe)
+    {
+        $this->safe = $safe;
+        return $this;
+    }
+
+    /**
+     * Get Safe value
+     *
+     * @return boolean Safe
+     */
+    public function getSafe()
+    {
+        return $this->safe;
     }
 }

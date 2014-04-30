@@ -88,7 +88,7 @@ class StorageProviderHandler implements EventSubscriber
         $entity = $args->getEntity();
         $entityManager = $args->getEntityManager();
 
-        if ($entity instanceof Media) {
+        if ($entity instanceof Media && !$entity->getSafe()) {
             $provider = $this->getStorageProvider($entity->getProviderName());
             $provider->remove($entity);
         }
