@@ -79,7 +79,11 @@ class Media
     /**
      * @var array synchronizedActions
      */
-    protected $synchronizedActions;
+    private $synchronizedActions = array(
+        self::REMOVE_ACTION => true,
+        self::CREATE_ACTION => true,
+        self::UPDATE_ACTION => true
+    );
 
     /**
      * Constructor
@@ -134,12 +138,11 @@ class Media
      */
     private function existsSynchronizedAction($key)
     {
-
         if(array_key_exists($key, $this->synchronizedActions)) {
             return true;
         } else {
             //TODO create specific exception
-            $throw new \Exception($key . " is not an existing action.");
+            throw new \Exception($key . " is not an existing action.");
         }
     }
 
@@ -150,7 +153,7 @@ class Media
      */
     protected function setSynchronizedActionValue($key, $value)
     {
-        if(existsSynchronizedAction($key)) {
+        if($this->existsSynchronizedAction($key)) {
             $this->synchronizedActions[$key] = $value;
         }
     }
@@ -161,7 +164,7 @@ class Media
      */
     protected function getSynchronizedActionValue($key)
     {
-        if(existsSynchronizedAction($key)) {
+        if($this->existsSynchronizedAction($key)) {
             return $this->synchronizedActions[$key];
         }
     }
@@ -438,27 +441,5 @@ class Media
     public function getUpdatedAt()
     {
         return $this->updatedAt;
-    }
-
-    /**
-     * Set safe
-     *
-     * @param boolean safe
-     * @return Media
-     */
-    public function setSafe($safe)
-    {
-        $this->safe = $safe;
-        return $this;
-    }
-
-    /**
-     * Get Safe value
-     *
-     * @return boolean Safe
-     */
-    public function getSafe()
-    {
-        return $this->safe;
     }
 }
