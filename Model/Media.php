@@ -98,14 +98,16 @@ class Media
      * initialize synchronized actions values
      */
     protected function initSynchronizedActionsValues(){
-        $this->synchronizedActions = array();
-        $this->synchronizedActions[self::REMOVE_ACTION] = true;
-        $this->synchronizedActions[self::CREATE_ACTION] = true;
-        $this->synchronizedActions[self::UPDATE_ACTION] = true;
+        $this->synchronizedActions = array(
+            self::REMOVE_ACTION => true,
+            self::CREATE_ACTION => true,
+            self::UPDATE_ACTION => true
+        );
     }
 
     /**
      * enable synchronization for a given action
+     *
      * @param string $key synchornized action
      */
     public function enableSynchronizedAction($key)
@@ -115,6 +117,7 @@ class Media
 
     /**
      * disable synchronization for a given action
+     *
      * @param string $key synchornized action
      */
     public function disableSynchronizedAction($key)
@@ -124,7 +127,9 @@ class Media
 
     /**
      * check if a given action is synchronized or not
+     *
      * @param string $key synchornized action
+     * @return boolean
      */
     public function isSynchronizedAction($key)
     {
@@ -133,8 +138,9 @@ class Media
 
     /**
      * check if a given action exists
-     * @throw Exception when action does'nt exist
+     *
      * @param string synchornized action
+     * @throw Exception when action does'nt exist
      */
     private function existsSynchronizedAction($key)
     {
@@ -148,8 +154,9 @@ class Media
 
     /**
      * set synchronism's value of a given action
+     *
      * @param string $key synchornized action
-     * @param string $value synchornized action
+     * @param booleab $value synchornized action
      */
     protected function setSynchronizedActionValue($key, $value)
     {
@@ -160,7 +167,9 @@ class Media
 
     /**
      * get synchronism's value of a given action
+     *
      * @param string $key synchornized action
+     * @return boolean
      */
     protected function getSynchronizedActionValue($key)
     {
