@@ -1,0 +1,35 @@
+Tms\Bundle\MediaClientBundle\Entity\Media:
+    exclusion_policy: ALL
+
+    properties:
+        id:
+            expose: true
+            groups: [list, details]
+
+        url:
+            expose: true
+            groups: [list, details]
+
+        mimeType:
+            expose: true
+            groups: [list, details]
+
+        extension:
+            expose: true
+            groups: [list, details]
+
+        providerName:
+            expose: true
+            groups: [list, details]
+
+        providerReference:
+            expose: true
+            groups: [list, details]
+
+        createdAt:
+            expose: true
+            groups: [list, details]
+
+        updatedAt:
+            expose: true
+            groups: [list, details]
