@@ -2,10 +2,6 @@ Tms\Bundle\MediaClientBundle\Entity\Media:
     exclusion_policy: ALL
 
     properties:
-        id:
-            expose: true
-            groups: [list, details]
-
         url:
             expose: true
             groups: [list, details]
