@@ -55,20 +55,6 @@ class TmsMediaStorageProvider implements StorageProviderInterface
     }
 
     /**
-     * Get Media public url from a given reference
-     *
-     * @param string $reference
-     * @return string
-     */
-    public function getMediaPublicUrlFromReference($reference)
-    {
-        return sprintf('%s/media/%s',
-            $this->getMediaApiClient()->getEndpointRoot(),
-            $reference
-        );
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function add(Media & $media)
@@ -100,7 +86,7 @@ class TmsMediaStorageProvider implements StorageProviderInterface
             $media->setMimeType($apiMedia['mimeType']);
             $media->setProviderReference($apiMedia['reference']);
             $media->setExtension($apiMedia['extension']);
-            $media->setUrl($this->getMediaPublicUrl($media));
+            $media->setUrl($apiMedia['publicUri']);
 
             $media->removeUploadedFile();
 
@@ -125,17 +111,5 @@ class TmsMediaStorageProvider implements StorageProviderInterface
         }
 
         return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMediaPublicUrl(Media $media)
-    {
-        return sprintf('%s/media/%s.%s',
-            $this->getMediaApiClient()->getEndpointRoot(),
-            $media->getProviderReference(),
-            $media->getExtension()
-        );
     }
 }

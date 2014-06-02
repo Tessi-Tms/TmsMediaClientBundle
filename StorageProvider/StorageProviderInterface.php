@@ -26,12 +26,4 @@ interface StorageProviderInterface
      * @return boolean
      */
     public function remove(Media $media);
-
-    /**
-     * Get the media public url
-     *
-     * @param Media $media
-     * @return string
-     */
-    public function getMediaPublicUrl(Media $media);
 }
