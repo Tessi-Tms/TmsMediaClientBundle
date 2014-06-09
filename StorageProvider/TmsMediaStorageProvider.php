@@ -112,4 +112,22 @@ class TmsMediaStorageProvider implements StorageProviderInterface
 
         return true;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMediaPublicUrl($reference)
+    {
+        try {
+            $raw = $this->getMediaApiClient()->get('/endpoint');
+            $data = json_decode($raw, true);
+
+            return sprintf('%s/media/%s',
+                $data['publicEndpoint'],
+                $reference
+            );
+        } catch(ApiHttpResponseException $e) {
+            return false;
+        }
+    }
 }

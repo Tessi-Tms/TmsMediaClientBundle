@@ -14,7 +14,7 @@ interface StorageProviderInterface
     /**
      * Add a media
      *
-     * @param Media $media
+     * @param  Media $media
      * @return boolean
      */
     public function add(Media & $media);
@@ -22,8 +22,16 @@ interface StorageProviderInterface
     /**
      * Remove a media
      *
-     * @param Media $media
+     * @param  Media $media
      * @return boolean
      */
     public function remove(Media $media);
+
+    /**
+     * Get the media public url
+     *
+     * @param  string $reference
+     * @return string | false
+     */
+    public function getMediaPublicUrl($reference);
 }

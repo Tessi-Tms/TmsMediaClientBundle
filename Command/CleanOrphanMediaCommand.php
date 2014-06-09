@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  * @author:  Gabriel BONDAZ <gabriel.bondaz@idci-consulting.fr>
  * @author:  Sekou KOÏTA <sekou.koita@supinfo.com>
  * @license: GPL
@@ -40,6 +40,15 @@ EOT
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        die('TODO: Add soft delete on media when remove. Use this command to inform provider to delete the media, then do the job.');
+        $em = $this->getContainer()->get('doctrine.orm.entity_manager');
+        $medias = $em->getRepository('TmsMediaClientBundle:Media')->findAll();
+
+        $providerHandler = $this->getContainer()->get('tms_media_client.storage_provider_handler');
+        foreach ($medias as $media) {
+            $storageProvider = $providerHandler->getStorageProvider($media->getProviderName());
+            var_dump($storageProvider->getMediaPublicUrl($media->getProviderReference()));
+        }
+
+        //die('TODO: Add soft delete on media when remove. Use this command to inform provider to delete the media, then do the job.');
     }
 }
