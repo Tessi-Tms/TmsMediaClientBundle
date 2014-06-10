@@ -37,6 +37,9 @@ class MediaProvidersCompilerPass implements CompilerPassInterface
             );
 
             foreach ($taggedServices as $id => $tagAttributes) {
+                $providerDefinition = $container->getDefinition($id);
+                $providerDefinition->addMethodCall('setName', array($id));
+
                 $definition->addMethodCall(
                     'addStorageProvider',
                     array(new Reference($id), $id)

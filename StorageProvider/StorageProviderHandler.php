@@ -90,7 +90,7 @@ class StorageProviderHandler implements EventSubscriber
 
         if ($entity instanceof Media && $entity->isSynchronizedAction(Media::REMOVE_ACTION)) {
             $provider = $this->getStorageProvider($entity->getProviderName());
-            $provider->remove($entity);
+            $provider->remove($entity->getProviderReference());
         }
     }
 }

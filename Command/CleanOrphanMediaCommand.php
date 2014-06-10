@@ -46,7 +46,7 @@ EOT
         $providerHandler = $this->getContainer()->get('tms_media_client.storage_provider_handler');
         foreach ($medias as $media) {
             $storageProvider = $providerHandler->getStorageProvider($media->getProviderName());
-            var_dump($storageProvider->getMediaPublicUrl($media->getProviderReference()));
+            var_dump($storageProvider->getName(), $storageProvider->getMediaPublicUrl($media->getProviderReference()));
         }
 
         //die('TODO: Add soft delete on media when remove. Use this command to inform provider to delete the media, then do the job.');

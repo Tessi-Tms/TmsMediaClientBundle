@@ -12,6 +12,20 @@ use Tms\Bundle\MediaClientBundle\Model\Media;
 interface StorageProviderInterface
 {
     /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName();
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     */
+    public function setName($name);
+
+    /**
      * Add a media
      *
      * @param  Media $media
@@ -22,10 +36,10 @@ interface StorageProviderInterface
     /**
      * Remove a media
      *
-     * @param  Media $media
+     * @param  string $reference
      * @return boolean
      */
-    public function remove(Media $media);
+    public function remove($reference);
 
     /**
      * Get the media public url

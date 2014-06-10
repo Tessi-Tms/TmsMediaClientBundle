@@ -10,7 +10,7 @@ namespace Tms\Bundle\MediaClientBundle\StorageProvider;
 use Da\ApiClientBundle\Exception\ApiHttpResponseException;
 use Tms\Bundle\MediaClientBundle\Model\Media;
 
-class TmsMediaStorageProvider implements StorageProviderInterface
+class TmsMediaStorageProvider extends AbstractStorageProvider
 {
     /**
      * @var RestApiClientInterface
@@ -57,19 +57,8 @@ class TmsMediaStorageProvider implements StorageProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function add(Media & $media)
+    public function doAdd(Media & $media)
     {
-        if (null === $media->getUploadedFile() ||
-            !$media->getUploadedFile()->getPathName()) {
-            return false;
-        }
-
-        // Update case
-        if ($media->getProviderReference()) {
-            // Remove the previous associated media
-            $this->remove($media);
-        }
-
         try {
             $data = $this
                 ->getMediaApiClient()
@@ -99,12 +88,12 @@ class TmsMediaStorageProvider implements StorageProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function remove(Media $media)
+    public function remove($reference)
     {
         try {
             $this
                 ->getMediaApiClient()
-                ->delete('/media/'.$media->getProviderReference())
+                ->delete('/media/'.$reference)
             ;
         } catch(ApiHttpResponseException $e) {
             return false;
