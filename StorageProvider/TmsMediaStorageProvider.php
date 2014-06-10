@@ -75,7 +75,7 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
             $media->setMimeType($apiMedia['mimeType']);
             $media->setProviderReference($apiMedia['reference']);
             $media->setExtension($apiMedia['extension']);
-            $media->setUrl($apiMedia['publicUri']);
+            $media->setPublicUri($apiMedia['publicUri']);
 
             $media->removeUploadedFile();
 

@@ -27,7 +27,7 @@ class Media extends BaseMedia
     /**
      * @ORM\Column(type="string")
      */
-    protected $url;
+    protected $publicUri;
 
     /**
      * @ORM\Column(name="mime_type", type="string")

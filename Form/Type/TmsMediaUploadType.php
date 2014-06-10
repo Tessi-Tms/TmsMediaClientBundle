@@ -54,7 +54,7 @@ class TmsMediaUploadType extends AbstractType
         }
 
         $builder
-            ->add('url', 'hidden', array(
+            ->add('publicUri', 'hidden', array(
                 'required' => false
             ))
             ->add('mimeType', 'hidden', array(

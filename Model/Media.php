@@ -34,7 +34,7 @@ class Media
     /**
      * @var string
      */
-    protected $url;
+    protected $publicUri;
 
     /**
      * @var string
@@ -93,6 +93,22 @@ class Media
     {
         $this->url = null;
         $this->initSynchronizedActionsValues();
+    }
+
+    /**
+     * Get public data
+     *
+     * @return array
+     */
+    public function getPublicData()
+    {
+        return array(
+            'providerName'      => $this->getProviderName(),
+            'providerReference' => $this->getProviderReference(),
+            'publicUri'         => $this->getPublicUri(),
+            'extension'         => $this->getExtension(),
+            'mimeType'          => $this->getMimeType()
+        );
     }
 
     /**
@@ -239,16 +255,26 @@ class Media
     }
 
     /**
-     * Set url
+     * Set public uri
      *
-     * @param string $url
+     * @param string $publicUri
      * @return Media
      */
-    public function setUrl($url)
+    public function setPublicUri($publicUri)
     {
-        $this->url = $url;
+        $this->publicUri = $publicUri;
 
         return $this;
+    }
+
+    /**
+     * Get public uri
+     *
+     * @return string
+     */
+    public function getPublicUri()
+    {
+        return $this->publicUri;
     }
 
     /**
@@ -259,12 +285,12 @@ class Media
      */
     public function getUrl($extension = null, $query = array())
     {
-        if (null === $this->url) {
+        if (null === $this->getPublicUri()) {
             return null;
         }
 
         if (empty($query) && (null === $extension || $extension == $this->getExtension())) {
-            return $this->url;
+            return $this->getPublicUri();
         }
 
         if (null === $extension) {
@@ -278,7 +304,7 @@ class Media
         }
         $query = http_build_query($query);
 
-        $parsedUrl = parse_url($this->url);
+        $parsedUrl = parse_url($this->getPublicUri());
         $scheme   = isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : '';
         $host     = isset($parsedUrl['host']) ? $parsedUrl['host'] : '';
         $port     = isset($parsedUrl['port']) ? ':' . $parsedUrl['port'] : '';

@@ -20,7 +20,7 @@ class MediaType extends AbstractType
     {
         $builder
             ->add('providerName', 'provider_choices')
-            ->add('url', 'hidden', array(
+            ->add('publicUri', 'hidden', array(
                 'required' => false
             ))
             ->add('mimeType', 'hidden', array(

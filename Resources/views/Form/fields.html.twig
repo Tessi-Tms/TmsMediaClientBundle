@@ -46,8 +46,8 @@
 {% block related_to_one_media_widget %}
     {% spaceless %}
     <div {{ block('widget_container_attributes') }}>
-        {% if data and data.url %}
-            <img src="{{ data.url }}" alt="{{ data }}" title="{{ data }}" />
+        {% if data and data.publicUri %}
+            <img src="{{ data.publicUri }}" alt="{{ data }}" title="{{ data }}" />
         {% endif %}
         {% if form.parent is empty %}
             {{ form_errors(form) }}

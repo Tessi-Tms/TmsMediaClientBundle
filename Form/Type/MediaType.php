@@ -42,7 +42,8 @@ class MediaType extends BaseMediaType
             function(FormEvent $event) use ($handler) {
                 $media = $event->getForm()->getData();
                 $provider = $handler->getStorageProvider($media->getProviderName());
-                if (!$provider->add($media)) {
+
+                if (null === $media->getProviderReference() && !$provider->add($media)) {
                     throw new MediaClientException(sprintf('The media "%s" was not created', $media));
                 }
             }
