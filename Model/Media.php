@@ -7,6 +7,7 @@
 namespace Tms\Bundle\MediaClientBundle\Model;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Tms\Bundle\MediaClientBundle\Exception\MediaClientException;
 
 class Media
 {
@@ -139,17 +140,17 @@ class Media
     /**
      * check if a given action exists
      *
-     * @param string synchornized action
-     * @throw Exception when action does'nt exist
+     * @param  string $key synchornized action
+     * @return true
+     * @throw  Exception when action does'nt exist
      */
     private function existsSynchronizedAction($key)
     {
-        if(array_key_exists($key, $this->synchronizedActions)) {
-            return true;
-        } else {
-            //TODO create specific exception
-            throw new \Exception($key . " is not an existing action.");
+        if(!array_key_exists($key, $this->synchronizedActions)) {
+            throw new MediaClientException(sprintf('Undefined action "%s"', $key));
         }
+
+        return true;
     }
 
     /**

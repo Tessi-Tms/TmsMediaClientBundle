@@ -14,6 +14,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Tms\Bundle\MediaClientBundle\StorageProvider\StorageProviderHandler;
+use Tms\Bundle\MediaClientBundle\Exception\MediaClientException;
 use Tms\Bundle\MediaClientBundle\Form\MediaType as BaseMediaType;
 
 class MediaType extends BaseMediaType
@@ -41,7 +42,9 @@ class MediaType extends BaseMediaType
             function(FormEvent $event) use ($handler) {
                 $media = $event->getForm()->getData();
                 $provider = $handler->getStorageProvider($media->getProviderName());
-                $provider->add($media);
+                if (!$provider->add($media)) {
+                    throw new MediaClientException(sprintf('The media "%s" was not created', $media));
+                }
             }
         );
     }
