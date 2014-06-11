@@ -25,7 +25,7 @@ class Media extends BaseMedia
     protected $id;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(name="public_uri", type="string")
      */
     protected $publicUri;
 
