@@ -41,10 +41,16 @@ class MediaType extends BaseMediaType
             FormEvents::POST_SUBMIT,
             function(FormEvent $event) use ($handler) {
                 $media = $event->getForm()->getData();
-                $provider = $handler->getStorageProvider($media->getProviderName());
 
-                if (null === $media->getProviderReference() && !$provider->add($media)) {
-                    throw new MediaClientException(sprintf('The media "%s" was not created', $media));
+                try {
+                    $provider = $handler->getStorageProvider($media->getProviderName());
+                    $provider->add($media);
+                } catch(\Exception $e) {
+                    throw new MediaClientException(sprintf(
+                        'The media "%s" was not created: %s',
+                        $media,
+                        $e->getMessage()
+                    ));
                 }
             }
         );

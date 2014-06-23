@@ -59,30 +59,26 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
      */
     public function doAdd(Media & $media)
     {
-        try {
-            $data = $this
-                ->getMediaApiClient()
-                ->post('/media', array(
-                    'source' => $this->getSourceName(),
-                    'media' => '@'.$media->getUploadedFile()->getPathName(),
-                    'name' => $media->getUploadedFile()->getClientOriginalName()
-                ))
-            ;
+        $data = $this
+            ->getMediaApiClient()
+            ->post('/media', array(
+                'source' => $this->getSourceName(),
+                'media' => '@'.$media->getUploadedFile()->getPathName(),
+                'name' => $media->getUploadedFile()->getClientOriginalName()
+            ))
+        ;
 
-            $apiMedia = json_decode($data, true);
+        $apiMedia = json_decode($data, true);
 
-            $media->setProviderData($apiMedia);
-            $media->setMimeType($apiMedia['mimeType']);
-            $media->setProviderReference($apiMedia['reference']);
-            $media->setExtension($apiMedia['extension']);
-            $media->setPublicUri($apiMedia['publicUri']);
+        $media->setProviderData($apiMedia);
+        $media->setMimeType($apiMedia['mimeType']);
+        $media->setProviderReference($apiMedia['reference']);
+        $media->setExtension($apiMedia['extension']);
+        $media->setPublicUri($apiMedia['publicUri']);
 
-            $media->removeUploadedFile();
+        $media->removeUploadedFile();
 
-            return true;
-        } catch(ApiHttpResponseException $e) {
-            return false;
-        }
+        return true;
     }
 
     /**
