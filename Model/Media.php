@@ -286,7 +286,7 @@ class Media
     public function getUrl($extension = null, $query = array())
     {
         if (null === $this->getPublicUri()) {
-            return null;
+            return '';
         }
 
         if (empty($query) && (null === $extension || $extension == $this->getExtension())) {
@@ -311,7 +311,7 @@ class Media
         $user     = isset($parsedUrl['user']) ? $parsedUrl['user'] : '';
         $pass     = isset($parsedUrl['pass']) ? ':' . $parsedUrl['pass']  : '';
         $pass     = ($user || $pass) ? "$pass@" : '';
-        $path     = isset($parsedUrl['path']) ? str_replace($this->getExtension(), $extension, $parsedUrl['path']) : '';
+        $path     = isset($parsedUrl['path']) ? $parsedUrl['path'].'.'.$extension : '';
         $query    = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'].'&'.$query : '?'.$query;
         $fragment = isset($parsedUrl['fragment']) ? '#' . $parsedUrl['fragment'] : '';
 

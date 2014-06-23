@@ -74,7 +74,7 @@ In your entity:
 private $media;
 ```
 
-In this entity form type:
+In the entity form type:
 
 ```php
 public function buildForm(FormBuilderInterface $builder, array $options)
@@ -115,7 +115,7 @@ Replace the inverseJoinColumns line with:
 inverseJoinColumns={@ORM\JoinColumn(name="media_id", referencedColumnName="id", unique=true, onDelete="cascade")}
 ```
 
-In this entity form type:
+In the entity form type:
 
 ```php
 public function buildForm(FormBuilderInterface $builder, array $options)

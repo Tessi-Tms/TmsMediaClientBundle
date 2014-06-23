@@ -19,15 +19,13 @@ class RelatedToManyMediaType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'type' => 'related_to_one_media',
-            'options' => array(
-                'required' => false,
-            ),
-            'allow_add' => true,
-            'allow_delete' => true,
-            'by_reference' => false,
+            'type'               => 'related_to_one_media',
+            'options'            => array('required' => false,),
+            'allow_add'          => true,
+            'allow_delete'       => true,
+            'by_reference'       => false,
             'cascade_validation' => true,
-            'attr' => array(
+            'attr'               => array(
                 'class' => sprintf('tms_media_client__%s', $this->getName())
             )
         ));
