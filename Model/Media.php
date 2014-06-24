@@ -96,6 +96,22 @@ class Media
     }
 
     /**
+     * isImageable
+     */
+    public function isImageable()
+    {
+        if (null === $this->getPublicUri()) {
+            return false;
+        }
+
+        if ("application/pdf" === $this->getMimeType()) {
+            return true;
+        }
+
+        return (boolean)preg_match("#^image/#", $this->getMimeType());
+    }
+
+    /**
      * Get public data
      *
      * @return array
