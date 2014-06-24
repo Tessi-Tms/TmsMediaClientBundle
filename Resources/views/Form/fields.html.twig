@@ -46,28 +46,29 @@
 {% block related_to_one_media_widget %}
     {% spaceless %}
     <div {{ block('widget_container_attributes') }}>
-        {% if data.isImageable() %}
-            <img src="{{ data.getUrl('png', {'resize': 1, 'height': 100}) }}" alt="{{ data }}" title="{{ data }}" />
-        {% else %}
-            <table class="table table-condensed table-bordered" style="font-size: 10px;">
-                <tr>
-                    <th>{% trans %}Provider name{% endtrans %}</th>
-                    <td>{{ data.providerName }}</td>
-                </tr>
-                <tr>
-                    <th>{% trans %}Provider reference{% endtrans %}</th>
-                    <td><a href="{{ data.publicUri }}" target="_blank">{{ data.providerReference }}</a></td>
-                </tr>
-                <tr>
-                    <th>{% trans %}Extension{% endtrans %}</th>
-                    <td>{{ data.extension }}</td>
-                </tr>
-                <tr>
-                    <th>{% trans %}Mime type{% endtrans %}</th>
-                    <td>{{ data.mimeType }}</td>
-                </tr>
-            </table>
-        {% endif %}
+        <table class="table table-condensed table-bordered" style="font-size: 10px;">
+            <tr>
+                {% if data.isImageable() %}
+                <td rowspan="4">
+                    <img src="{{ data.getUrl('png', {'resize': 1, 'height': 100}) }}" alt="{{ data }}" title="{{ data }}" />
+                </td>
+                {% endif %}
+                <th>{% trans %}Provider name{% endtrans %}</th>
+                <td>{{ data.providerName }}</td>
+            </tr>
+            <tr>
+                <th>{% trans %}Provider reference{% endtrans %}</th>
+                <td><a href="{{ data.publicUri }}" target="_blank">{{ data.providerReference }}</a></td>
+            </tr>
+            <tr>
+                <th>{% trans %}Extension{% endtrans %}</th>
+                <td>{{ data.extension }}</td>
+            </tr>
+            <tr>
+                <th>{% trans %}Mime type{% endtrans %}</th>
+                <td>{{ data.mimeType }}</td>
+            </tr>
+        </table>
         {% if form.parent is empty %}
             {{ form_errors(form) }}
         {% endif %}
