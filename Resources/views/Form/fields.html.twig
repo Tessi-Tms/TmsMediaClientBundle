@@ -46,6 +46,7 @@
 {% block related_to_one_media_widget %}
     {% spaceless %}
     <div {{ block('widget_container_attributes') }}>
+        {% if data %}
         <table class="table table-condensed table-bordered" style="font-size: 10px;">
             <tr>
                 {% if data.isImageable() %}
@@ -69,6 +70,7 @@
                 <td>{{ data.mimeType }}</td>
             </tr>
         </table>
+        {% endif %}
         {% if form.parent is empty %}
             {{ form_errors(form) }}
         {% endif %}
