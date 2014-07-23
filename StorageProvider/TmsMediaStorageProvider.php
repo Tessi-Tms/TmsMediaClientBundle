@@ -65,7 +65,7 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
                 'source' => $this->getSourceName(),
                 'media' => '@'.$media->getUploadedFile()->getPathName(),
                 'name' => $media->getUploadedFile()->getClientOriginalName()
-            ))
+            ))->getContent()
         ;
 
         $apiMedia = json_decode($response->getContent(), true);
@@ -104,7 +104,7 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
     public function getMediaPublicUrl($reference)
     {
         try {
-            $raw = $this->getMediaApiClient()->get('/endpoint');
+            $raw = $this->getMediaApiClient()->get('/endpoint')->getContent();
             $data = json_decode($raw, true);
 
             return sprintf('%s/media/%s',

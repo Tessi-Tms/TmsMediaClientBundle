@@ -305,10 +305,6 @@ class Media
             return '';
         }
 
-        if (empty($query) && (null === $extension || $extension == $this->getExtension())) {
-            return $this->getPublicUri();
-        }
-
         if (null === $extension) {
             $extension = $this->getExtension();
         }
@@ -328,7 +324,7 @@ class Media
         $pass     = isset($parsedUrl['pass']) ? ':' . $parsedUrl['pass']  : '';
         $pass     = ($user || $pass) ? "$pass@" : '';
         $path     = isset($parsedUrl['path']) ? $parsedUrl['path'].'.'.$extension : '';
-        $query    = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'].'&'.$query : '?'.$query;
+        $query    = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'].'&'.$query : $query ? '?'.$query : '';
         $fragment = isset($parsedUrl['fragment']) ? '#' . $parsedUrl['fragment'] : '';
 
         return "$scheme$user$pass$host$port$path$query$fragment";
