@@ -59,7 +59,7 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
      */
     public function doAdd(Media & $media)
     {
-        $data = $this
+        $response = $this
             ->getMediaApiClient()
             ->post('/media', array(
                 'source' => $this->getSourceName(),
@@ -68,7 +68,7 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
             ))
         ;
 
-        $apiMedia = json_decode($data, true);
+        $apiMedia = json_decode($response->getContent(), true);
 
         $media->setProviderData($apiMedia);
         $media->setMimeType($apiMedia['mimeType']);
