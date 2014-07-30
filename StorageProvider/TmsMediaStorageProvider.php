@@ -65,7 +65,7 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
                 'source' => $this->getSourceName(),
                 'media' => '@'.$media->getUploadedFile()->getPathName(),
                 'name' => $media->getUploadedFile()->getClientOriginalName()
-            ))->getContent()
+            ))
         ;
 
         $apiMedia = json_decode($response->getContent(), true);
