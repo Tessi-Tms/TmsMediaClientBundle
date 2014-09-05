@@ -25,7 +25,7 @@ class CleanOrphanMediaCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('tms:media:clean-orphan')
+            ->setName('tms-media:clean-orphan')
             ->setDescription('Clean orphan media')
             ->setHelp(<<<EOT
 The <info>%command.name%</info> command clean orphan media.
