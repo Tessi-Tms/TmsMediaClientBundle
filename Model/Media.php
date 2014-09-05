@@ -317,7 +317,7 @@ class Media
         $query = http_build_query($query);
 
         $parsedUrl = parse_url($this->getPublicUri());
-        $scheme   = isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : '';
+        $scheme   = isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . ':' : '';
         $host     = isset($parsedUrl['host']) ? $parsedUrl['host'] : '';
         $port     = isset($parsedUrl['port']) ? ':' . $parsedUrl['port'] : '';
         $user     = isset($parsedUrl['user']) ? $parsedUrl['user'] : '';
@@ -327,7 +327,7 @@ class Media
         $query    = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'].'&'.$query : $query ? '?'.$query : '';
         $fragment = isset($parsedUrl['fragment']) ? '#' . $parsedUrl['fragment'] : '';
 
-        return "$scheme$user$pass$host$port$path$query$fragment";
+        return "$scheme//$user$pass$host$port$path$query$fragment";
     }
 
     /**
