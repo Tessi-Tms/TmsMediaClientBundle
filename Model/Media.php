@@ -305,29 +305,30 @@ class Media
             return '';
         }
 
-        if (null === $extension) {
-            $extension = $this->getExtension();
-        }
-
+        $countValidQueries = 0;
         foreach ($query as $k => $param) {
             if (!$param) {
                 unset($query[$k]);
+            } else {
+                $countValidQueries++;
             }
         }
-        $query = http_build_query($query);
 
-        $parsedUrl = parse_url($this->getPublicUri());
-        $scheme   = isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . ':' : '';
-        $host     = isset($parsedUrl['host']) ? $parsedUrl['host'] : '';
-        $port     = isset($parsedUrl['port']) ? ':' . $parsedUrl['port'] : '';
-        $user     = isset($parsedUrl['user']) ? $parsedUrl['user'] : '';
-        $pass     = isset($parsedUrl['pass']) ? ':' . $parsedUrl['pass']  : '';
-        $pass     = ($user || $pass) ? "$pass@" : '';
-        $path     = isset($parsedUrl['path']) ? $parsedUrl['path'].'.'.$extension : '';
-        $query    = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'].'&'.$query : $query ? '?'.$query : '';
-        $fragment = isset($parsedUrl['fragment']) ? '#' . $parsedUrl['fragment'] : '';
+        $url = sprintf(
+            '%s.%s',
+            $this->getPublicUri(),
+            null === $extension ? $this->getExtension() : $extension
+        );
 
-        return "$scheme//$user$pass$host$port$path$query$fragment";
+        if ($countValidQueries == 0) {
+            return $url; 
+        }
+
+        return sprintf(
+            '%s?%s',
+            $url,
+            http_build_query($query)
+        );
     }
 
     /**
