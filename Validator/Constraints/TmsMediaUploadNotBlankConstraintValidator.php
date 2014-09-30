@@ -16,7 +16,11 @@ class TmsMediaUploadNotBlankConstraintValidator extends NotBlankValidator
     public function validate($value, Constraint $constraint)
     {
         if ($value instanceof Media) {
-            parent::validate($value->getUploadedFile(), $constraint);
+            if (null === $value->getPublicUri() && null === $value->getUploadedFile()) {
+                $this->context->addViolation($constraint->message, array(
+                    '{{ value }}' => $this->formatValue($value),
+                ));
+            }
         }
     }
 }
