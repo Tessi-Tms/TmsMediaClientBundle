@@ -12,6 +12,6 @@ use Symfony\Component\Validator\Constraints\Image;
 /**
  * @Annotation
  */
-class TmsMediaUploadImageConstraint extends Image
+class TmsMediaUploadImage extends Image
 {
 }

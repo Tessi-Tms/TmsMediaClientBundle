@@ -7,11 +7,11 @@
 
 namespace Tms\Bundle\MediaClientBundle\Validator\Constraints;
 
-use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\File;
 
 /**
  * @Annotation
  */
-class TmsMediaUploadNotBlankConstraint extends NotBlank
+class TmsMediaUploadFile extends File
 {
 }

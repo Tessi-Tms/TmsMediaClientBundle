@@ -8,10 +8,10 @@
 namespace Tms\Bundle\MediaClientBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Constraints\ImageValidator;
+use Symfony\Component\Validator\Constraints\FileValidator;
 use Tms\Bundle\MediaClientBundle\Model\Media;
 
-class TmsMediaUploadImageConstraintValidator extends ImageValidator
+class TmsMediaUploadFileValidator extends FileValidator
 {
     public function validate($value, Constraint $constraint)
     {

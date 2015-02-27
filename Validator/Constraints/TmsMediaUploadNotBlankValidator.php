@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\NotBlankValidator;
 use Tms\Bundle\MediaClientBundle\Model\Media;
 
-class TmsMediaUploadNotBlankConstraintValidator extends NotBlankValidator
+class TmsMediaUploadNotBlankValidator extends NotBlankValidator
 {
     public function validate($value, Constraint $constraint)
     {
