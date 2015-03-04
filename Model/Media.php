@@ -11,21 +11,6 @@ use Tms\Bundle\MediaClientBundle\Exception\MediaClientException;
 
 class Media
 {
-    /*
-     * @var string
-     */
-    const REMOVE_ACTION = 'remove';
-
-    /*
-     * @var string
-     */
-    const CREATE_ACTION = 'create';
-
-    /*
-     * @var string
-     */
-    const UPDATE_ACTION = 'update';
-
     /**
      * @var integer
      */
@@ -76,23 +61,12 @@ class Media
      */
     protected $uploadedFile;
 
-
-    /**
-     * @var array synchronizedActions
-     */
-    private $synchronizedActions = array(
-        self::REMOVE_ACTION => true,
-        self::CREATE_ACTION => true,
-        self::UPDATE_ACTION => true
-    );
-
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->url = null;
-        $this->initSynchronizedActionsValues();
+        $this->publicUri = null;
     }
 
     /**
@@ -125,90 +99,6 @@ class Media
             'extension'         => $this->getExtension(),
             'mimeType'          => $this->getMimeType()
         );
-    }
-
-    /**
-     * initialize synchronized actions values
-     */
-    protected function initSynchronizedActionsValues(){
-        $this->synchronizedActions = array(
-            self::REMOVE_ACTION => true,
-            self::CREATE_ACTION => true,
-            self::UPDATE_ACTION => true
-        );
-    }
-
-    /**
-     * enable synchronization for a given action
-     *
-     * @param string $key synchornized action
-     */
-    public function enableSynchronizedAction($key)
-    {
-        $this->setSynchronizedActionValue($key, true);
-    }
-
-    /**
-     * disable synchronization for a given action
-     *
-     * @param string $key synchornized action
-     */
-    public function disableSynchronizedAction($key)
-    {
-        $this->setSynchronizedActionValue($key, false);
-    }
-
-    /**
-     * check if a given action is synchronized or not
-     *
-     * @param string $key synchornized action
-     * @return boolean
-     */
-    public function isSynchronizedAction($key)
-    {
-        return $this->getSynchronizedActionValue($key);
-    }
-
-    /**
-     * check if a given action exists
-     *
-     * @param  string $key synchornized action
-     * @return true
-     * @throw  Exception when action does'nt exist
-     */
-    private function existsSynchronizedAction($key)
-    {
-        if(!array_key_exists($key, $this->synchronizedActions)) {
-            throw new MediaClientException(sprintf('Undefined action "%s"', $key));
-        }
-
-        return true;
-    }
-
-    /**
-     * set synchronism's value of a given action
-     *
-     * @param string $key synchornized action
-     * @param booleab $value synchornized action
-     */
-    protected function setSynchronizedActionValue($key, $value)
-    {
-        if($this->existsSynchronizedAction($key)) {
-            $this->synchronizedActions[$key] = $value;
-        }
-    }
-
-    /**
-     * get synchronism's value of a given action
-     *
-     * @param string $key synchornized action
-     * @return boolean
-     */
-    protected function getSynchronizedActionValue($key)
-    {
-        if($this->existsSynchronizedAction($key)) {
-            return $this->synchronizedActions[$key];
-        }
     }
 
     /**
