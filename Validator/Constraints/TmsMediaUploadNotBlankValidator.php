@@ -21,6 +21,8 @@ class TmsMediaUploadNotBlankValidator extends NotBlankValidator
                     '{{ value }}' => $this->formatValue($value),
                 ));
             }
+        } else {
+            parent::validate($value, $constraint);
         }
     }
 }
