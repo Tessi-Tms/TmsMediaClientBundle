@@ -67,6 +67,11 @@ class TmsMediaUploadType extends AbstractType
                 'label'    => ' ',
                 'required' => $isUploadedFileRequired
             ))
+            /*->add('toDelete', 'checkbox', array(
+                'label'    => 'X',
+                'required' => false,
+                'mapped'   => false
+            ))*/
         ;
 
         $provider = $this->storageProvider;
@@ -79,11 +84,16 @@ class TmsMediaUploadType extends AbstractType
                 if (count($violations) > 0) {
                     return false;
                 }
+
                 $media = $form->getData();
                 if (null === $media) {
                     return false;
-                };
-                $provider->add($media);
+                }
+                /*if ($form->get('toDelete')->getData()) {
+                    $provider->remove($media);
+                } else {*/
+                    $provider->add($media);
+                //}
             },
             500
         );
