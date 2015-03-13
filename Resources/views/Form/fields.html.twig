@@ -102,42 +102,52 @@
                     $that.after($uploadedArea);
                 }
 
-                var $button = $(this).siblings('.upload_button');
+                var $button = $that.parent().find('.upload_button');
                 if ($button.length === 0) {
-                    var position = $(this).css('position');
+                    var position = $that.css('position');
 
-                    if (position) {
-                        $button = $('<button type="button" class="button upload_button"></button>');
-                        $that.before($button);
+                    if (null == position || 'static' === position) {
+                        $buttonWrapper = $('<div class="upload_button_wrapper"><button type="button" class="button upload_button"></button></div>');
+                        $that.before($buttonWrapper);
+                        $button = $buttonWrapper.find('button');
+
+                        $that.parent().css('position', 'relative');
+
+                        $that.css({
+                            filter: 'alpha(opacity=0)',
+                            opacity: 0,
+                            cursor: 'pointer'
+                        });
+
+                        $buttonWrapper.css({
+                            position: 'absolute',
+                            display: 'inline-block',
+                            'white-space': 'nowrap',
+                            float: 'left',
+                            padding: 0,
+                            left: 0,
+                            margin: 0
+                        });
+
+                        $button.css({
+                            padding: 0,
+                            margin: 0
+                        });
+
+                        $that
+                            .mouseenter(function(){
+                                $buttonWrapper.addClass('hover');
+                            })
+                            .mouseleave(function(){
+                                $buttonWrapper.removeClass('hover');
+                            })
+                        ;
                     }
+                } else {
+                    $buttonWrapper = $button.parent();
                 }
 
                 if ($button.length !== 0) {
-                    $that.css({
-                        position: 'absolute',
-                        filter: 'alpha(opacity=0)',
-                        opacity: 0,
-                        cursor: 'pointer'
-                    });
-
-                    $button.css({
-                        display: 'inline-block',
-                        padding: '0 1em',
-                        'white-space': 'nowrap',
-                        float: 'left',
-                        left: 0,
-                        margin: '0 3em'
-                    });
-
-                    var padding = Math.max(
-                        0,
-                        Math.floor(
-                            ($that.height() - parseInt($button.css('line-height'), 10)) / 2
-                        )
-                    );
-
-                    $button.css('padding', padding+'px 1em '+padding+'px 1em');
-
                     var placeholder = $that.attr('placeholder'),
                         hasFile = name ? true : false
                     ;
@@ -163,6 +173,30 @@
                             : 'Choisissez un fichier'
                         );
                     }
+
+                    var vPadding = Math.max(
+                            0,
+                            Math.floor(
+                                ($that.height() - parseInt($button.css('font-size'), 10)) / 2
+                            )
+                        ),
+                        hPadding = Math.max(
+                            0,
+                            Math.floor(($that.width() - $button.width()) / 2)
+                        )
+                    ;
+
+                    $button.css('padding', vPadding+'px '+hPadding+'px '+vPadding+'px '+hPadding+'px');
+
+                    $buttonWrapper.css('padding-top', $that.css('padding-top'));
+                    $buttonWrapper.css('padding-right', $that.css('padding-right'));
+                    $buttonWrapper.css('padding-bottom', $that.css('padding-bottom'));
+                    $buttonWrapper.css('padding-left', $that.css('padding-left'));
+
+                    $buttonWrapper.css('margin-top', $that.css('margin-top'));
+                    $buttonWrapper.css('margin-right', $that.css('margin-right'));
+                    $buttonWrapper.css('margin-bottom', $that.css('margin-bottom'));
+                    $buttonWrapper.css('margin-left', $that.css('margin-left'));
                 }
 
                 $uploadedArea.empty();
