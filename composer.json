@@ -16,7 +16,7 @@
         "symfony/framework-bundle":       ">=2.3",
         "twig/twig":                      "*",
         "jms/serializer-bundle":          "dev-master",
-        "da/api-client-bundle":           "1.1.*"
+        "da/api-client-bundle":           "~1.1"
     },
     "autoload": {
         "psr-0": { "Tms\\Bundle\\MediaClientBundle": "" }
