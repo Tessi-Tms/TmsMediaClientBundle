@@ -4,7 +4,10 @@
     {% spaceless %}
         {{ block('collection_widget') }}
     {% endspaceless %}
-
+    <script>
+        window.jQuery ||
+        document.write("<script src='{{ asset('bundles/idciextraform/js/jquery-1.11.3.min.js') }}'>\x3C/script>")
+    </script>
     <script type="text/javascript">
         (function($) {
             var collectionHolder = $('.tms_media_client__related_to_many_media');
@@ -91,6 +94,10 @@
     {% set mimeType  = data ? data.mimeType : null %}
     {% set reference = data ? data.providerReference : null %}
 
+    <script>
+        window.jQuery ||
+        document.write("<script src='{{ asset('bundles/idciextraform/js/jquery-1.11.3.min.js') }}'>\x3C/script>")
+    </script>
     <script type="text/javascript">
         (function($) {
             $.fn.loadUploadedArea = function(url, mimeType, name) {
@@ -123,7 +130,6 @@
                             position: 'absolute',
                             display: 'inline-block',
                             'white-space': 'nowrap',
-                            float: 'left',
                             padding: 0,
                             left: 0,
                             margin: 0
@@ -182,7 +188,7 @@
                         ),
                         hPadding = Math.max(
                             0,
-                            Math.floor(($that.width() - $button.width()) / 2)
+                            Math.floor($that.width() - $button.width()) / 2
                         )
                     ;
 
