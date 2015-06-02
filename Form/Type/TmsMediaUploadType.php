@@ -47,12 +47,6 @@ class TmsMediaUploadType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $isUploadedFileRequired = $options['required'];
-
-        if (null !== $builder->getData() && $builder->getData()->getProviderReference()) {
-            $isUploadedFileRequired = false;
-        }
-
         $builder
             ->add('publicUri', 'hidden', array(
                 'required' => false
@@ -63,16 +57,27 @@ class TmsMediaUploadType extends AbstractType
             ->add('providerReference', 'hidden', array(
                 'required' => false
             ))
-            ->add('uploadedFile', 'file', array(
-                'label'    => ' ',
-                'required' => $isUploadedFileRequired
-            ))
             /*->add('toDelete', 'checkbox', array(
                 'label'    => 'X',
                 'required' => false,
                 'mapped'   => false
             ))*/
         ;
+
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function(FormEvent $event) use ($options) {
+                $isUploadedFileRequired = $options['required'];
+                $form = $event->getForm();
+                if (null !== $event->getData()) {
+                    $isUploadedFileRequired = false;
+                }
+                $form->add('uploadedFile', 'file', array(
+                    'label'    => ' ',
+                    'required' => $isUploadedFileRequired
+                ));
+            }
+        );
 
         $provider = $this->storageProvider;
         $validator = $this->validator;
