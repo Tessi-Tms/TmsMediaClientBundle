@@ -226,6 +226,11 @@
 
                     if (mimeType.match('image.*')) {
                         $img = $('<img src="'+url+'" title="'+name+'" />');
+
+                        var maxWidth = $img.css('max-width');
+                        if ('100%' === maxWidth || !maxWidth) {
+                            $img.css('max-width', String($container.width())+'px');
+                        }
                         $uploadedElement.append($img);
                     }
                     $data = $('\
