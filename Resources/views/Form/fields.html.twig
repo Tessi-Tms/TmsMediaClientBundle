@@ -23,20 +23,20 @@
         };
 
         getJquery(function() {
-            var collectionHolder = $('.tms_media_client__related_to_many_media');
-            var $addMediaLink = $('<a href="#" class="btn btn-default add_media_link">Add media</a>');
-            var $newLink = $('<div></div>').append($addMediaLink);
+            var collectionHolder = jQuery('.tms_media_client__related_to_many_media');
+            var $addMediaLink = jQuery('<a href="#" class="btn btn-default add_media_link">Add media</a>');
+            var $newLink = jQuery('<div></div>').append($addMediaLink);
 
             function addMediaForm(collectionHolder, $newLink) {
                 var prototype = collectionHolder.attr('data-prototype');
                 var newForm = prototype.replace(/__name__/g, collectionHolder.children().length);
-                var $newFormDiv = $('<div></div>').append(newForm);
+                var $newFormDiv = jQuery('<div></div>').append(newForm);
                 $newLink.before($newFormDiv);
                 addMediaFormDeleteLink($newFormDiv);
             }
 
             function addMediaFormDeleteLink($mediaFormDiv) {
-                var $removeFormA = $('<a href="#" class="btn btn-default">Delete media</a>');
+                var $removeFormA = jQuery('<a href="#" class="btn btn-default">Delete media</a>');
                 $mediaFormDiv.append($removeFormA);
 
                 $removeFormA.on('click', function(e) {
@@ -53,7 +53,7 @@
             });
 
             collectionHolder.find('.tms_media_client__related_to_one_media').each(function() {
-                addMediaFormDeleteLink($(this));
+                addMediaFormDeleteLink(jQuery(this));
             });
         });
     </script>
@@ -124,11 +124,11 @@
 
         getJquery(function() {
             $.fn.loadUploadedArea = function(url, mimeType, name, media) {
-                var $that = $(this);
+                var $that = jQuery(this);
 
-                var $uploadedArea = $(this).siblings('.uploaded_area');
+                var $uploadedArea = jQuery(this).siblings('.uploaded_area');
                 if ($uploadedArea.length === 0) {
-                    $uploadedArea = $('<div class="uploaded_area"></div>');
+                    $uploadedArea = jQuery('<div class="uploaded_area"></div>');
                     $that.after($uploadedArea);
                 }
 
@@ -141,7 +141,7 @@
                     var position = $that.css('position');
 
                     if (null == position || 'static' === position) {
-                        $buttonWrapper = $('<div class="upload_button_wrapper"><input style="display:none" type="text" class="upload_text" /><button type="button" class="button upload_button"></button></div>');
+                        $buttonWrapper = jQuery('<div class="upload_button_wrapper"><input style="display:none" type="text" class="upload_text" /><button type="button" class="button upload_button"></button></div>');
                         $that.before($buttonWrapper);
                         $button = $buttonWrapper.find('button');
                         $uploadText = $buttonWrapper.find('.upload_text');
@@ -244,11 +244,11 @@
                 }
 
                 $uploadedArea.empty();
-                var $uploadedElement = $('<div class="item"></div>');
+                var $uploadedElement = jQuery('<div class="item"></div>');
                 $uploadedArea.append($uploadedElement);
 
                 if (mimeType.match('image.*')) {
-                    $img = $('<img src="'+url+'" title="'+name+'" />');
+                    $img = jQuery('<img src="'+url+'" title="'+name+'" />');
 
                     var maxWidth = $img.css('max-width');
                     if ('100%' === maxWidth || !maxWidth) {
@@ -256,7 +256,7 @@
                     }
                     $uploadedElement.append($img);
                 }
-                $data = $('\
+                $data = jQuery('\
                     <div class="file_data">\
                         <p class="name"><strong>Nom:</strong> '+(media ? media.name : name)+'</p>\
                         <p class="name"><strong>Reference:</strong> '+name+'</p>\
@@ -270,7 +270,7 @@
             var url = "{{ url }}",
                 mimeType = "{{ mimeType }}",
                 reference = "{{ reference }}",
-                $inputFile = $('#{{ id }}_uploadedFile')
+                $inputFile = jQuery('#{{ id }}_uploadedFile')
             ;
 
             $inputFile.loadUploadedArea(url, mimeType, reference, null);
