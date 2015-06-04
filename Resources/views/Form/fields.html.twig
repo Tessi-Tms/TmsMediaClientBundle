@@ -4,30 +4,28 @@
     {% spaceless %}
         {{ block('collection_widget') }}
     {% endspaceless %}
-    <script>
-        var scriptTag = document.createElement('script');
-        scriptTag.src = '{{ asset('bundles/tmsmediaclient/js/jquery-1.11.3.min.js') }}';
-
-        window.jQuery || document.getElementsByTagName('head')[0].appendChild(scriptTag);
-    </script>
     <script type="text/javascript">
-        (function($) {
+        function getJquery(callback) {
+            if (!window.jQuery) {
+                var sJquery = document.createElement("script");
+                sJquery.src = "{{ asset('bundles/tmsmediaclient/js/jquery-1.11.3.min.js') }}";
+                sJquery.type = "text/javascript";
+
+                var head = document.getElementsByTagName('head')[0];
+                head.parentNode.insertBefore(sJquery, head);
+
+                sJquery.onload = sJquery.onreadystatechange = function() {
+                    callback();
+                }
+            } else {
+                callback();
+            }
+        };
+
+        getJquery(function() {
             var collectionHolder = $('.tms_media_client__related_to_many_media');
             var $addMediaLink = $('<a href="#" class="btn btn-default add_media_link">Add media</a>');
             var $newLink = $('<div></div>').append($addMediaLink);
-
-            $(document).ready(function() {
-                collectionHolder.append($newLink);
-
-                $addMediaLink.on('click', function(e) {
-                    e.preventDefault();
-                    addMediaForm(collectionHolder, $newLink);
-                });
-
-                collectionHolder.find('.tms_media_client__related_to_one_media').each(function() {
-                    addMediaFormDeleteLink($(this));
-                });
-            });
 
             function addMediaForm(collectionHolder, $newLink) {
                 var prototype = collectionHolder.attr('data-prototype');
@@ -46,7 +44,18 @@
                     $mediaFormDiv.remove();
                 });
             }
-        {{ block('tms_media_jquery') }}
+
+            collectionHolder.append($newLink);
+
+            $addMediaLink.on('click', function(e) {
+                e.preventDefault();
+                addMediaForm(collectionHolder, $newLink);
+            });
+
+            collectionHolder.find('.tms_media_client__related_to_one_media').each(function() {
+                addMediaFormDeleteLink($(this));
+            });
+        });
     </script>
 {% endblock %}
 
@@ -95,191 +104,194 @@
     {% set mimeType  = data ? data.mimeType : null %}
     {% set reference = data ? data.providerReference : null %}
 
-    <script>
-        var scriptTag = document.createElement('script');
-        scriptTag.src = '{{ asset('bundles/tmsmediaclient/js/jquery-1.11.3.min.js') }}';
-
-        window.jQuery || document.getElementsByTagName('head')[0].appendChild(scriptTag);
-    </script>
     <script type="text/javascript">
-        setTimeout(function() {
-            (function($) {
-                $.fn.loadUploadedArea = function(url, mimeType, name, media) {
-                    var $that = $(this);
+        function getJquery(callback) {
+            if (!window.jQuery) {
+                var sJquery = document.createElement("script");
+                sJquery.src = "{{ asset('bundles/tmsmediaclient/js/jquery-1.11.3.min.js') }}";
+                sJquery.type = "text/javascript";
 
-                    var $uploadedArea = $(this).siblings('.uploaded_area');
-                    if ($uploadedArea.length === 0) {
-                        $uploadedArea = $('<div class="uploaded_area"></div>');
-                        $that.after($uploadedArea);
+                var head = document.getElementsByTagName('head')[0];
+                head.parentNode.insertBefore(sJquery, head);
+
+                sJquery.onload = sJquery.onreadystatechange = function() {
+                    callback();
+                }
+            } else {
+                callback();
+            }
+        };
+
+        getJquery(function() {
+            $.fn.loadUploadedArea = function(url, mimeType, name, media) {
+                var $that = $(this);
+
+                var $uploadedArea = $(this).siblings('.uploaded_area');
+                if ($uploadedArea.length === 0) {
+                    $uploadedArea = $('<div class="uploaded_area"></div>');
+                    $that.after($uploadedArea);
+                }
+
+                var $button = $that.parent().find('.upload_button'),
+                    $buttonWrapper,
+                    $uploadText,
+                    $container = $that.parent()
+                ;
+                if ($button.length === 0) {
+                    var position = $that.css('position');
+
+                    if (null == position || 'static' === position) {
+                        $buttonWrapper = $('<div class="upload_button_wrapper"><input style="display:none" type="text" class="upload_text" /><button type="button" class="button upload_button"></button></div>');
+                        $that.before($buttonWrapper);
+                        $button = $buttonWrapper.find('button');
+                        $uploadText = $buttonWrapper.find('.upload_text');
+
+                        $container
+                            .addClass('upload_container')
+                            .css('position', 'relative')
+                        ;
+
+                        $that.css({
+                            filter: 'alpha(opacity=0)',
+                            opacity: 0,
+                            cursor: 'pointer'
+                        });
+
+                        $buttonWrapper.css({
+                            position: 'absolute',
+                            display: 'inline-block',
+                            'white-space': 'nowrap',
+                            padding: 0,
+                            left: 0,
+                            margin: 0
+                        });
+
+                        $button.css({
+                            padding: 0,
+                            margin: 0
+                        });
+
+                        $that
+                            .mouseenter(function(){
+                                $buttonWrapper.addClass('hover');
+                            })
+                            .mouseleave(function(){
+                                $buttonWrapper.removeClass('hover');
+                            })
+                        ;
+                    }
+                } else {
+                    $buttonWrapper = $button.parent();
+                    $uploadText = $that.parent().find('.upload_text');
+                }
+
+                if ($button.length !== 0) {
+                    if (media) {
+                        $uploadText.val(media.name);
                     }
 
-                    var $button = $that.parent().find('.upload_button'),
-                        $buttonWrapper,
-                        $uploadText,
-                        $container = $that.parent()
+                    var placeholder = $that.attr('placeholder'),
+                        hasFile = name ? true : false
                     ;
-                    if ($button.length === 0) {
-                        var position = $that.css('position');
 
-                        if (null == position || 'static' === position) {
-                            $buttonWrapper = $('<div class="upload_button_wrapper"><input style="display:none" type="text" class="upload_text" /><button type="button" class="button upload_button"></button></div>');
-                            $that.before($buttonWrapper);
-                            $button = $buttonWrapper.find('button');
-                            $uploadText = $buttonWrapper.find('.upload_text');
+                    if (null == placeholder) {
+                        placeholder = 'Choisissez un fichier|Changez le fichier';
+                    }
 
-                            $container
-                                .addClass('upload_container')
-                                .css('position', 'relative')
-                            ;
+                    $container.css('max-width', 'auto');
+                    if (placeholder) {
+                        var part = hasFile ? 1 : 0,
+                            text = placeholder.split('|')[part]
+                        ;
 
-                            $that.css({
-                                filter: 'alpha(opacity=0)',
-                                opacity: 0,
-                                cursor: 'pointer'
-                            });
-
-                            $buttonWrapper.css({
-                                position: 'absolute',
-                                display: 'inline-block',
-                                'white-space': 'nowrap',
-                                padding: 0,
-                                left: 0,
-                                margin: 0
-                            });
-
-                            $button.css({
-                                padding: 0,
-                                margin: 0
-                            });
-
-                            $that
-                                .mouseenter(function(){
-                                    $buttonWrapper.addClass('hover');
-                                })
-                                .mouseleave(function(){
-                                    $buttonWrapper.removeClass('hover');
-                                })
-                            ;
-                        }
+                        $button.text(text ? text : placeholder);
                     } else {
-                        $buttonWrapper = $button.parent();
-                        $uploadText = $that.parent().find('.upload_text');
-                    }
-
-                    if ($button.length !== 0) {
-                        if (media) {
-                            $uploadText.val(media.name);
-                        }
-
-                        var placeholder = $that.attr('placeholder'),
-                            hasFile = name ? true : false
+                        var file = this.file
+                            ? this.files[0].name
+                            : name
                         ;
 
-                        if (null == placeholder) {
-                            placeholder = 'Choisissez un fichier|Changez le fichier';
-                        }
+                        $button.text(file
+                            ? file
+                            : 'Choisissez un fichier'
+                        );
+                    }
+                    $container.css('max-width', String($container.width())+'px');
 
-                        $container.css('max-width', 'auto');
-                        if (placeholder) {
-                            var part = hasFile ? 1 : 0,
-                                text = placeholder.split('|')[part]
-                            ;
-
-                            $button.text(text ? text : placeholder);
-                        } else {
-                            var file = this.file
-                                ? this.files[0].name
-                                : name
-                            ;
-
-                            $button.text(file
-                                ? file
-                                : 'Choisissez un fichier'
-                            );
-                        }
-                        $container.css('max-width', String($container.width())+'px');
-
-                        var vPadding = Math.max(
-                                0,
-                                Math.floor(
-                                    ($that.height() - parseInt($button.css('font-size'), 10)) / 2
-                                )
-                            ),
-                            hPadding = Math.max(
-                                0,
-                                Math.floor($that.width() - $button.width()) / 2
+                    var vPadding = Math.max(
+                            0,
+                            Math.floor(
+                                ($that.height() - parseInt($button.css('font-size'), 10)) / 2
                             )
-                        ;
-
-                        $button.css('padding', vPadding+'px '+hPadding+'px '+vPadding+'px '+hPadding+'px');
-
-                        $buttonWrapper.css('padding-top', $that.css('padding-top'));
-                        $buttonWrapper.css('padding-right', $that.css('padding-right'));
-                        $buttonWrapper.css('padding-bottom', $that.css('padding-bottom'));
-                        $buttonWrapper.css('padding-left', $that.css('padding-left'));
-
-                        $buttonWrapper.css('margin-top', $that.css('margin-top'));
-                        $buttonWrapper.css('margin-right', $that.css('margin-right'));
-                        $buttonWrapper.css('margin-bottom', $that.css('margin-bottom'));
-                        $buttonWrapper.css('margin-left', $that.css('margin-left'));
-                    }
-
-                    $uploadedArea.empty();
-                    var $uploadedElement = $('<div class="item"></div>');
-                    $uploadedArea.append($uploadedElement);
-
-                    if (mimeType.match('image.*')) {
-                        $img = $('<img src="'+url+'" title="'+name+'" />');
-
-                        var maxWidth = $img.css('max-width');
-                        if ('100%' === maxWidth || !maxWidth) {
-                            $img.css('max-width', String($container.width())+'px');
-                        }
-                        $uploadedElement.append($img);
-                    }
-                    $data = $('\
-                        <div class="file_data">\
-                            <p class="name"><strong>Nom:</strong> '+(media ? media.name : name)+'</p>\
-                            <p class="name"><strong>Reference:</strong> '+name+'</p>\
-                            <p class="mime_type"><strong>Type:</strong> '+mimeType+'</p>\
-                        </div>\
-                    ');
-                    $uploadedElement.append($data);
-                };
-
-                {% set cleanId = id | replace({'-': ''}) %}
-                $('document').ready(function() {
-                    var url = "{{ url }}",
-                        mimeType = "{{ mimeType }}",
-                        reference = "{{ reference }}",
-                        $inputFile = $('#{{ id }}_uploadedFile')
+                        ),
+                        hPadding = Math.max(
+                            0,
+                            Math.floor($that.width() - $button.width()) / 2
+                        )
                     ;
 
-                    $inputFile.loadUploadedArea(url, mimeType, reference, null);
+                    $button.css('padding', vPadding+'px '+hPadding+'px '+vPadding+'px '+hPadding+'px');
 
-                    $inputFile.on('change', function(event) {
-                        var files = event.target.files;
+                    $buttonWrapper.css('padding-top', $that.css('padding-top'));
+                    $buttonWrapper.css('padding-right', $that.css('padding-right'));
+                    $buttonWrapper.css('padding-bottom', $that.css('padding-bottom'));
+                    $buttonWrapper.css('padding-left', $that.css('padding-left'));
 
-                        // Loop through the FileList and render image files as thumbnails.
-                        for (var i = 0, f; f = files[i]; i++) {
-                            var reader = new FileReader();
-                            // Closure to capture the file information.
-                            reader.onload = (function(theFile) {
-                                return function(e) {
-                                    $inputFile.loadUploadedArea(e.target.result, theFile.type, theFile.name, null);
-                                };
-                            })(f);
+                    $buttonWrapper.css('margin-top', $that.css('margin-top'));
+                    $buttonWrapper.css('margin-right', $that.css('margin-right'));
+                    $buttonWrapper.css('margin-bottom', $that.css('margin-bottom'));
+                    $buttonWrapper.css('margin-left', $that.css('margin-left'));
+                }
 
-                            // Read in the image file as a data URL.
-                            reader.readAsDataURL(f);
-                        }
-                    });
-                });
-            {{ block('tms_media_jquery') }}
-        }, 10);
+                $uploadedArea.empty();
+                var $uploadedElement = $('<div class="item"></div>');
+                $uploadedArea.append($uploadedElement);
+
+                if (mimeType.match('image.*')) {
+                    $img = $('<img src="'+url+'" title="'+name+'" />');
+
+                    var maxWidth = $img.css('max-width');
+                    if ('100%' === maxWidth || !maxWidth) {
+                        $img.css('max-width', String($container.width())+'px');
+                    }
+                    $uploadedElement.append($img);
+                }
+                $data = $('\
+                    <div class="file_data">\
+                        <p class="name"><strong>Nom:</strong> '+(media ? media.name : name)+'</p>\
+                        <p class="name"><strong>Reference:</strong> '+name+'</p>\
+                        <p class="mime_type"><strong>Type:</strong> '+mimeType+'</p>\
+                    </div>\
+                ');
+                $uploadedElement.append($data);
+            };
+
+            {% set cleanId = id | replace({'-': ''}) %}
+            var url = "{{ url }}",
+                mimeType = "{{ mimeType }}",
+                reference = "{{ reference }}",
+                $inputFile = $('#{{ id }}_uploadedFile')
+            ;
+
+            $inputFile.loadUploadedArea(url, mimeType, reference, null);
+
+            $inputFile.on('change', function(event) {
+                var files = event.target.files;
+
+                // Loop through the FileList and render image files as thumbnails.
+                for (var i = 0, f; f = files[i]; i++) {
+                    var reader = new FileReader();
+                    // Closure to capture the file information.
+                    reader.onload = (function(theFile) {
+                        return function(e) {
+                            $inputFile.loadUploadedArea(e.target.result, theFile.type, theFile.name, null);
+                        };
+                    })(f);
+
+                    // Read in the image file as a data URL.
+                    reader.readAsDataURL(f);
+                }
+            });
+        });
     </script>
-{% endblock %}
-
-{% block tms_media_jquery %}
-    })($);
 {% endblock %}
