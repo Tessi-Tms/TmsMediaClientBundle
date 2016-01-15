@@ -9,7 +9,7 @@ namespace Tms\Bundle\MediaClientBundle\Model;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Tms\Bundle\MediaClientBundle\Exception\MediaClientException;
 
-class Media
+class Media implements \Serializable
 {
     /**
      * @var integer
@@ -67,6 +67,40 @@ class Media
     public function __construct()
     {
         $this->publicUri = null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function serialize()
+    {
+        return serialize(array(
+            'publicUri'         => $this->publicUri,
+            'mimeType'          => $this->mimeType,
+            'providerName'      => $this->providerName,
+            'providerReference' => $this->providerReference,
+            'providerData'      => $this->providerData,
+            'extension'         => $this->extension,
+            'createdAt'         => $this->createdAt,
+            'updatedAt'         => $this->updatedAt,
+        ));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function unserialize($data)
+    {
+        $unserializedData = unserialize($data);
+
+        $this->publicUri         = $unserializedData['publicUri'];
+        $this->mimeType          = $unserializedData['mimeType'];
+        $this->providerName      = $unserializedData['providerName'];
+        $this->providerReference = $unserializedData['providerReference'];
+        $this->providerData      = $unserializedData['providerData'];
+        $this->extension         = $unserializedData['extension'];
+        $this->createdAt         = $unserializedData['createdAt'];
+        $this->updatedAt         = $unserializedData['updatedAt'];
     }
 
     /**
