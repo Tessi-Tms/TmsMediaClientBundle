@@ -138,22 +138,9 @@ class Media
     }
 
     /**
-     * Remove uploaded file
-     *
-     * @return Media
-     */
-    public function removeUploadedFile()
-    {
-        unlink($this->uploadedFile->getPathName());
-        $this->uploadedFile = null;
-
-        return $this;
-    }
-
-    /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -211,7 +198,7 @@ class Media
         );
 
         if ($countValidQueries == 0) {
-            return $url; 
+            return $url;
         }
 
         return sprintf(
@@ -237,7 +224,7 @@ class Media
     /**
      * Get mimeType
      *
-     * @return string 
+     * @return string
      */
     public function getMimeType()
     {
@@ -260,7 +247,7 @@ class Media
     /**
      * Get providerName
      *
-     * @return string 
+     * @return string
      */
     public function getProviderName()
     {
@@ -306,7 +293,7 @@ class Media
     /**
      * Get providerData
      *
-     * @return array 
+     * @return array
      */
     public function getProviderData()
     {
@@ -352,7 +339,7 @@ class Media
     /**
      * Get created at
      *
-     * @return Datetime 
+     * @return Datetime
      */
     public function getCreatedAt()
     {
@@ -375,7 +362,7 @@ class Media
     /**
      * Get updated at
      *
-     * @return Datetime 
+     * @return Datetime
      */
     public function getUpdatedAt()
     {

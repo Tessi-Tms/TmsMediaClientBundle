@@ -63,7 +63,7 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
             ->getMediaApiClient()
             ->post('/media', array(
                 'source' => $this->getSourceName(),
-                'media' => '@'.$media->getUploadedFile()->getPathName(),
+                'media' => new \CURLFile($media->getUploadedFile()->getPathName()),
                 'name' => $media->getUploadedFile()->getClientOriginalName()
             ))
         ;
@@ -75,8 +75,6 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
         $media->setProviderReference($apiMedia['reference']);
         $media->setExtension($apiMedia['extension']);
         $media->setPublicUri($apiMedia['publicUri']);
-
-        $media->removeUploadedFile();
 
         return true;
     }
@@ -91,7 +89,7 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
                 ->getMediaApiClient()
                 ->delete('/media/'.$reference)
             ;
-        } catch(ApiHttpResponseException $e) {
+        } catch (ApiHttpResponseException $e) {
             return false;
         }
 
@@ -111,7 +109,7 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
                 $data['publicEndpoint'],
                 $reference
             );
-        } catch(ApiHttpResponseException $e) {
+        } catch (ApiHttpResponseException $e) {
             return false;
         }
     }
