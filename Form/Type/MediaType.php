@@ -45,7 +45,7 @@ class MediaType extends BaseMediaType
                 try {
                     $provider = $handler->getStorageProvider($media->getProviderName());
                     $provider->add($media);
-                } catch(\Exception $e) {
+                } catch (\Exception $e) {
                     throw new MediaClientException(sprintf(
                         'The media "%s" was not created: %s',
                         $media,

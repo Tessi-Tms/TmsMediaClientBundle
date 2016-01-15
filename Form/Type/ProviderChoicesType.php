@@ -25,7 +25,7 @@ class ProviderChoicesType extends AbstractType
      */
     public function __construct($providerChoices)
     {
-        foreach($providerChoices as $key => $choice) {
+        foreach ($providerChoices as $key => $choice) {
             $this->providerChoices[$key] = isset($choice[0]['alias']) ?
                 $choice[0]['alias'] :
                 $key
