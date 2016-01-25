@@ -313,3 +313,182 @@
         });
     </script>
 {% endblock %}
+
+{% block tms_transformable_image_upload_widget %}
+    {% spaceless %}
+        {{ block('collection_widget') }}
+    {% endspaceless %}
+    {% set url       = data ? data.getUrl('png') : null %}
+    {% set mimeType  = data ? data.mimeType : null %}
+    {% set reference = data ? data.providerReference : null %}
+
+    <script type="text/javascript">
+        function getJquery(callback) {
+            if (!window.jQuery) {
+                if (!document.getElementById('tms_jquery')) {
+                    var sJquery = document.createElement("script");
+                    sJquery.id   = "tms_jquery";
+                    sJquery.src  = "{{ asset('bundles/tmsmediaclient/js/jquery-1.11.3.min.js') }}";
+                    sJquery.type = "text/javascript";
+
+                    var head = document.getElementsByTagName('head')[0];
+                    head.appendChild(sJquery);
+                } else {
+                    var sJquery = document.getElementById('tms_jquery');
+                }
+
+                var onload = sJquery.onload;
+                sJquery.onload = sJquery.onreadystatechange = function() {
+                    if (typeof onload == 'function') {
+                        onload();
+                    }
+                    callback(window.jQuery);
+                }
+            } else {
+                callback(window.jQuery);
+            }
+        };
+
+        getJquery(function($) {
+            var cropperJsPath = "{{ asset('bundles/tmsmediaclient/cropper/dist/cropper.min.js') }}";
+            var cropperCssPath = "{{ asset('bundles/tmsmediaclient/cropper/dist/cropper.css') }}";
+
+            var cropperCss = document.createElement("link")
+            cropperCss.rel  = "stylesheet";
+            cropperCss.type = "text/css";
+            cropperCss.href = cropperCssPath;
+            var head = document.getElementsByTagName('head')[0];
+            head.appendChild(cropperCss);
+
+            $.getScript(cropperJsPath)
+                .fail(function(jqxhr, settings, exception) {
+                    $( "div.log" ).text( "Triggered ajaxError handler." );
+                })
+                .done(function(script, textStatus ) {
+                    var URL = window.URL || window.webkitURL;
+                    var blobURL;
+
+                    var $inputX      = $('#{{ id }}_x'),
+                        $inputY      = $('#{{ id }}_y'),
+                        $inputWidth  = $('#{{ id }}_width'),
+                        $inputHeight = $('#{{ id }}_height'),
+                        $inputZoom   = $('#{{ id }}_zoom'),
+                        $inputRotate = $('#{{ id }}_rotate'),
+                        $inputFile   = $('#{{ id }}_uploadedFile')
+                        $inputReset  = $('#{{ id }}_reset')
+                    ;
+
+                    var $imageContainer = $('<div class="tms_image_container" style="width:{{ container_width }}px; height:{{ container_height }}px;"></div>'),
+                        $uploadedImage = $('<img src="{{ asset('bundles/tmsmediaclient/img/upload.jpg') }}" />')
+                    ;
+                    $imageContainer.append($uploadedImage);
+                    $('#{{ id }}').append($imageContainer);
+
+                    $uploadedImage
+                        .on({
+                            'build.cropper': function (e) {
+                            },
+                            'built.cropper': function (e) {
+                                var containerData = $uploadedImage.cropper('getContainerData');
+                                var canvasData = $uploadedImage.cropper('getCanvasData');
+                                var wRatio = Math.round(containerData.width / canvasData.naturalWidth * 1000) / 1000;
+                                var hRatio = Math.round(containerData.height / canvasData.naturalHeight * 1000) / 1000;
+
+                                var maxImg    = Math.max(canvasData.naturalWidth, canvasData.naturalHeight);
+                                var minCanvas = Math.min(containerData.width, containerData.height);
+
+                                var maxRatio = Math.max(wRatio, hRatio),
+                                    minRatio = Math.round(minCanvas / maxImg * 1000) / 1000,
+                                    avgRatio = (maxRatio + minRatio) / 2
+                                ;
+
+                                $inputZoom.attr('step', Math.round(0.1 * avgRatio * 1000) / 1000);
+                                $inputZoom.attr('max', Math.round(maxRatio * 10));
+                                $inputZoom.attr('min', minRatio > 1 ? 1 : minRatio);
+
+                                $inputZoom.val(wRatio);
+                            },
+                            'cropstart.cropper': function (e) {
+                            },
+                            'cropmove.cropper': function (e) {
+                            },
+                            'cropend.cropper': function (e) {
+                            },
+                            'crop.cropper': function (e) {
+                                $uploadedImage.cropper('getCroppedCanvas').toBlob(function (blob) {
+                                    //console.log(blob);
+                                });
+                            },
+                            'zoom.cropper': function (e) {
+                                console.log(e.ratio);
+                            }
+                        })
+                        .cropper({
+                            viewMode: 0,
+                            dragMode: 'move',
+                            background: false,
+                            guides: false,
+                            cropBoxMovable: false,
+                            cropBoxResizable: false,
+                            toggleDragModeOnDblclick: false,
+                            scalable: false,
+                            zoomOnWheel: false,
+                            minCropBoxWidth: {{ container_width }},
+                            minCropBoxHeight: {{ container_height }},
+                            /*
+                            minContainerWidth: 258,
+                            minContainerHeight: 193,
+                            minCanvasWidth: 258,
+                            minCanvasHeight: 193
+                            */
+                        })
+                    ;
+
+                    $inputRotate.on('input', function(event) {
+                        $uploadedImage.cropper('rotateTo', $(this).val());
+                    });
+
+                    $inputZoom.on('input', function(event) {
+                        $uploadedImage.cropper('zoomTo', $(this).val());
+                    });
+
+                    $inputReset.on('click', function(event) {
+                        $uploadedImage.cropper('reset');
+                    });
+
+                    if (URL) {
+                        $inputFile.change(function () {
+                            var files = this.files;
+                            var file;
+
+                            if (!$uploadedImage.data('cropper')) {
+                                return;
+                            }
+
+                            if (files && files.length) {
+                                file = files[0];
+
+                                if (/^image\/\w+$/.test(file.type)) {
+                                    blobURL = URL.createObjectURL(file);
+                                    $uploadedImage
+                                        .one('built.cropper', function () {
+                                            // Revoke when load complete
+                                            URL.revokeObjectURL(blobURL);
+                                        })
+                                        .cropper('reset')
+                                        .cropper('replace', blobURL)
+                                    ;
+                                    $inputFile.val('');
+                                } else {
+                                    window.alert('Please choose an image file.');
+                                }
+                            }
+                        });
+                    } else {
+                        $inputFile.prop('disabled', true).parent().addClass('disabled');
+                    }
+                })
+            ;
+        });
+    </script>
+{% endblock %}

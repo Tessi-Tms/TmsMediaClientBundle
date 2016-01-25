@@ -37,3 +37,9 @@ services:
         arguments: [@tms_media_client.storage_provider.tms_media, @validator]
         tags:
             - { name: form.type, alias: tms_media_upload }
+
+    tms_media_client.form_type.tms_transformable_image_upload:
+        class: Tms\Bundle\MediaClientBundle\Form\Type\TmsTransformableImageUploadType
+        arguments: [@tms_media_client.storage_provider.tms_media, @validator]
+        tags:
+            - { name: form.type, alias: tms_transformable_image_upload }
