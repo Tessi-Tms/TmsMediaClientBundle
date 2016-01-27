@@ -43,8 +43,6 @@ class TmsTransformableImageUploadType extends TmsMediaUploadType
                     $metadata = $data->getMetadata();
                 }
 
-                var_dump($metadata);
-
                 $form
                     ->add('cropper_x', 'hidden', array(
                         'required' => false,
