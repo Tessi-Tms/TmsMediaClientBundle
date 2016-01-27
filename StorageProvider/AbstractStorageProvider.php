@@ -12,7 +12,7 @@ use Tms\Bundle\MediaClientBundle\Model\Media;
 abstract class AbstractStorageProvider implements StorageProviderInterface
 {
     protected $name;
- 
+
     /**
      * {@inheritdoc}
      */
@@ -38,7 +38,7 @@ abstract class AbstractStorageProvider implements StorageProviderInterface
             return false;
         }
 
-        // Update case
+        // Update media case
         if ($media->getProviderReference()) {
             // Remove the previous associated media
             $this->remove($media);

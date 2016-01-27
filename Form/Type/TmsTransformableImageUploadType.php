@@ -9,9 +9,12 @@ namespace Tms\Bundle\MediaClientBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Tms\Bundle\MediaClientBundle\Model\Media;
 
 class TmsTransformableImageUploadType extends TmsMediaUploadType
 {
@@ -22,47 +25,55 @@ class TmsTransformableImageUploadType extends TmsMediaUploadType
     {
         parent::buildForm($builder, $options);
 
-        $builder
-            ->add('cropper_x', 'hidden', array(
-                'required' => false,
-                'data'     => 0,
-            ))
-            ->add('cropper_y', 'hidden', array(
-                'required' => false,
-                'data'     => 0,
-            ))
-            ->add('cropper_width', 'hidden', array(
-                'required' => false,
-                'data'     => 0,
-            ))
-            ->add('cropper_height', 'hidden', array(
-                'required' => false,
-                'data'     => 0,
-            ))
-            ->add('cropper_zoom', 'extra_form_range', array(
-                'required' => false,
-                'label'    => $options['zoom_label'],
-                'data'     => 0,
-                'attr'     => array(
-                    'min'  => 0,
-                    'max'  => 10,
-                    'step' => 0.1,
-                )
-            ))
-            ->add('cropper_rotate', 'extra_form_range', array(
-                'required' => false,
-                'label'    => $options['rotate_label'],
-                'data'     => 0,
-                'attr'     => array(
-                    'min'  => -180,
-                    'max'  => 180,
-                    'step' => 5,
-                )
-            ))
-            ->add('reset', 'button', array(
-                'label'  => $options['reset_label'],
-            ))
-        ;
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function(FormEvent $event) use ($options) {
+                $form = $event->getForm();
+                $data = $event->getData();
+                $metadata = array(
+                    'cropper_x'      => 0,
+                    'cropper_y'      => 0,
+                    'cropper_width'  => null,
+                    'cropper_height' => null,
+                    'cropper_zoom'   => 1,
+                    'cropper_rotate' => 0,
+                );
+
+                if ($data instanceof Media) {
+                    $metadata = $data->getMetadata();
+                }
+
+                var_dump($metadata);
+
+                $form
+                    ->add('cropper_x', 'hidden', array(
+                        'required' => false,
+                        'data'     => $metadata['cropper_x'],
+                    ))
+                    ->add('cropper_y', 'hidden', array(
+                        'required' => false,
+                        'data'     => $metadata['cropper_y'],
+                    ))
+                    ->add('cropper_width', 'hidden', array(
+                        'required' => false,
+                        'data'     => $metadata['cropper_width'],
+                    ))
+                    ->add('cropper_height', 'hidden', array(
+                        'required' => false,
+                        'data'     => $metadata['cropper_height'],
+                    ))
+                    ->add('cropper_zoom', 'hidden', array(
+                        'required' => false,
+                        'data'     => $metadata['cropper_zoom'],
+                    ))
+                    ->add('cropper_rotate', 'hidden', array(
+                        'required' => false,
+                        'data'     => $metadata['cropper_rotate'],
+                    ))
+                ;
+            },
+            100
+        );
     }
 
     /**

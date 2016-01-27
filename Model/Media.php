@@ -97,6 +97,7 @@ class Media implements \Serializable
      */
     public function __set($name, $value)
     {
+        $name = Inflector::tableize($name);
         $this->setMetadata($name, $value);
 
         return $this;
@@ -110,6 +111,8 @@ class Media implements \Serializable
      */
     public function __get($name)
     {
+        $name = Inflector::tableize($name);
+
         return $this->getMetadata($name);
     }
 
@@ -126,7 +129,7 @@ class Media implements \Serializable
         $subMethod = substr($method, 0, 3);
 
         if (in_array($subMethod, array('set', 'get'))) {
-            $property = Inflector::tableize(substr($method, 3));
+            $property = substr($method, 3);
 
             if ('set' === $subMethod) {
                 var_dump($arguments); die;

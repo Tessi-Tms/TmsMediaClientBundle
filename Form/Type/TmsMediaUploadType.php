@@ -76,7 +76,8 @@ class TmsMediaUploadType extends AbstractType
                     'label'    => ' ',
                     'required' => $isUploadedFileRequired
                 ));
-            }
+            },
+            50
         );
 
         $provider = $this->storageProvider;
