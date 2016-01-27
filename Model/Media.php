@@ -8,6 +8,7 @@ namespace Tms\Bundle\MediaClientBundle\Model;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Tms\Bundle\MediaClientBundle\Exception\MediaClientException;
+use Doctrine\Common\Util\Inflector;
 
 class Media implements \Serializable
 {
@@ -47,6 +48,11 @@ class Media implements \Serializable
     protected $extension;
 
     /**
+     * @var string
+     */
+    protected $metadata;
+
+    /**
      * @var Datetime
      */
     protected $createdAt;
@@ -70,6 +76,68 @@ class Media implements \Serializable
     }
 
     /**
+     * toString.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return sprintf('[%s] %s',
+            $this->getProviderName(),
+            $this->getProviderReference()
+        );
+    }
+
+    /**
+     * Magic setter.
+     *
+     * @param string $name  The setter name.
+     * @param mixed  $value The value to set.
+     * @return Media
+     */
+    public function __set($name, $value)
+    {
+        $this->setMetadata($name, $value);
+
+        return $this;
+    }
+
+    /**
+     * Magic getter.
+     *
+     * @param string $name The getter name.
+     * @return mixed The value.
+     */
+    public function __get($name)
+    {
+        return $this->getMetadata($name);
+    }
+
+    /**
+     * Magic call.
+     *
+     * @param string $method    The method name.
+     * @param mixed  $arguments The given arguments.
+     * @return mixed
+     */
+    public function __call($method, $arguments)
+    {
+        $property  = $method;
+        $subMethod = substr($method, 0, 3);
+
+        if (in_array($subMethod, array('set', 'get'))) {
+            $property = Inflector::tableize(substr($method, 3));
+
+            if ('set' === $subMethod) {
+                var_dump($arguments); die;
+                $this->$property = $arguments;
+            }
+        }
+
+        return $this->$property;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function serialize()
@@ -81,6 +149,7 @@ class Media implements \Serializable
             'providerReference' => $this->providerReference,
             'providerData'      => $this->providerData,
             'extension'         => $this->extension,
+            'metadata'          => $this->metadata,
             'createdAt'         => $this->createdAt,
             'updatedAt'         => $this->updatedAt,
         ));
@@ -99,6 +168,7 @@ class Media implements \Serializable
         $this->providerReference = $unserializedData['providerReference'];
         $this->providerData      = $unserializedData['providerData'];
         $this->extension         = $unserializedData['extension'];
+        $this->metadata          = $unserializedData['metadata'];
         $this->createdAt         = $unserializedData['createdAt'];
         $this->updatedAt         = $unserializedData['updatedAt'];
     }
@@ -120,7 +190,7 @@ class Media implements \Serializable
     }
 
     /**
-     * Get public data
+     * Returns public data
      *
      * @return array
      */
@@ -136,20 +206,7 @@ class Media implements \Serializable
     }
 
     /**
-     * toString
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return sprintf('[%s] %s',
-            $this->getProviderName(),
-            $this->getProviderReference()
-        );
-    }
-
-    /**
-     * Set uploaded file
+     * Set uploaded file.
      *
      * @param UploadedFile $uploadedFile
      * @return Media
@@ -162,7 +219,7 @@ class Media implements \Serializable
     }
 
     /**
-     * Get uploaded file
+     * Returns uploaded file.
      *
      * @return UploadedFile
      */
@@ -172,7 +229,7 @@ class Media implements \Serializable
     }
 
     /**
-     * Get id
+     * Get id.
      *
      * @return integer
      */
@@ -182,7 +239,7 @@ class Media implements \Serializable
     }
 
     /**
-     * Set public uri
+     * Returns public uri
      *
      * @param string $publicUri
      * @return Media
@@ -195,7 +252,7 @@ class Media implements \Serializable
     }
 
     /**
-     * Get public uri
+     * Get public uri.
      *
      * @return string
      */
@@ -205,7 +262,7 @@ class Media implements \Serializable
     }
 
     /**
-     * Get url
+     * Returns url.
      *
      * @param string $extension
      * @return string
@@ -243,7 +300,7 @@ class Media implements \Serializable
     }
 
     /**
-     * Set mimeType
+     * Set mimeType.
      *
      * @param string $mimeType
      * @return Media
@@ -256,7 +313,7 @@ class Media implements \Serializable
     }
 
     /**
-     * Get mimeType
+     * Returns mimeType.
      *
      * @return string
      */
@@ -266,7 +323,7 @@ class Media implements \Serializable
     }
 
     /**
-     * Set providerName
+     * Set providerName.
      *
      * @param string $providerName
      * @return Media
@@ -279,7 +336,7 @@ class Media implements \Serializable
     }
 
     /**
-     * Get providerName
+     * Returns providerName.
      *
      * @return string
      */
@@ -289,7 +346,7 @@ class Media implements \Serializable
     }
 
     /**
-     * Set providerReference
+     * Set providerReference.
      *
      * @param string $providerReference
      * @return Media
@@ -302,7 +359,7 @@ class Media implements \Serializable
     }
 
     /**
-     * Get providerReference
+     * Returns providerReference.
      *
      * @return string
      */
@@ -312,7 +369,7 @@ class Media implements \Serializable
     }
 
     /**
-     * Set providerData
+     * Set providerData.
      *
      * @param array $providerData
      * @return Media
@@ -325,7 +382,7 @@ class Media implements \Serializable
     }
 
     /**
-     * Get providerData
+     * Returns providerData.
      *
      * @return array
      */
@@ -335,7 +392,7 @@ class Media implements \Serializable
     }
 
     /**
-     * Set extension
+     * Set extension.
      *
      * @param string $extension
      * @return Media
@@ -348,7 +405,7 @@ class Media implements \Serializable
     }
 
     /**
-     * Get extension
+     * Returns extension.
      *
      * @return string
      */
@@ -358,7 +415,47 @@ class Media implements \Serializable
     }
 
     /**
-     * Set created at
+     * Set metadata.
+     *
+     * @param array|string $key
+     * @param mixed        $value
+     * @return Media
+     */
+    public function setMetadata($key, $value)
+    {
+        $this->metadata[$key] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Returns metadata.
+     *
+     * @param string|null $key
+     * @return mixed|null
+     */
+    public function getMetadata($key = null)
+    {
+        if (null === $key) {
+            return $this->metadata;
+        }
+
+        return $this->hasMetadata($key) ? $this->metadata[$key] : null;
+    }
+
+    /**
+     * Returns weather metadata has a key
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function hasMetadata($key)
+    {
+        return isset($this->metadata[$key]);
+    }
+
+    /**
+     * Set created at.
      *
      * @param Datetime $createdAt
      * @return Media
@@ -371,7 +468,7 @@ class Media implements \Serializable
     }
 
     /**
-     * Get created at
+     * Returns created at.
      *
      * @return Datetime
      */
@@ -381,7 +478,7 @@ class Media implements \Serializable
     }
 
     /**
-     * Set updated at
+     * Set updated at.
      *
      * @param Datetime $updatedAt
      * @return Media
@@ -394,7 +491,7 @@ class Media implements \Serializable
     }
 
     /**
-     * Get updated at
+     * Returns updated at.
      *
      * @return Datetime
      */

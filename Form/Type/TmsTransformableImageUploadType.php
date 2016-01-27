@@ -13,7 +13,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class TmsTransformableImageUploadType extends AbstractType
+class TmsTransformableImageUploadType extends TmsMediaUploadType
 {
     /**
      * {@inheritdoc}
@@ -23,23 +23,23 @@ class TmsTransformableImageUploadType extends AbstractType
         parent::buildForm($builder, $options);
 
         $builder
-            ->add('x', 'hidden', array(
+            ->add('cropper_x', 'hidden', array(
                 'required' => false,
                 'data'     => 0,
             ))
-            ->add('y', 'hidden', array(
+            ->add('cropper_y', 'hidden', array(
                 'required' => false,
                 'data'     => 0,
             ))
-            ->add('width', 'hidden', array(
+            ->add('cropper_width', 'hidden', array(
                 'required' => false,
                 'data'     => 0,
             ))
-            ->add('height', 'hidden', array(
+            ->add('cropper_height', 'hidden', array(
                 'required' => false,
                 'data'     => 0,
             ))
-            ->add('zoom', 'extra_form_range', array(
+            ->add('cropper_zoom', 'extra_form_range', array(
                 'required' => false,
                 'label'    => $options['zoom_label'],
                 'data'     => 0,
@@ -49,7 +49,7 @@ class TmsTransformableImageUploadType extends AbstractType
                     'step' => 0.1,
                 )
             ))
-            ->add('rotate', 'extra_form_range', array(
+            ->add('cropper_rotate', 'extra_form_range', array(
                 'required' => false,
                 'label'    => $options['rotate_label'],
                 'data'     => 0,
@@ -60,7 +60,7 @@ class TmsTransformableImageUploadType extends AbstractType
                 )
             ))
             ->add('reset', 'button', array(
-                'label' => $options['reset_label'],
+                'label'  => $options['reset_label'],
             ))
         ;
     }
@@ -97,14 +97,6 @@ class TmsTransformableImageUploadType extends AbstractType
                 'reset_label'      => array('string'),
             ))
         ;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
-    {
-        return 'tms_media_upload';
     }
 
     /**

@@ -55,6 +55,11 @@ class Media extends BaseMedia
     protected $extension;
 
     /**
+     * @ORM\Column(type="json_array", nullable=true)
+     */
+    protected $metadata;
+
+    /**
      * @ORM\Column(name="created_at", type="datetime")
      */
     protected $createdAt;

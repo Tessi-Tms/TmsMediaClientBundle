@@ -318,11 +318,22 @@
     {% spaceless %}
         {{ block('collection_widget') }}
     {% endspaceless %}
-    {% set url       = data ? data.getUrl('png') : null %}
-    {% set mimeType  = data ? data.mimeType : null %}
-    {% set reference = data ? data.providerReference : null %}
+    {% set url           = data ? data.getUrl('png') : null %}
+    {% set mimeType      = data ? data.mimeType : null %}
+    {% set reference     = data ? data.providerReference : null %}
+    {% set cropperX      = data ? data.cropperX : null %}
+    {% set cropperY      = data ? data.cropperY : null %}
+    {% set cropperWidth  = data ? data.cropperWidth : null %}
+    {% set cropperHeight = data ? data.cropperHeight : null %}
+    {% set cropperZoom   = data ? data.cropperZoom : null %}
+    {% set cropperRotate = data ? data.cropperRotate : null %}
 
     <script type="text/javascript">
+        console.log('{{ url }}', '{{ mimeType }}', '{{ reference }}');
+        console.log('{{ cropperX }}', '{{ cropperY }}');
+        console.log('{{ cropperWidth }}', '{{ cropperHeight }}');
+        console.log('{{ cropperZoom }}', '{{ cropperRotate }}');
+
         function getJquery(callback) {
             if (!window.jQuery) {
                 if (!document.getElementById('tms_jquery')) {
@@ -362,24 +373,24 @@
 
             $.getScript(cropperJsPath)
                 .fail(function(jqxhr, settings, exception) {
-                    $( "div.log" ).text( "Triggered ajaxError handler." );
+                    console.log(exception);
                 })
-                .done(function(script, textStatus ) {
+                .done(function(script, textStatus) {
                     var URL = window.URL || window.webkitURL;
                     var blobURL;
 
-                    var $inputX      = $('#{{ id }}_x'),
-                        $inputY      = $('#{{ id }}_y'),
-                        $inputWidth  = $('#{{ id }}_width'),
-                        $inputHeight = $('#{{ id }}_height'),
-                        $inputZoom   = $('#{{ id }}_zoom'),
-                        $inputRotate = $('#{{ id }}_rotate'),
+                    var $inputX      = $('#{{ id }}_cropper_x'),
+                        $inputY      = $('#{{ id }}_cropper_y'),
+                        $inputWidth  = $('#{{ id }}_cropper_width'),
+                        $inputHeight = $('#{{ id }}_cropper_height'),
+                        $inputZoom   = $('#{{ id }}_cropper_zoom'),
+                        $inputRotate = $('#{{ id }}_cropper_rotate'),
                         $inputFile   = $('#{{ id }}_uploadedFile')
                         $inputReset  = $('#{{ id }}_reset')
                     ;
 
                     var $imageContainer = $('<div class="tms_image_container" style="width:{{ container_width }}px; height:{{ container_height }}px;"></div>'),
-                        $uploadedImage = $('<img src="{{ asset('bundles/tmsmediaclient/img/upload.jpg') }}" />')
+                        $uploadedImage = $('<img src="{{ url|default(asset('bundles/tmsmediaclient/img/upload.jpg')) }}" />')
                     ;
                     $imageContainer.append($uploadedImage);
                     $('#{{ id }}').append($imageContainer);
@@ -415,12 +426,12 @@
                             'cropend.cropper': function (e) {
                             },
                             'crop.cropper': function (e) {
-                                $uploadedImage.cropper('getCroppedCanvas').toBlob(function (blob) {
-                                    //console.log(blob);
-                                });
+                                $inputX.val(e.x);
+                                $inputY.val(e.y);
+                                $inputWidth.val(e.width);
+                                $inputHeight.val(e.height);
                             },
                             'zoom.cropper': function (e) {
-                                console.log(e.ratio);
                             }
                         })
                         .cropper({
@@ -434,13 +445,7 @@
                             scalable: false,
                             zoomOnWheel: false,
                             minCropBoxWidth: {{ container_width }},
-                            minCropBoxHeight: {{ container_height }},
-                            /*
-                            minContainerWidth: 258,
-                            minContainerHeight: 193,
-                            minCanvasWidth: 258,
-                            minCanvasHeight: 193
-                            */
+                            minCropBoxHeight: {{ container_height }}
                         })
                     ;
 

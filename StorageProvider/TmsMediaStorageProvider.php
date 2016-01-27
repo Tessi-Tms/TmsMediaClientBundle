@@ -62,9 +62,10 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
         $response = $this
             ->getMediaApiClient()
             ->post('/media', array(
-                'source' => $this->getSourceName(),
-                'name'   => $media->getUploadedFile()->getClientOriginalName(),
-                'media'  => curl_file_create(
+                'source'   => $this->getSourceName(),
+                'name'     => $media->getUploadedFile()->getClientOriginalName(),
+                'metadata' => $media->getMetadata(),
+                'media'    => curl_file_create(
                     $media->getUploadedFile()->getPathName(),
                     $media->getUploadedFile()->getMimeType(),
                     $media->getUploadedFile()->getClientOriginalName()

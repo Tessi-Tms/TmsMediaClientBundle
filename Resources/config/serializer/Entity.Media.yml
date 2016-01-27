@@ -22,6 +22,10 @@ Tms\Bundle\MediaClientBundle\Entity\Media:
             expose: true
             groups: [tms_rest.collection, tms_rest.item]
 
+        metadata:
+            expose: true
+            groups: [tms_rest.collection, tms_rest.item]
+
         createdAt:
             expose: true
             groups: [tms_rest.collection, tms_rest.item]
