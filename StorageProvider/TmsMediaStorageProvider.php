@@ -59,6 +59,28 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
      */
     public function doAdd(Media & $media)
     {
+        if (null === $media->getUploadedFile() || !$media->getUploadedFile()->getPathName()) {
+            if (!empty($media->getMetadata())) {
+                $this
+                    ->getMediaApiClient()
+                    ->put(
+                        sprintf('/media/%s', $media->getProviderReference()),
+                        array('metadata' => $media->getMetadata())
+                    )
+                ;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        // Reupload case
+        if ($media->getProviderReference()) {
+            // Remove the previous associated media
+            $this->remove($media);
+        }
+
         $response = $this
             ->getMediaApiClient()
             ->post('/media', array(

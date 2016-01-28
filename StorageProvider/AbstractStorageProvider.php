@@ -34,16 +34,6 @@ abstract class AbstractStorageProvider implements StorageProviderInterface
      */
     public function add(Media & $media)
     {
-        if (null === $media->getUploadedFile() || !$media->getUploadedFile()->getPathName()) {
-            return false;
-        }
-
-        // Update media case
-        if ($media->getProviderReference()) {
-            // Remove the previous associated media
-            $this->remove($media);
-        }
-
         // Set the provider name
         $media->setProviderName($this->getName());
 
