@@ -31,46 +31,65 @@ class TmsTransformableImageUploadType extends TmsMediaUploadType
                 $form = $event->getForm();
                 $data = $event->getData();
                 $metadata = array(
-                    'cropper_x'      => 0,
-                    'cropper_y'      => 0,
-                    'cropper_width'  => null,
-                    'cropper_height' => null,
-                    'cropper_zoom'   => 1,
-                    'cropper_rotate' => 0,
+                    'cropper_ratio'          => 1,
+                    'cropper_data'           => array(),
+                    'cropper_container_data' => array(),
+                    'cropper_image_data'     => array(),
+                    'cropper_canvas_data'    => array(),
+                    'cropper_crop_box_data'  => array(),
                 );
 
                 if ($data instanceof Media) {
                     $metadata = $data->getMetadata();
+                    // Ugly hack !
+                    $metadata['cropper_ratio'] = (float)$metadata['cropper_ratio'];
                 }
 
                 $form
-                    ->add('cropper_x', 'hidden', array(
+                    ->add('cropper_ratio', 'hidden', array(
                         'required' => false,
-                        'data'     => $metadata['cropper_x'],
+                        'data'     => json_encode($metadata['cropper_ratio']),
                     ))
-                    ->add('cropper_y', 'hidden', array(
+                    ->add('cropper_data', 'hidden', array(
                         'required' => false,
-                        'data'     => $metadata['cropper_y'],
+                        'data'     => json_encode($metadata['cropper_data']),
                     ))
-                    ->add('cropper_width', 'hidden', array(
+                    ->add('cropper_container_data', 'hidden', array(
                         'required' => false,
-                        'data'     => $metadata['cropper_width'],
+                        'data'     => json_encode($metadata['cropper_container_data']),
                     ))
-                    ->add('cropper_height', 'hidden', array(
+                    ->add('cropper_image_data', 'hidden', array(
                         'required' => false,
-                        'data'     => $metadata['cropper_height'],
+                        'data'     => json_encode($metadata['cropper_image_data']),
                     ))
-                    ->add('cropper_zoom', 'hidden', array(
+                    ->add('cropper_canvas_data', 'hidden', array(
                         'required' => false,
-                        'data'     => $metadata['cropper_zoom'],
+                        'data'     => json_encode($metadata['cropper_canvas_data']),
                     ))
-                    ->add('cropper_rotate', 'hidden', array(
+                    ->add('cropper_crop_box_data', 'hidden', array(
                         'required' => false,
-                        'data'     => $metadata['cropper_rotate'],
+                        'data'     => json_encode($metadata['cropper_crop_box_data']),
                     ))
                 ;
             },
             100
+        );
+
+        $builder->addEventListener(
+            FormEvents::PRE_SUBMIT,
+            function(FormEvent $event) {
+                $form = $event->getForm();
+                $data = $event->getData();
+
+                $data['cropper_ratio']          = (float)$data['cropper_ratio'];
+                $data['cropper_data']           = json_decode($data['cropper_data'], true);
+                $data['cropper_container_data'] = json_decode($data['cropper_container_data'], true);
+                $data['cropper_image_data']     = json_decode($data['cropper_image_data'], true);
+                $data['cropper_canvas_data']    = json_decode($data['cropper_canvas_data'], true);
+                $data['cropper_crop_box_data']  = json_decode($data['cropper_crop_box_data'], true);
+
+                $event->setData($data);
+            }
         );
     }
 
@@ -94,16 +113,16 @@ class TmsTransformableImageUploadType extends TmsMediaUploadType
             ->setDefaults(array(
                 'container_width'  => 200,
                 'container_height' => 200,
-                'zoom_label'       => 'Zoom',
-                'rotate_label'     => 'Rotate',
-                'reset_label'      => 'Reset',
+                'zoom_attr'        => array(),
+                'rotate_attr'      => array(),
+                'reset_attr'       => array(),
             ))
             ->setAllowedTypes(array(
                 'container_width'  => array('integer'),
                 'container_height' => array('integer'),
-                'zoom_label'       => array('string'),
-                'rotate_label'     => array('string'),
-                'reset_label'      => array('string'),
+                'zoom_attr'        => array('array'),
+                'rotate_attr'      => array('array'),
+                'reset_attr'       => array('array'),
             ))
         ;
     }

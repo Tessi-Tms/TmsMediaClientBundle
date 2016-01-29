@@ -364,22 +364,21 @@
                     var URL = window.URL || window.webkitURL;
                     var blobURL;
 
-                    var $inputPublicUri = $('#{{ id }}_publicUri'),
-                        $inputX         = $('#{{ id }}_cropper_x'),
-                        $inputY         = $('#{{ id }}_cropper_y'),
-                        $inputWidth     = $('#{{ id }}_cropper_width'),
-                        $inputHeight    = $('#{{ id }}_cropper_height'),
-                        $inputZoom      = $('#{{ id }}_cropper_zoom'),
-                        $inputRotate    = $('#{{ id }}_cropper_rotate'),
-                        $inputFile      = $('#{{ id }}_uploadedFile'),
-                        $inputReset     = $('#{{ id }}_reset')
+                    var $inputPublicUri     = $('#{{ id }}_publicUri'),
+                        $inputRatio         = $('#{{ id }}_cropper_ratio'),
+                        $inputData          = $('#{{ id }}_cropper_data'),
+                        $inputContainerData = $('#{{ id }}_cropper_container_data'),
+                        $inputImageData     = $('#{{ id }}_cropper_image_data'),
+                        $inputCanvasData    = $('#{{ id }}_cropper_canvas_data'),
+                        $inputCropBoxData   = $('#{{ id }}_cropper_crop_box_data'),
+                        $inputFile          = $('#{{ id }}_uploadedFile')
                     ;
 
                     var $editor         = $('<div class="tms_image_editor"></div>'),
                         $imageContainer = $('<div class="tms_image_container" style="width:{{ container_width }}px; height:{{ container_height }}px;"></div>'),
                         $uploadedImage  = $('<img src="{{ asset('bundles/tmsmediaclient/img/upload.jpg') }}" />'),
-                        $editorZoom     = $('<input type="range" />'),
-                        $editorRotate   = $('<input type="range" step="5" min="-180" max="180" />'),
+                        $editorRatio    = $('<input type="range" />'),
+                        $editorRotate   = $('<input type="range" value="0" step="5" min="0" max="360" />'),
                         $editorReset    = $('<input type="button" value="reset" />')
                     ;
 
@@ -389,7 +388,7 @@
 
                     $uploadedImage.appendTo($imageContainer);
                     $imageContainer.appendTo($editor);
-                    $editorZoom.appendTo($editor);
+                    $editorRatio.appendTo($editor);
                     $editorRotate.appendTo($editor);
                     $editorReset.appendTo($editor);
                     $editor.appendTo($('#{{ id }}'));
@@ -420,13 +419,15 @@
                             'build.cropper': function (e) {
                             },
                             'built.cropper': function (e) {
-                                initZoom($uploadedImage, $editorZoom);
+                                initZoom($uploadedImage, $editorRatio);
 
                                 // Init with previous value if exist
                                 if ('' !== $inputPublicUri.val()) {
-                                    $editorRotate.val($inputRotate.val()).trigger('input');
-                                    $editorZoom.val($inputZoom.val()).trigger('input');
-                                    $uploadedImage.cropper('moveTo', -($inputX.val() * $inputZoom.val()),  -($inputY.val() * $inputZoom.val()));
+                                    var data  = JSON.parse($inputData.val());
+                                    var ratio = $inputRatio.val();
+                                    $editorRatio.val(ratio).trigger('input');
+                                    $editorRotate.val(data.rotate).trigger('input');
+                                    $uploadedImage.cropper('moveTo', -(data.x * ratio), -(data.y * ratio));
                                 }
                             },
                             'cropstart.cropper': function (e) {
@@ -436,14 +437,14 @@
                             'cropend.cropper': function (e) {
                             },
                             'crop.cropper': function (e) {
-                                $inputX.val(Math.round(e.x));
-                                $inputY.val(Math.round(e.y));
-                                $inputWidth.val(Math.round(e.width));
-                                $inputHeight.val(Math.round(e.height));
-                                $inputRotate.val(e.rotate);
+                                $inputData.val(JSON.stringify($uploadedImage.cropper('getData')));
+                                $inputContainerData.val(JSON.stringify($uploadedImage.cropper('getContainerData')));
+                                $inputImageData.val(JSON.stringify($uploadedImage.cropper('getImageData')));
+                                $inputCanvasData.val(JSON.stringify($uploadedImage.cropper('getCanvasData')));
+                                $inputCropBoxData.val(JSON.stringify($uploadedImage.cropper('getCropBoxData')));
                             },
                             'zoom.cropper': function (e) {
-                                $inputZoom.val(e.ratio)
+                                $inputRatio.val(e.ratio)
                             }
                         })
                         .cropper({
@@ -465,14 +466,14 @@
                         $uploadedImage.cropper('rotateTo', $(this).val());
                     });
 
-                    $editorZoom.on('input', function(event) {
+                    $editorRatio.on('input', function(event) {
                         $uploadedImage.cropper('zoomTo', $(this).val());
                     });
 
                     $editorReset.on('click', function(event) {
                         $uploadedImage.cropper('reset');
                         $editorRotate.val(0);
-                        initZoom($uploadedImage, $editorZoom);
+                        initZoom($uploadedImage, $editorRatio);
                     });
 
                     if (URL) {
