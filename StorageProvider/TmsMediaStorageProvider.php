@@ -78,7 +78,7 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
         // Reupload case
         if ($media->getProviderReference()) {
             // Remove the previous associated media
-            $this->remove($media);
+            $this->remove($media->getProviderReference());
         }
 
         $response = $this
