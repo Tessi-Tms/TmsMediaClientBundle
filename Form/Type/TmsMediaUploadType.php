@@ -76,6 +76,13 @@ class TmsMediaUploadType extends AbstractType
                     'label'    => ' ',
                     'required' => $isUploadedFileRequired
                 ));
+
+                foreach ($options['metadata'] as $key => $value) {
+                    $form->add($key, 'hidden', array(
+                        'required' => false,
+                        'data'     => $value,
+                    ));
+                }
             },
             50
         );
@@ -110,10 +117,16 @@ class TmsMediaUploadType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
-            'data_class'     => 'Tms\Bundle\MediaClientBundle\Model\Media',
-            'error_bubbling' => false,
-        ));
+        $resolver
+            ->setDefaults(array(
+                'data_class'     => 'Tms\Bundle\MediaClientBundle\Model\Media',
+                'error_bubbling' => false,
+                'metadata'       => array(),
+            ))
+            ->setAllowedTypes(array(
+                'metadata'       => array('array'),
+            ))
+        ;
     }
 
     /**

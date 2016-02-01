@@ -59,51 +59,55 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
      */
     public function doAdd(Media & $media)
     {
-        if (null === $media->getUploadedFile() || !$media->getUploadedFile()->getPathName()) {
-            if (!empty($media->getMetadata())) {
-                $this
-                    ->getMediaApiClient()
-                    ->put(
-                        sprintf('/media/%s', $media->getProviderReference()),
-                        array('metadata' => $media->getMetadata())
-                    )
-                ;
-
-                return true;
-            }
-
-            return false;
-        }
-
-        // Reupload case
+        // Update case
         if ($media->getProviderReference()) {
-            // Remove the previous associated media
-            $this->remove($media->getProviderReference());
+            if (null === $media->getUploadedFile()) {
+                if (!empty($media->getMetadata())) {
+                    $this
+                        ->getMediaApiClient()
+                        ->put(
+                            sprintf('/media/%s', $media->getProviderReference()),
+                            array('metadata' => $media->getMetadata())
+                        )
+                    ;
+
+                    return true;
+                }
+
+                return false;
+            } else {
+                // Reupload case, remove the previous associated media
+                $this->remove($media->getProviderReference());
+            }
         }
 
-        $response = $this
-            ->getMediaApiClient()
-            ->post('/media', array(
-                'source'   => $this->getSourceName(),
-                'name'     => $media->getUploadedFile()->getClientOriginalName(),
-                'metadata' => $media->getMetadata(),
-                'media'    => curl_file_create(
-                    $media->getUploadedFile()->getPathName(),
-                    $media->getUploadedFile()->getMimeType(),
-                    $media->getUploadedFile()->getClientOriginalName()
-                )
-            ))
-        ;
+        if (null !== $media->getUploadedFile()) {
+            $response = $this
+                ->getMediaApiClient()
+                ->post('/media', array(
+                    'source'   => $this->getSourceName(),
+                    'name'     => $media->getUploadedFile()->getClientOriginalName(),
+                    'metadata' => $media->getMetadata(),
+                    'media'    => curl_file_create(
+                        $media->getUploadedFile()->getPathName(),
+                        $media->getUploadedFile()->getMimeType(),
+                        $media->getUploadedFile()->getClientOriginalName()
+                    )
+                ))
+            ;
 
-        $apiMedia = json_decode($response->getContent(), true);
+            $apiMedia = json_decode($response->getContent(), true);
 
-        $media->setProviderData($apiMedia);
-        $media->setMimeType($apiMedia['mimeType']);
-        $media->setProviderReference($apiMedia['reference']);
-        $media->setExtension($apiMedia['extension']);
-        $media->setPublicUri($apiMedia['publicUri']);
+            $media->setProviderData($apiMedia);
+            $media->setMimeType($apiMedia['mimeType']);
+            $media->setProviderReference($apiMedia['reference']);
+            $media->setExtension($apiMedia['extension']);
+            $media->setPublicUri($apiMedia['publicUri']);
 
-        return true;
+            return true;
+        }
+
+        return false;
     }
 
     /**
