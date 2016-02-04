@@ -79,6 +79,7 @@ class Media implements \Serializable
      * toString.
      *
      * @return string
+     */
     public function __toString()
     {
         return sprintf('[%s] %s',
@@ -86,7 +87,6 @@ class Media implements \Serializable
             $this->getProviderReference()
         );
     }
-     */
 
     /**
      * Magic setter.
