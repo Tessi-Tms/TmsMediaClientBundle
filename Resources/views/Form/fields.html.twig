@@ -379,7 +379,7 @@
                         $uploadedImage  = $('<img src="" />'),
                         $editorRatio    = $('<input type="range"{%- for attrname, attrvalue in zoom_attr %} {{ attrname }}="{{ attrvalue }}"{%- endfor -%}/>'),
                         $editorRotate   = $('<input type="range"{%- for attrname, attrvalue in rotate_attr %} {{ attrname }}="{{ attrvalue }}"{%- endfor -%}/>'),
-                        $editorReset    = $('<input type="button"{%- for attrname, attrvalue in reset_attr %} {{ attrname }}="{{ attrvalue }}"{%- endfor -%}/>'),
+                        $editorReset    = $('<input type="button"{%- for attrname, attrvalue in reset_attr %} {{ attrname }}="{{ attrvalue }}"{%- endfor -%}/>')
                     ;
 
                     if ('' !== $inputPublicUri.val()) {
