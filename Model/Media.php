@@ -129,10 +129,9 @@ class Media implements \Serializable
         $subMethod = substr($method, 0, 3);
 
         if (in_array($subMethod, array('set', 'get'))) {
-            $property = substr($method, 3);
+            $property = Inflector::tableize(substr($method, 3));
 
             if ('set' === $subMethod) {
-                var_dump($arguments); die;
                 $this->$property = $arguments;
             }
         }
