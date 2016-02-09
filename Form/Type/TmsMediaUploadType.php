@@ -33,7 +33,7 @@ class TmsMediaUploadType extends AbstractType
     /**
      * Constructor
      *
-     * @param TmsMediaStorageProvider $mediaClientManager
+     * @param TmsMediaStorageProvider $storageProvider
      * @param ValidatorInterface $validator
      */
     public function __construct(TmsMediaStorageProvider $storageProvider, ValidatorInterface $validator)
