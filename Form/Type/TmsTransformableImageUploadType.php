@@ -100,6 +100,9 @@ class TmsTransformableImageUploadType extends TmsMediaUploadType
     {
         $view->vars['container_width']  = $options['container_width'];
         $view->vars['container_height'] = $options['container_height'];
+        $view->vars['zoom_attr']        = $options['zoom_attr'];
+        $view->vars['rotate_attr']      = $options['rotate_attr'];
+        $view->vars['reset_attr']       = $options['reset_attr'];
     }
 
     /**
@@ -114,8 +117,15 @@ class TmsTransformableImageUploadType extends TmsMediaUploadType
                 'container_width'  => 200,
                 'container_height' => 200,
                 'zoom_attr'        => array(),
-                'rotate_attr'      => array(),
-                'reset_attr'       => array(),
+                'rotate_attr'      => array(
+                    'value' => 0,
+                    'step'  => 5,
+                    'min'   => 0,
+                    'max'   => 360,
+                ),
+                'reset_attr'       => array(
+                    'value' => 'reset',
+                ),
             ))
             ->setAllowedTypes(array(
                 'container_width'  => array('integer'),
