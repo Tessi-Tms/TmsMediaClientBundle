@@ -48,7 +48,7 @@ class Media implements \Serializable
     protected $extension;
 
     /**
-     * @var string
+     * @var array
      */
     protected $metadata;
 
@@ -73,6 +73,7 @@ class Media implements \Serializable
     public function __construct()
     {
         $this->publicUri = null;
+        $this->metadata  = array();
     }
 
     /**
