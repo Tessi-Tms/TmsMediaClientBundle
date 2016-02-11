@@ -14,7 +14,6 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\OptionsResolver\Options;
 use Tms\Bundle\MediaClientBundle\Model\Media;
 
 class TmsTransformableImageUploadType extends TmsMediaUploadType
@@ -127,16 +126,6 @@ class TmsTransformableImageUploadType extends TmsMediaUploadType
                 'zoom_attr'        => array('array'),
                 'rotate_attr'      => array('array'),
                 'reset_attr'       => array('array'),
-            ))
-            ->setNormalizers(array(
-                'rotate_attr' => function(Options $options, $value) {
-                    return array_merge($value, array(
-                        'value' => 0,
-                        'step'  => 5,
-                        'min'   => 0,
-                        'max'   => 360,
-                    ));
-                }
             ))
         ;
     }

@@ -374,12 +374,14 @@
                         $inputFile          = $('#{{ id }}_uploadedFile')
                     ;
 
-                    var $editor         = $('<div class="tms_image_editor"></div>'),
-                        $imageContainer = $('<div class="image_container" style="width:{{ container_width }}px; height:{{ container_height }}px;"></div>'),
-                        $uploadedImage  = $('<img src="" />'),
-                        $editorRatio    = $('<input type="range"{%- for attrname, attrvalue in zoom_attr %} {{ attrname }}="{{ attrvalue }}"{%- endfor -%}/>'),
-                        $editorRotate   = $('<input type="range"{%- for attrname, attrvalue in rotate_attr %} {{ attrname }}="{{ attrvalue }}"{%- endfor -%}/>'),
-                        $editorReset    = $('<input type="button"{%- for attrname, attrvalue in reset_attr %} {{ attrname }}="{{ attrvalue }}"{%- endfor -%}/>')
+                    var $editor                = $('<div class="tms_image_editor"></div>'),
+                        $imageContainer        = $('<div class="image_container" style="width:{{ container_width }}px; height:{{ container_height }}px;"></div>'),
+                        $uploadedImage         = $('<img src="" />'),
+                        $editorRatioContainer  = $('<span{%- for attrname, attrvalue in zoom_attr %} {{ attrname }}="{{ attrvalue }}"{%- endfor -%}></span>'),
+                        $editorRatio           = $('<input type="range" />'),
+                        $editorRotateContainer = $('<span{%- for attrname, attrvalue in rotate_attr %} {{ attrname }}="{{ attrvalue }}"{%- endfor -%}></span>'),
+                        $editorRotate          = $('<input type="range" max="360" min="0" step="5" value="0" />'),
+                        $editorReset           = $('<input type="button"{%- for attrname, attrvalue in reset_attr %} {{ attrname }}="{{ attrvalue }}"{%- endfor -%}/>')
                     ;
 
                     if ('' !== $inputPublicUri.val()) {
@@ -389,8 +391,10 @@
                     $uploadedImage.appendTo($imageContainer);
                     $imageContainer.appendTo($editor);
                     $editorReset.insertAfter($inputFile);
-                    $editorRotate.insertAfter($inputFile);
-                    $editorRatio.insertAfter($inputFile);
+                    $editorRotate.appendTo($editorRotateContainer);
+                    $editorRotateContainer.insertAfter($inputFile);
+                    $editorRatio.appendTo($editorRatioContainer);
+                    $editorRatioContainer.insertAfter($inputFile);
                     $editor.appendTo($('#{{ id }}'));
 
                     var initZoom = function ($img, $zoom) {
