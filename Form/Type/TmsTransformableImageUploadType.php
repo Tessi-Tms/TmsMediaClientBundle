@@ -41,14 +41,12 @@ class TmsTransformableImageUploadType extends TmsMediaUploadType
 
                 if ($data instanceof Media) {
                     $metadata = $data->getMetadata();
-                    // Ugly hack !
-                    $metadata['cropper_ratio'] = (float)$metadata['cropper_ratio'];
                 }
 
                 $form
                     ->add('cropper_ratio', 'hidden', array(
                         'required' => false,
-                        'data'     => json_encode($metadata['cropper_ratio']),
+                        'data'     => floatval($metadata['cropper_ratio']),
                     ))
                     ->add('cropper_data', 'hidden', array(
                         'required' => false,

@@ -397,11 +397,15 @@
                     $editorRatioContainer.insertAfter($inputFile);
                     $editor.appendTo($('#{{ id }}'));
 
-                    var initZoom = function ($img, $zoom) {
+                    var initZoom = function ($img, $zoom, ratio = undefined) {
                         var containerData = $img.cropper('getContainerData');
                         var canvasData = $img.cropper('getCanvasData');
                         var wRatio = Math.round(containerData.width / canvasData.naturalWidth * 1000) / 1000;
                         var hRatio = Math.round(containerData.height / canvasData.naturalHeight * 1000) / 1000;
+
+                        if (undefined == ratio) {
+                            ratio  = Math.round(canvasData.width / canvasData.naturalWidth * 1000) / 1000;
+                        }
 
                         var maxImg    = Math.max(canvasData.naturalWidth, canvasData.naturalHeight);
                         var minCanvas = Math.min(containerData.width, containerData.height);
@@ -412,10 +416,10 @@
                         ;
 
                         $zoom.attr('step', Math.round(0.1 * avgRatio * 1000) / 1000);
-                        $zoom.attr('max', Math.round(maxRatio * 10));
+                        $zoom.attr('max', Math.round(maxRatio * 8));
                         $zoom.attr('min', minRatio > 1 ? 1 : minRatio);
 
-                        $zoom.val(wRatio);
+                        $zoom.val(ratio).trigger('input');
                     };
 
                     $uploadedImage
@@ -423,16 +427,7 @@
                             'build.cropper': function (e) {
                             },
                             'built.cropper': function (e) {
-                                initZoom($uploadedImage, $editorRatio);
-
-                                // Init with previous value if exist
-                                if ('' !== $inputPublicUri.val()) {
-                                    var data  = JSON.parse($inputData.val());
-                                    var ratio = $inputRatio.val();
-                                    $editorRatio.val(ratio).trigger('input');
-                                    $editorRotate.val(data.rotate).trigger('input');
-                                    $uploadedImage.cropper('moveTo', -(data.x * ratio), -(data.y * ratio));
-                                }
+                                initZoom($uploadedImage, $editorRatio, $inputRatio.val());
                             },
                             'cropstart.cropper': function (e) {
                             },
@@ -448,10 +443,11 @@
                                 $inputCropBoxData.val(JSON.stringify($uploadedImage.cropper('getCropBoxData')));
                             },
                             'zoom.cropper': function (e) {
-                                $inputRatio.val(e.ratio)
+                                $inputRatio.val(e.ratio);
                             }
                         })
                         .cropper({
+                            data: JSON.parse($inputData.val()),
                             viewMode: 0,
                             dragMode: 'move',
                             background: false,
@@ -476,7 +472,6 @@
 
                     $editorReset.on('click', function(event) {
                         $uploadedImage.cropper('reset');
-                        $editorRotate.val(0);
                         initZoom($uploadedImage, $editorRatio);
                     });
 
