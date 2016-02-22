@@ -44,29 +44,35 @@ class TmsTransformableImageUploadType extends TmsMediaUploadType
                 }
 
                 $form
-                    ->add('cropper_ratio', 'hidden', array(
+                    ->add('cropper_ratio', 'textarea', array(
                         'required' => false,
                         'data'     => floatval($metadata['cropper_ratio']),
+                        'attr' =>  array('cols' => 100),
                     ))
-                    ->add('cropper_data', 'hidden', array(
+                    ->add('cropper_data', 'textarea', array(
                         'required' => false,
                         'data'     => json_encode($metadata['cropper_data']),
+                        'attr' =>  array('cols' => 100),
                     ))
-                    ->add('cropper_container_data', 'hidden', array(
+                    ->add('cropper_container_data', 'textarea', array(
                         'required' => false,
                         'data'     => json_encode($metadata['cropper_container_data']),
+                        'attr' =>  array('cols' => 100),
                     ))
-                    ->add('cropper_image_data', 'hidden', array(
+                    ->add('cropper_image_data', 'textarea', array(
                         'required' => false,
                         'data'     => json_encode($metadata['cropper_image_data']),
+                        'attr' =>  array('cols' => 100),
                     ))
-                    ->add('cropper_canvas_data', 'hidden', array(
+                    ->add('cropper_canvas_data', 'textarea', array(
                         'required' => false,
                         'data'     => json_encode($metadata['cropper_canvas_data']),
+                        'attr' =>  array('cols' => 100),
                     ))
-                    ->add('cropper_crop_box_data', 'hidden', array(
+                    ->add('cropper_crop_box_data', 'textarea', array(
                         'required' => false,
                         'data'     => json_encode($metadata['cropper_crop_box_data']),
+                        'attr' =>  array('cols' => 100),
                     ))
                 ;
             },
