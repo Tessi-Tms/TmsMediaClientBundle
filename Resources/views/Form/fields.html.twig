@@ -416,7 +416,7 @@
                         ;
 
                         $zoom.attr('step', Math.round(0.1 * avgRatio * 1000) / 1000);
-                        $zoom.attr('max', Math.round(maxRatio * 8));
+                        $zoom.attr('max', Math.round(maxRatio * 10 * 1000) / 1000);
                         $zoom.attr('min', minRatio > 1 ? 1 : minRatio);
 
                         $zoom.val(ratio).trigger('input');
