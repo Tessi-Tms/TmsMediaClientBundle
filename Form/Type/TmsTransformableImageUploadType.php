@@ -31,7 +31,7 @@ class TmsTransformableImageUploadType extends TmsMediaUploadType
                 $form = $event->getForm();
                 $data = $event->getData();
                 $metadata = array(
-                    'cropper_ratio'          => 1,
+                    'cropper_ratio'          => null,
                     'cropper_data'           => array(),
                     'cropper_container_data' => array(),
                     'cropper_image_data'     => array(),

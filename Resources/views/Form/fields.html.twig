@@ -403,8 +403,8 @@
                         var wRatio = Math.round(containerData.width / canvasData.naturalWidth * 1000) / 1000;
                         var hRatio = Math.round(containerData.height / canvasData.naturalHeight * 1000) / 1000;
 
-                        if (undefined == ratio) {
-                            ratio  = Math.round(canvasData.width / canvasData.naturalWidth * 1000) / 1000;
+                        if (0 == ratio || undefined == ratio) {
+                            ratio = Math.round(canvasData.width / canvasData.naturalWidth * 1000) / 1000;
                         }
 
                         var maxImg    = Math.max(canvasData.naturalWidth, canvasData.naturalHeight);
