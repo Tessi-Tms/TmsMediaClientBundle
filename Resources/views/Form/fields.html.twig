@@ -397,7 +397,7 @@
                     $editorRatioContainer.insertAfter($inputFile);
                     $editor.appendTo($('#{{ id }}'));
 
-                    var initZoom = function ($img, $zoom, ratio = undefined) {
+                    var initZoom = function ($img, $zoom, ratio) {
                         var containerData = $img.cropper('getContainerData');
                         var canvasData = $img.cropper('getCanvasData');
                         var wRatio = Math.round(containerData.width / canvasData.naturalWidth * 1000) / 1000;
