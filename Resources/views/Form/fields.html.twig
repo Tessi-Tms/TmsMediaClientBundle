@@ -423,6 +423,16 @@
                         $zoom.val(ratio).trigger('input');
                     };
 
+                    var initRotate = function ($img, $rotate, degree) {
+                        var imageData = $img.cropper('getImageData');
+
+                        if (0 == degree || undefined == degree) {
+                            degree = imageData.rotate;
+                        }
+
+                        $rotate.val(degree).trigger('input');
+                    }
+
                     var updateInputs = function ($img) {
                         $inputData.val(JSON.stringify($img.cropper('getData', true)));
                         $inputContainerData.val(JSON.stringify($img.cropper('getContainerData')));
@@ -437,7 +447,7 @@
                             dragMode: 'move',
                             background: false,
                             guides: false,
-                            checkOrientation: false,
+                            checkOrientation: true,
                             cropBoxMovable: false,
                             cropBoxResizable: false,
                             toggleDragModeOnDblclick: false,
@@ -447,11 +457,13 @@
                             minCropBoxWidth: {{ container_width }},
                             minCropBoxHeight: {{ container_height }},
                             built: function(e) {
+                                var degree = undefined == defaultData ? undefined : defaultData.rotate;
+
                                 initZoom($uploadedImage, $editorRatio, defaultRatio);
+                                initRotate($uploadedImage, $editorRotate, degree);
 
                                 // Init with previous value if defined
                                 if (undefined != defaultData) {
-                                   $editorRotate.val(defaultData.rotate).trigger('input');
                                    $uploadedImage.cropper('moveTo', -(defaultData.x * defaultRatio), -(defaultData.y * defaultRatio));
                                    updateInputs($uploadedImage);
                                 }
@@ -476,7 +488,7 @@
                     $editorReset.on('click', function(event) {
                         $uploadedImage.cropper('reset');
                         initZoom($uploadedImage, $editorRatio);
-                        $editorRotate.val(0).trigger('input');
+                        initRotate($uploadedImage, $editorRotate);
                     });
 
                     if (URL) {
