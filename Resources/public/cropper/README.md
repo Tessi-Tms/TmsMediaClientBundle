@@ -5,7 +5,7 @@
 - [Homepage](http://fengyuanchen.github.io/cropper)
 - [Cropper without jQuery](https://github.com/fengyuanchen/cropperjs)
 
-[![Build Status Images](https://travis-ci.org/fengyuanchen/cropper.svg)](https://travis-ci.org/fengyuanchen/cropper) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/fengyuanchen/cropper?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Build Status Images](https://travis-ci.org/fengyuanchen/cropper.svg)](https://travis-ci.org/fengyuanchen/cropper)
 
 
 
@@ -407,6 +407,8 @@ The minimum height of the canvas (image wrapper).
 
 The minimum width of the crop box.
 
+**Note:** This size is relative to the page, not the image.
+
 
 ### minCropBoxHeight
 
@@ -414,6 +416,8 @@ The minimum width of the crop box.
 - Default: `0`
 
 The minimum height of the crop box.
+
+**Note:** This size is relative to the page, not the image.
 
 
 ### build
@@ -517,11 +521,16 @@ Reset the image and crop box to their initial states.
 Clear the crop box.
 
 
-### replace(url)
+### replace(url[, onlyColorChanged])
 
 - **url**:
   - Type: `String`
   - A new image url.
+
+- **onlyColorChanged** (optional):
+  - Type: `Boolean`
+  - If only change the color, not the size, then the cropper only need to change the srcs of all related images, not need to rebuild the cropper. This can be used for applying filters.
+  - If not present, its default value is `false`.
 
 Replace the image's src and rebuild the cropper.
 
