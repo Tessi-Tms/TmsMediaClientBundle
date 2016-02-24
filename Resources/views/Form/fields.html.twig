@@ -426,8 +426,11 @@
                     var initRotate = function ($img, $rotate, degree) {
                         var imageData = $img.cropper('getImageData');
 
-                        if (0 == degree || undefined == degree) {
-                            degree = imageData.rotate;
+                        if (undefined == degree) {
+                            degree = 0;
+                            if (undefined != imageData.rotate) {
+                                degree = imageData.rotate;
+                            }
                         }
 
                         $rotate.val(degree).trigger('input');
