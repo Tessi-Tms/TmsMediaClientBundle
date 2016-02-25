@@ -420,7 +420,7 @@
                         $zoom.attr('min', minValue);
                         $zoom.attr('value', ratio);
 
-                        $zoom.val(ratio).trigger('input');
+                        $zoom.val(ratio).trigger('change');
                     };
 
                     var initRotate = function ($img, $rotate, degree) {
@@ -433,7 +433,7 @@
                             }
                         }
 
-                        $rotate.val(degree).trigger('input');
+                        $rotate.val(degree).trigger('change');
                     }
 
                     var updateInputs = function ($img) {
@@ -480,11 +480,11 @@
                         })
                     ;
 
-                    $editorRotate.on('input', function(event) {
+                    $editorRotate.on('change input', function(event) {
                         $uploadedImage.cropper('rotateTo', $(this).val());
                     });
 
-                    $editorRatio.on('input', function(event) {
+                    $editorRatio.on('change input', function(event) {
                         $uploadedImage.cropper('zoomTo', $(this).val());
                     });
 
