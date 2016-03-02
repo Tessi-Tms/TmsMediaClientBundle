@@ -48,46 +48,29 @@ class TmsTransformableImageUploadType extends TmsMediaUploadType
                         'required' => false,
                         'data'     => floatval($metadata['cropper_ratio']),
                     ))
-                    ->add('cropper_data', 'hidden', array(
+                    ->add('cropper_data', 'tms_hidden_json', array(
                         'required' => false,
-                        'data'     => json_encode($metadata['cropper_data']),
+                        'data'     => $metadata['cropper_data'],
                     ))
-                    ->add('cropper_container_data', 'hidden', array(
+                    ->add('cropper_container_data', 'tms_hidden_json', array(
                         'required' => false,
-                        'data'     => json_encode($metadata['cropper_container_data']),
+                        'data'     => $metadata['cropper_container_data'],
                     ))
-                    ->add('cropper_image_data', 'hidden', array(
+                    ->add('cropper_image_data', 'tms_hidden_json', array(
                         'required' => false,
-                        'data'     => json_encode($metadata['cropper_image_data']),
+                        'data'     => $metadata['cropper_image_data'],
                     ))
-                    ->add('cropper_canvas_data', 'hidden', array(
+                    ->add('cropper_canvas_data', 'tms_hidden_json', array(
                         'required' => false,
-                        'data'     => json_encode($metadata['cropper_canvas_data']),
+                        'data'     => $metadata['cropper_canvas_data'],
                     ))
-                    ->add('cropper_crop_box_data', 'hidden', array(
+                    ->add('cropper_crop_box_data', 'tms_hidden_json', array(
                         'required' => false,
-                        'data'     => json_encode($metadata['cropper_crop_box_data']),
+                        'data'     => $metadata['cropper_crop_box_data'],
                     ))
                 ;
             },
             100
-        );
-
-        $builder->addEventListener(
-            FormEvents::PRE_SUBMIT,
-            function(FormEvent $event) {
-                $form = $event->getForm();
-                $data = $event->getData();
-
-                $data['cropper_ratio']          = (float)$data['cropper_ratio'];
-                $data['cropper_data']           = json_decode($data['cropper_data'], true);
-                $data['cropper_container_data'] = json_decode($data['cropper_container_data'], true);
-                $data['cropper_image_data']     = json_decode($data['cropper_image_data'], true);
-                $data['cropper_canvas_data']    = json_decode($data['cropper_canvas_data'], true);
-                $data['cropper_crop_box_data']  = json_decode($data['cropper_crop_box_data'], true);
-
-                $event->setData($data);
-            }
         );
     }
 

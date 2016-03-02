@@ -43,3 +43,8 @@ services:
         arguments: [@tms_media_client.storage_provider.tms_media, @validator]
         tags:
             - { name: form.type, alias: tms_transformable_image_upload }
+
+    tms_media_client.form.type.tms_hidden_json:
+        class: Tms\Bundle\MediaClientBundle\Form\Type\TmsHiddenJsonType
+        tags:
+            - { name: form.type, alias: tms_hidden_json }
