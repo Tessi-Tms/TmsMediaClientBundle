@@ -90,6 +90,26 @@ class Media implements \Serializable
     }
 
     /**
+     * toArray.
+     *
+     * @return array
+     */
+    public function __toArray()
+    {
+        return array(
+            'publicUri'         => $this->publicUri,
+            'mimeType'          => $this->mimeType,
+            'providerName'      => $this->providerName,
+            'providerReference' => $this->providerReference,
+            'providerData'      => $this->providerData,
+            'extension'         => $this->extension,
+            'metadata'          => $this->metadata,
+            'createdAt'         => $this->createdAt,
+            'updatedAt'         => $this->updatedAt,
+        );
+    }
+
+    /**
      * Magic setter.
      *
      * @param string $name  The setter name.
@@ -145,17 +165,7 @@ class Media implements \Serializable
      */
     public function serialize()
     {
-        return serialize(array(
-            'publicUri'         => $this->publicUri,
-            'mimeType'          => $this->mimeType,
-            'providerName'      => $this->providerName,
-            'providerReference' => $this->providerReference,
-            'providerData'      => $this->providerData,
-            'extension'         => $this->extension,
-            'metadata'          => $this->metadata,
-            'createdAt'         => $this->createdAt,
-            'updatedAt'         => $this->updatedAt,
-        ));
+        return serialize($this->__toArray());
     }
 
     /**
