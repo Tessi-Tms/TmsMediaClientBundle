@@ -17,6 +17,7 @@ use Symfony\Component\Form\Extension\Validator\Constraints\Form;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\ValidatorInterface;
 use Tms\Bundle\MediaClientBundle\StorageProvider\TmsMediaStorageProvider;
+use Tms\Bundle\MediaClientBundle\Model\Media;
 
 class TmsMediaUploadType extends AbstractType
 {
@@ -40,6 +41,22 @@ class TmsMediaUploadType extends AbstractType
     {
         $this->storageProvider = $storageProvider;
         $this->validator = $validator;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        if (!$view->vars['required']) {
+            return;
+        }
+
+        $media = $view->vars['data'];
+
+        if ($media instanceof Media && null !== $media->getPublicUri()) {
+            $view->vars['required'] = false;
+        }
     }
 
     /**

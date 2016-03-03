@@ -292,6 +292,7 @@
             ;
 
             $inputFile.loadUploadedArea(url, mimeType, reference, null);
+            $inputFile.prop('required', {{ required ? 'true' : 'false' }});
 
             $inputFile.on('change', function(event) {
                 var files = event.target.files;
