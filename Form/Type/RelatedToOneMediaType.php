@@ -9,6 +9,8 @@ namespace Tms\Bundle\MediaClientBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class RelatedToOneMediaType extends AbstractType
@@ -20,9 +22,28 @@ class RelatedToOneMediaType extends AbstractType
     {
         parent::buildForm($builder, $options);
 
-        if(!$builder->getData()) {
-            $builder->add('uploadedFile', 'file', array('required' => true));
-        }
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function(FormEvent $event) use ($options) {
+                $isUploadedFileRequired = $options['required'];
+                $form = $event->getForm();
+                if (null !== $event->getData()) {
+                    $isUploadedFileRequired = false;
+                }
+                $form->add('uploadedFile', 'file', array(
+                    'label'    => ' ',
+                    'required' => $isUploadedFileRequired
+                ));
+
+                foreach ($options['metadata'] as $key => $value) {
+                    $form->add($key, 'hidden', array(
+                        'required' => false,
+                        'data'     => $value,
+                    ));
+                }
+            },
+            50
+        );
     }
 
     /**
@@ -31,12 +52,18 @@ class RelatedToOneMediaType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         parent::setDefaultOptions($resolver);
-        $resolver->setDefaults(array(
-            'cascade_validation' => true,
-            'attr' => array(
-                'class' => sprintf('tms_media_client__%s', $this->getName())
-            ),
-        ));
+        $resolver
+            ->setDefaults(array(
+                'cascade_validation' => true,
+                'metadata'           => array(),
+                'attr'               => array(
+                    'class' => sprintf('tms_media_client__%s', $this->getName())
+                ),
+            ))
+            ->setAllowedTypes(array(
+                'metadata' => array('array'),
+            ))
+        ;
     }
 
     /**

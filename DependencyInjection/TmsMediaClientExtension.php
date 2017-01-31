@@ -30,9 +30,14 @@ class TmsMediaClientExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
-         $container->setParameter(
+        $container->setParameter(
             'tms_media_client.api.source_name',
             $config['source_name']
+        );
+
+        $container->setParameter(
+            'tms_media_client.default_reference_prefix',
+            $config['default_reference_prefix']
         );
     }
 }
