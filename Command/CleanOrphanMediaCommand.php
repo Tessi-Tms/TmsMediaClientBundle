@@ -17,6 +17,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Doctrine\Bundle\DoctrineBundle\Command\Proxy\DoctrineCommandHelper;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Helper\Table;
 
 class CleanOrphanMediaCommand extends ContainerAwareCommand
 {
@@ -26,8 +28,10 @@ class CleanOrphanMediaCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('tms:media:clean-orphan')
-            ->setDescription('Clean orphan media')
+            ->setName('tms-media:clean:orphan')
+            ->setDescription('Display or remove media with unavailable associated files')
+            ->addOption('limit', 'l', InputOption::VALUE_REQUIRED, 'The limit to processed', 10000)
+            ->addOption('offset', 'o', InputOption::VALUE_REQUIRED, 'The offset to processed', 1)
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'if present, orphan media will be removed')
             ->addOption('em', null, InputOption::VALUE_OPTIONAL, 'The entity manager to use for this command', 'default')
             ->setHelp(<<<EOT
@@ -50,22 +54,110 @@ EOT
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $timeStart = microtime(true);
         DoctrineCommandHelper::setApplicationEntityManager(
             $this->getApplication(),
             $input->getOption('em')
         );
-        $entityManager = $this->getContainer()->get('doctrine')->getManager();
-        $medias = $entityManager->getRepository('TmsMediaClientBundle:Media')->findAll();
+        $providerHandler = $this
+            ->getContainer()
+            ->get('tms_media_client.storage_provider_handler')
+        ;
 
-        $providerHandler = $this->getContainer()->get('tms_media_client.storage_provider_handler');
+        $entityManager = $this
+            ->getContainer()
+            ->get('doctrine')
+            ->getManager()
+        ;
+
+        $medias = $entityManager
+            ->getRepository('TmsMediaClientBundle:Media')
+            ->findBy(
+                array(),
+                array(),
+                $input->getOption('limit'),
+                $input->getOption('offset')
+        );
+        $orphans = array();
+
+        $progress = new ProgressBar($output, count($medias));
+        $output->writeln('');
+        $progress->start();
+        $table = new Table($output);
+        $table->setHeaders(array('Action', 'ID', 'PublicUri'));
+
         foreach ($medias as $media) {
-            var_dump($media->getProviderReference());
-            /*
-            $storageProvider = $providerHandler->getStorageProvider($media->getProviderName());
-            var_dump($storageProvider->getName(), $storageProvider->getMediaPublicUrl($media->getProviderReference()));
-            */
+            $url = sprintf('http:%s.json', $media->getPublicUri());
+
+            try {
+                $statusCode = $this->getHttpStatusCode($url);
+                if (200 !== $statusCode) {
+                    $orphans[] = $media;
+
+                    if ($input->getOption('force')) {
+                        $table->addRow(array(
+                            'REMOVED',
+                            $media->getId(),
+                            $media->getPublicUri()
+                        ));
+
+                        $entityManager->remove($media);
+                    } else {
+                        $table->addRow(array(
+                            'TO REMOVE',
+                            $media->getId(),
+                            $media->getPublicUri()
+                        ));
+                    }
+                }
+            } catch (\Exception $e) {
+                $table->addRow(array(
+                    'ERROR: '.$e->getMessage(),
+                    $media->getId(),
+                    $media->getPublicUri()
+                ));
+            }
+
+            $progress->advance();
         }
 
-        //die('TODO: Add soft delete on media when remove. Use this command to inform provider to delete the media, then do the job.');
+        $entityManager->flush();
+
+        $progress->finish();
+        $output->writeln('');
+        $output->writeln('');
+
+        $table->setStyle('borderless');
+        $table->render();
+
+        $timeEnd = microtime(true);
+        $time = $timeEnd - $timeStart;
+
+        $output->writeln('');
+        $output->writeln(sprintf(
+            '<comment>%d orphan media processed [%d sec]</comment>',
+            count($orphans),
+            $time
+        ));
+    }
+
+    /**
+     * Returns the HTTP status code for a given URL.
+     *
+     * @param string $url The url to join
+     *
+     * @return int
+     */
+    protected function getHttpStatusCode($url)
+    {
+        $headers = get_headers($url);
+
+        $code = (int)substr($headers[0], 9, 3);
+
+        if (301 === $code) {
+            return $this->getHttpStatusCode(substr($headers[1], 10));
+        }
+
+        return $code;
     }
 }
