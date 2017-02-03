@@ -93,22 +93,18 @@ EOT
                 $statusCode = $this->getHttpStatusCode($url);
                 if (200 !== $statusCode) {
                     $orphans[] = $media;
+                    $action = 'TO REMOVE';
 
                     if ($input->getOption('force')) {
-                        $table->addRow(array(
-                            'REMOVED',
-                            $media->getId(),
-                            $media->getPublicUri()
-                        ));
-
                         $entityManager->remove($media);
-                    } else {
-                        $table->addRow(array(
-                            'TO REMOVE',
-                            $media->getId(),
-                            $media->getPublicUri()
-                        ));
+                        $action = 'REMOVED';
                     }
+
+                    $table->addRow(array(
+                        $action,
+                        $media->getId(),
+                        $media->getPublicUri()
+                    ));
                 }
             } catch (\Exception $e) {
                 $table->addRow(array(
