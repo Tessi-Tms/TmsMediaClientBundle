@@ -9,7 +9,6 @@ services:
         arguments:
             - @da_api_client.api.media
             - %tms_media_client.api.source_name%
-            - %tms_media_client.default_reference_prefix%
         tags:
             - { name: tms_media_client.storage_provider, alias: Tms Media }
 

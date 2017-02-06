@@ -31,7 +31,6 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('source_name')->defaultNull()->end()
-                ->scalarNode('default_reference_prefix')->defaultNull()->end()
             ->end()
         ;
 

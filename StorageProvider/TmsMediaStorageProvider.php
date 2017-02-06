@@ -23,40 +23,16 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
     private $sourceName;
 
     /**
-     * @var string
-     */
-    private $defaultReferencePrefix;
-
-    /**
      * Constructor
      *
      * @param RestApiClientInterface $mediaApiClient
      * @param string                 $sourceName
-     * @param string                 $defaultReferencePrefix
      */
-    public function __construct($mediaApiClient, $sourceName, $defaultReferencePrefix)
+    public function __construct($mediaApiClient, $sourceName)
     {
-        $this->mediaApiClient         = $mediaApiClient;
-        $this->sourceName             = $sourceName;
-        $this->defaultReferencePrefix = $defaultReferencePrefix;
+        $this->mediaApiClient = $mediaApiClient;
+        $this->sourceName     = $sourceName;
     }
-
-    /**
-     */
-    private function getMetadata(Media $media)
-    {
-        $metadata = $media->getMetadata();
-
-        if (
-            !isset($metadata['prefix']) &&
-            null !== $this->getDefaultReferencePrefix()
-        ) {
-            $metadata['prefix'] = $this->getDefaultReferencePrefix();
-        }
-
-        return $metadata;
-    }
-
 
     /**
      * Get MediaClient
@@ -79,16 +55,6 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
     }
 
     /**
-     * Get default ReferencePrefix
-     *
-     * @return string
-     */
-    public function getDefaultReferencePrefix()
-    {
-        return $this->defaultReferencePrefix;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function doAdd(Media & $media)
@@ -101,7 +67,7 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
                         ->getMediaApiClient()
                         ->put(
                             sprintf('/media/%s', $media->getProviderReference()),
-                            array('metadata' => $this->getMetadata($media))
+                            array('metadata' => $media->getMetadata())
                         )
                     ;
 
@@ -121,7 +87,7 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
                 ->post('/media', array(
                     'source'   => $this->getSourceName(),
                     'name'     => $media->getUploadedFile()->getClientOriginalName(),
-                    'metadata' => $this->getMetadata($media),
+                    'metadata' => $media->getMetadata(),
                     'media'    => curl_file_create(
                         $media->getUploadedFile()->getPathName(),
                         $media->getUploadedFile()->getMimeType(),
