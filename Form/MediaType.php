@@ -26,6 +26,9 @@ class MediaType extends AbstractType
             ->add('mimeType', 'hidden', array(
                 'required' => false
             ))
+            ->add('extension', 'hidden', array(
+                'required' => false
+            ))
             ->add('providerReference', 'hidden', array(
                 'required' => false
             ))
