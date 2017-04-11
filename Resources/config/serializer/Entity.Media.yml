@@ -3,33 +3,49 @@ Tms\Bundle\MediaClientBundle\Entity\Media:
 
     properties:
         publicUri:
+            type: string
             expose: true
             groups: [tms_rest.collection, tms_rest.item]
+            serialized_name: public_uri
 
         mimeType:
+            type: string
             expose: true
             groups: [tms_rest.collection, tms_rest.item]
+            serialized_name: mime_type
 
         extension:
+            type: string
             expose: true
             groups: [tms_rest.collection, tms_rest.item]
+            serialized_name: extension
 
         providerName:
+            type: string
             expose: true
             groups: [tms_rest.collection, tms_rest.item]
+            serialized_name: provider_name
 
         providerReference:
+            type: string
             expose: true
             groups: [tms_rest.collection, tms_rest.item]
+            serialized_name: provider_reference
 
         metadata:
+            type: array
             expose: true
             groups: [tms_rest.collection, tms_rest.item]
+            serialized_name: metadata
 
         createdAt:
+            type: datetime
             expose: true
             groups: [tms_rest.collection, tms_rest.item]
+            serialized_name: created_at
 
         updatedAt:
+            type: datetime
             expose: true
             groups: [tms_rest.collection, tms_rest.item]
+            serialized_name: updated_at
