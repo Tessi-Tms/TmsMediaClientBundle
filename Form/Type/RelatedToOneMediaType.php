@@ -11,6 +11,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class RelatedToOneMediaType extends AbstractType
@@ -49,9 +50,9 @@ class RelatedToOneMediaType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        parent::setDefaultOptions($resolver);
+        parent::configureOptions($resolver);
         $resolver
             ->setDefaults(array(
                 'cascade_validation' => true,
@@ -60,10 +61,18 @@ class RelatedToOneMediaType extends AbstractType
                     'class' => sprintf('tms_media_client__%s', $this->getName()),
                 ),
             ))
-            ->setAllowedTypes(array(
-                'metadata' => array('array'),
-            ))
+            ->setAllowedTypes('metadata', array('array'))
         ;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @deprecated
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $this->configureOptions($resolver);
     }
 
     /**
@@ -71,14 +80,24 @@ class RelatedToOneMediaType extends AbstractType
      */
     public function getParent()
     {
-        return 'media';
+        return MediaType::class;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'related_to_one_media';
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @deprecated
+     */
+    public function getName()
+    {
+        return $this->getBlockPrefix();
     }
 }

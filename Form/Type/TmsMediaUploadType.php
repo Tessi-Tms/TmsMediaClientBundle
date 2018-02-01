@@ -8,11 +8,13 @@
 namespace Tms\Bundle\MediaClientBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type as Types;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\ValidatorInterface;
 use Tms\Bundle\MediaClientBundle\StorageProvider\TmsMediaStorageProvider;
@@ -64,16 +66,16 @@ class TmsMediaUploadType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('publicUri', 'hidden', array(
+            ->add('publicUri', Types\HiddenType::class, array(
                 'required' => false,
             ))
-            ->add('mimeType', 'hidden', array(
+            ->add('mimeType', Types\HiddenType::class, array(
                 'required' => false,
             ))
-            ->add('providerReference', 'hidden', array(
+            ->add('providerReference', Types\HiddenType::class, array(
                 'required' => false,
             ))
-            /*->add('toDelete', 'checkbox', array(
+            /*->add('toDelete', Types\CheckboxType::class, array(
                 'label'    => 'X',
                 'required' => false,
                 'mapped'   => false
@@ -88,13 +90,13 @@ class TmsMediaUploadType extends AbstractType
                 if (null !== $event->getData()) {
                     $isUploadedFileRequired = false;
                 }
-                $form->add('uploadedFile', 'file', array(
+                $form->add('uploadedFile', Types\FileType::class, array(
                     'label' => ' ',
                     'required' => $isUploadedFileRequired,
                 ));
 
                 foreach ($options['metadata'] as $key => $value) {
-                    $form->add($key, 'hidden', array(
+                    $form->add($key, Types\HiddenType::class, array(
                         'required' => false,
                         'data' => $value,
                     ));
@@ -129,9 +131,9 @@ class TmsMediaUploadType extends AbstractType
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
             ->setDefaults(array(
@@ -139,17 +141,35 @@ class TmsMediaUploadType extends AbstractType
                 'error_bubbling' => false,
                 'metadata' => array(),
             ))
-            ->setAllowedTypes(array(
-                'metadata' => array('array'),
-            ))
+            ->setAllowedTypes('metadata', array('array'))
         ;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @deprecated
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $this->configureOptions($resolver);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
+    {
+        return 'tms_media_upload';
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @deprecated
      */
     public function getName()
     {
-        return 'tms_media_upload';
+        return $this->getBlockPrefix();
     }
 }

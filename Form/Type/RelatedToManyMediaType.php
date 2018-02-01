@@ -8,6 +8,8 @@
 namespace Tms\Bundle\MediaClientBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type as Types;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class RelatedToManyMediaType extends AbstractType
@@ -15,7 +17,7 @@ class RelatedToManyMediaType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'type' => 'related_to_one_media',
@@ -32,17 +34,37 @@ class RelatedToManyMediaType extends AbstractType
 
     /**
      * {@inheritdoc}
+     *
+     * @deprecated
      */
-    public function getParent()
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        return 'collection';
+        $this->configureOptions($resolver);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getParent()
+    {
+        return Types\CollectionType::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
     {
         return 'related_to_many_media';
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @deprecated
+     */
+    public function getName()
+    {
+        return $this->getBlockPrefix();
     }
 }

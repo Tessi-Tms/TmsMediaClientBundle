@@ -12,6 +12,8 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\Extension\Core\Type as Types;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Tms\Bundle\MediaClientBundle\Model\Media;
 
@@ -43,27 +45,27 @@ class TmsTransformableImageUploadType extends TmsMediaUploadType
                 }
 
                 $form
-                    ->add('cropper_ratio', 'hidden', array(
+                    ->add('cropper_ratio', Types\HiddenType::class, array(
                         'required' => false,
                         'data' => floatval($metadata['cropper_ratio']),
                     ))
-                    ->add('cropper_data', 'tms_hidden_json', array(
+                    ->add('cropper_data', TmsHiddenJsonType::class, array(
                         'required' => false,
                         'data' => $metadata['cropper_data'],
                     ))
-                    ->add('cropper_container_data', 'tms_hidden_json', array(
+                    ->add('cropper_container_data', TmsHiddenJsonType::class, array(
                         'required' => false,
                         'data' => $metadata['cropper_container_data'],
                     ))
-                    ->add('cropper_image_data', 'tms_hidden_json', array(
+                    ->add('cropper_image_data', TmsHiddenJsonType::class, array(
                         'required' => false,
                         'data' => $metadata['cropper_image_data'],
                     ))
-                    ->add('cropper_canvas_data', 'tms_hidden_json', array(
+                    ->add('cropper_canvas_data', TmsHiddenJsonType::class, array(
                         'required' => false,
                         'data' => $metadata['cropper_canvas_data'],
                     ))
-                    ->add('cropper_crop_box_data', 'tms_hidden_json', array(
+                    ->add('cropper_crop_box_data', TmsHiddenJsonType::class, array(
                         'required' => false,
                         'data' => $metadata['cropper_crop_box_data'],
                     ))
@@ -88,9 +90,9 @@ class TmsTransformableImageUploadType extends TmsMediaUploadType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        parent::setDefaultOptions($resolver);
+        parent::configureOptions($resolver);
 
         $resolver
             ->setDefaults(array(
@@ -112,9 +114,29 @@ class TmsTransformableImageUploadType extends TmsMediaUploadType
 
     /**
      * {@inheritdoc}
+     *
+     * @deprecated
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $this->configureOptions($resolver);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
+    {
+        return 'tms_transformable_image_upload';
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @deprecated
      */
     public function getName()
     {
-        return 'tms_transformable_image_upload';
+        return $this->getBlockPrefix();
     }
 }

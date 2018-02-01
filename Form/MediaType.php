@@ -8,8 +8,11 @@
 namespace Tms\Bundle\MediaClientBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type as Types;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Tms\Bundle\MediaClientBundle\Form\Type\ProviderChoicesType;
 
 class MediaType extends AbstractType
 {
@@ -19,20 +22,20 @@ class MediaType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('providerName', 'provider_choices')
-            ->add('publicUri', 'hidden', array(
+            ->add('providerName', ProviderChoicesType::class)
+            ->add('publicUri', Types\HiddenType::class, array(
                 'required' => false,
             ))
-            ->add('mimeType', 'hidden', array(
+            ->add('mimeType', Types\HiddenType::class, array(
                 'required' => false,
             ))
-            ->add('extension', 'hidden', array(
+            ->add('extension', Types\HiddenType::class, array(
                 'required' => false,
             ))
-            ->add('providerReference', 'hidden', array(
+            ->add('providerReference', Types\HiddenType::class, array(
                 'required' => false,
             ))
-            ->add('uploadedFile', 'file', array(
+            ->add('uploadedFile', Types\FileType::class, array(
                 'required' => false,
                 'constraints' => $options['constraints'],
             ))
@@ -40,9 +43,9 @@ class MediaType extends AbstractType
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'data_class' => 'Tms\Bundle\MediaClientBundle\Entity\Media',
@@ -50,10 +53,30 @@ class MediaType extends AbstractType
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
+     *
+     * @deprecated
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $this->configureOptions($resolver);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
+    {
+        return 'tms_bundle_mediaclientbundle_mediatype';
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @deprecated
      */
     public function getName()
     {
-        return 'tms_bundle_mediaclientbundle_mediatype';
+        return $this->getBlockPrefix();
     }
 }
