@@ -8,6 +8,7 @@
 namespace Tms\Bundle\MediaClientBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type as Types;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
@@ -31,13 +32,13 @@ class RelatedToOneMediaType extends AbstractType
                 if (null !== $event->getData()) {
                     $isUploadedFileRequired = false;
                 }
-                $form->add('uploadedFile', 'file', array(
+                $form->add('uploadedFile', Types\FileType::class, array(
                     'label' => ' ',
                     'required' => $isUploadedFileRequired,
                 ));
 
                 foreach ($options['metadata'] as $key => $value) {
-                    $form->add($key, 'hidden', array(
+                    $form->add($key, Types\HiddenType::class, array(
                         'required' => false,
                         'data' => $value,
                     ));
