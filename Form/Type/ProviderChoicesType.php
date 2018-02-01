@@ -8,7 +8,6 @@
 namespace Tms\Bundle\MediaClientBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class ProviderChoicesType extends AbstractType
@@ -19,7 +18,7 @@ class ProviderChoicesType extends AbstractType
     private $providerChoices = array();
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param array $providerChoices
      */

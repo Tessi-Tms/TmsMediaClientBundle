@@ -32,7 +32,7 @@ abstract class AbstractStorageProvider implements StorageProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function add(Media & $media)
+    public function add(Media &$media)
     {
         // Set the provider name
         $media->setProviderName($this->getName());
@@ -41,12 +41,13 @@ abstract class AbstractStorageProvider implements StorageProviderInterface
     }
 
     /**
-     * Do add a media
+     * Do add a media.
      *
-     * @param  Media $media
-     * @return boolean
+     * @param Media $media
+     *
+     * @return bool
      */
-    abstract public function doAdd(Media & $media);
+    abstract public function doAdd(Media &$media);
 
     /**
      * {@inheritdoc}

@@ -1,11 +1,9 @@
 <?php
 
 /**
- * 
  * @author:  Gabriel BONDAZ <gabriel.bondaz@idci-consulting.fr>
  * @author:  Sekou KOÏTA <sekou.koita@supinfo.com>
  * @license: GPL
- *
  */
 
 namespace Tms\Bundle\MediaClientBundle\DependencyInjection\Compiler;
@@ -13,7 +11,6 @@ namespace Tms\Bundle\MediaClientBundle\DependencyInjection\Compiler;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\DependencyInjection\DefinitionDecorator;
 
 class MediaProvidersCompilerPass implements CompilerPassInterface
 {

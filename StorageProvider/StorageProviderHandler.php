@@ -16,9 +16,10 @@ class StorageProviderHandler implements EventSubscriber
     protected $storageProviders = array();
 
     /**
-     * Get StorageProvider
+     * Get StorageProvider.
      *
      * @param string $serviceName
+     *
      * @return StorageProviderInterface|null
      */
     public function getStorageProvider($serviceName)
@@ -30,10 +31,10 @@ class StorageProviderHandler implements EventSubscriber
     }
 
     /**
-     * Add StorageProvider
+     * Add StorageProvider.
      *
      * @param StorageProviderInterface $provider
-     * @param string $serviceName
+     * @param string                   $serviceName
      */
     public function addStorageProvider(StorageProviderInterface $provider, $serviceName)
     {
@@ -48,7 +49,7 @@ class StorageProviderHandler implements EventSubscriber
         return array(
             'prePersist',
             'preUpdate',
-            'preRemove'
+            'preRemove',
         );
     }
 

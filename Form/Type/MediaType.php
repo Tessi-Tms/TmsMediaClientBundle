@@ -8,11 +8,8 @@
 namespace Tms\Bundle\MediaClientBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Tms\Bundle\MediaClientBundle\StorageProvider\StorageProviderHandler;
 use Tms\Bundle\MediaClientBundle\Exception\MediaClientException;
 use Tms\Bundle\MediaClientBundle\Form\MediaType as BaseMediaType;
@@ -39,7 +36,7 @@ class MediaType extends BaseMediaType
         $handler = $this->storageProviderHandler;
         $builder->addEventListener(
             FormEvents::POST_SUBMIT,
-            function(FormEvent $event) use ($handler) {
+            function (FormEvent $event) use ($handler) {
                 $media = $event->getForm()->getData();
 
                 try {

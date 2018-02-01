@@ -21,20 +21,20 @@ class MediaType extends AbstractType
         $builder
             ->add('providerName', 'provider_choices')
             ->add('publicUri', 'hidden', array(
-                'required' => false
+                'required' => false,
             ))
             ->add('mimeType', 'hidden', array(
-                'required' => false
+                'required' => false,
             ))
             ->add('extension', 'hidden', array(
-                'required' => false
+                'required' => false,
             ))
             ->add('providerReference', 'hidden', array(
-                'required' => false
+                'required' => false,
             ))
             ->add('uploadedFile', 'file', array(
-                'required'    => false,
-                'constraints' => $options['constraints']
+                'required' => false,
+                'constraints' => $options['constraints'],
             ))
         ;
     }
@@ -45,7 +45,7 @@ class MediaType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Tms\Bundle\MediaClientBundle\Entity\Media'
+            'data_class' => 'Tms\Bundle\MediaClientBundle\Entity\Media',
         ));
     }
 

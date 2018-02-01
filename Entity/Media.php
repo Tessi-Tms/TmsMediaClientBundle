@@ -7,7 +7,6 @@
 namespace Tms\Bundle\MediaClientBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Tms\Bundle\MediaClientBundle\Model\Media as BaseMedia;
 
 /**
@@ -70,7 +69,7 @@ class Media extends BaseMedia
     protected $updatedAt;
 
     /**
-     * onCreate
+     * onCreate.
      *
      * @ORM\PrePersist()
      */
@@ -82,7 +81,7 @@ class Media extends BaseMedia
     }
 
     /**
-     * onUpdate
+     * onUpdate.
      *
      * @ORM\PreUpdate()
      */

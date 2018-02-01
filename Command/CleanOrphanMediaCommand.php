@@ -1,18 +1,15 @@
 <?php
 
 /**
- *
  * @author:  Gabriel BONDAZ <gabriel.bondaz@idci-consulting.fr>
  * @author:  Sekou KOÏTA <sekou.koita@supinfo.com>
  * @license: GPL
- *
  */
 
 namespace Tms\Bundle\MediaClientBundle\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -103,14 +100,14 @@ EOT
                     $table->addRow(array(
                         $action,
                         $media->getId(),
-                        $media->getPublicUri()
+                        $media->getPublicUri(),
                     ));
                 }
             } catch (\Exception $e) {
                 $table->addRow(array(
                     'ERROR: '.$e->getMessage(),
                     $media->getId(),
-                    $media->getPublicUri()
+                    $media->getPublicUri(),
                 ));
             }
 
@@ -148,7 +145,7 @@ EOT
     {
         $headers = get_headers($url);
 
-        $code = (int)substr($headers[0], 9, 3);
+        $code = (int) substr($headers[0], 9, 3);
 
         if (301 === $code) {
             return $this->getHttpStatusCode(substr($headers[1], 10));

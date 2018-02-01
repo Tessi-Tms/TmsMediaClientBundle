@@ -23,7 +23,7 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
     private $sourceName;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param RestApiClientInterface $mediaApiClient
      * @param string                 $sourceName
@@ -31,11 +31,11 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
     public function __construct($mediaApiClient, $sourceName)
     {
         $this->mediaApiClient = $mediaApiClient;
-        $this->sourceName     = $sourceName;
+        $this->sourceName = $sourceName;
     }
 
     /**
-     * Get MediaClient
+     * Get MediaClient.
      *
      * @return RestApiClientInterface
      */
@@ -45,7 +45,7 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
     }
 
     /**
-     * Get SourceName
+     * Get SourceName.
      *
      * @return string
      */
@@ -57,7 +57,7 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
     /**
      * {@inheritdoc}
      */
-    public function doAdd(Media & $media)
+    public function doAdd(Media &$media)
     {
         // Update case
         if ($media->getProviderReference()) {
@@ -85,14 +85,14 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
             $response = $this
                 ->getMediaApiClient()
                 ->post('/media', array(
-                    'source'   => $this->getSourceName(),
-                    'name'     => $media->getUploadedFile()->getClientOriginalName(),
+                    'source' => $this->getSourceName(),
+                    'name' => $media->getUploadedFile()->getClientOriginalName(),
                     'metadata' => $media->getMetadata(),
-                    'media'    => curl_file_create(
+                    'media' => curl_file_create(
                         $media->getUploadedFile()->getPathName(),
                         $media->getUploadedFile()->getMimeType(),
                         $media->getUploadedFile()->getClientOriginalName()
-                    )
+                    ),
                 ))
             ;
 

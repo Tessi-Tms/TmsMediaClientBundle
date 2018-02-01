@@ -24,21 +24,21 @@ class RelatedToOneMediaType extends AbstractType
 
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
-            function(FormEvent $event) use ($options) {
+            function (FormEvent $event) use ($options) {
                 $isUploadedFileRequired = $options['required'];
                 $form = $event->getForm();
                 if (null !== $event->getData()) {
                     $isUploadedFileRequired = false;
                 }
                 $form->add('uploadedFile', 'file', array(
-                    'label'    => ' ',
-                    'required' => $isUploadedFileRequired
+                    'label' => ' ',
+                    'required' => $isUploadedFileRequired,
                 ));
 
                 foreach ($options['metadata'] as $key => $value) {
                     $form->add($key, 'hidden', array(
                         'required' => false,
-                        'data'     => $value,
+                        'data' => $value,
                     ));
                 }
             },
@@ -55,9 +55,9 @@ class RelatedToOneMediaType extends AbstractType
         $resolver
             ->setDefaults(array(
                 'cascade_validation' => true,
-                'metadata'           => array(),
-                'attr'               => array(
-                    'class' => sprintf('tms_media_client__%s', $this->getName())
+                'metadata' => array(),
+                'attr' => array(
+                    'class' => sprintf('tms_media_client__%s', $this->getName()),
                 ),
             ))
             ->setAllowedTypes(array(

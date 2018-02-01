@@ -13,7 +13,6 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\Extension\Validator\Constraints\Form;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\ValidatorInterface;
 use Tms\Bundle\MediaClientBundle\StorageProvider\TmsMediaStorageProvider;
@@ -32,10 +31,10 @@ class TmsMediaUploadType extends AbstractType
     private $validator;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param TmsMediaStorageProvider $storageProvider
-     * @param ValidatorInterface $validator
+     * @param ValidatorInterface      $validator
      */
     public function __construct(TmsMediaStorageProvider $storageProvider, ValidatorInterface $validator)
     {
@@ -66,13 +65,13 @@ class TmsMediaUploadType extends AbstractType
     {
         $builder
             ->add('publicUri', 'hidden', array(
-                'required' => false
+                'required' => false,
             ))
             ->add('mimeType', 'hidden', array(
-                'required' => false
+                'required' => false,
             ))
             ->add('providerReference', 'hidden', array(
-                'required' => false
+                'required' => false,
             ))
             /*->add('toDelete', 'checkbox', array(
                 'label'    => 'X',
@@ -83,21 +82,21 @@ class TmsMediaUploadType extends AbstractType
 
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
-            function(FormEvent $event) use ($options) {
+            function (FormEvent $event) use ($options) {
                 $isUploadedFileRequired = $options['required'];
                 $form = $event->getForm();
                 if (null !== $event->getData()) {
                     $isUploadedFileRequired = false;
                 }
                 $form->add('uploadedFile', 'file', array(
-                    'label'    => ' ',
-                    'required' => $isUploadedFileRequired
+                    'label' => ' ',
+                    'required' => $isUploadedFileRequired,
                 ));
 
                 foreach ($options['metadata'] as $key => $value) {
                     $form->add($key, 'hidden', array(
                         'required' => false,
-                        'data'     => $value,
+                        'data' => $value,
                     ));
                 }
             },
@@ -108,7 +107,7 @@ class TmsMediaUploadType extends AbstractType
         $validator = $this->validator;
         $builder->addEventListener(
             FormEvents::POST_SUBMIT,
-            function(FormEvent $event) use ($provider, $validator) {
+            function (FormEvent $event) use ($provider, $validator) {
                 $form = $event->getForm();
                 $violations = $validator->validate($form);
                 if (count($violations) > 0) {
@@ -136,12 +135,12 @@ class TmsMediaUploadType extends AbstractType
     {
         $resolver
             ->setDefaults(array(
-                'data_class'     => 'Tms\Bundle\MediaClientBundle\Model\Media',
+                'data_class' => 'Tms\Bundle\MediaClientBundle\Model\Media',
                 'error_bubbling' => false,
-                'metadata'       => array(),
+                'metadata' => array(),
             ))
             ->setAllowedTypes(array(
-                'metadata'       => array('array'),
+                'metadata' => array('array'),
             ))
         ;
     }
