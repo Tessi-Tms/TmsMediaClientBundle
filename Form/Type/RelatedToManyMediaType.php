@@ -20,8 +20,8 @@ class RelatedToManyMediaType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'type' => 'related_to_one_media',
-            'options' => array('required' => false),
+            'entry_type' => RelatedToOneMediaType::class,
+            'entry_options' => array('required' => false),
             'allow_add' => true,
             'allow_delete' => true,
             'by_reference' => false,

@@ -102,13 +102,11 @@ class TmsTransformableImageUploadType extends TmsMediaUploadType
                 'rotate_attr' => array(),
                 'reset_attr' => array('value' => 'reset'),
             ))
-            ->setAllowedTypes(array(
-                'container_width' => array('integer'),
-                'container_height' => array('integer'),
-                'zoom_attr' => array('array'),
-                'rotate_attr' => array('array'),
-                'reset_attr' => array('array'),
-            ))
+            ->setAllowedTypes('container_width', array('integer'))
+            ->setAllowedTypes('container_height', array('integer'))
+            ->setAllowedTypes('zoom_attr', array('array'))
+            ->setAllowedTypes('rotate_attr', array('array'))
+            ->setAllowedTypes('reset_attr', array('array'))
         ;
     }
 
