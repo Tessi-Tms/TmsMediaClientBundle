@@ -2,11 +2,10 @@
 da_api_client:
     api:
         media:
-            endpoint_root: %api.media.endpoint_root%
-            security_token: %api.security_token%
+            endpoint_root: '%api.media.endpoint_root%'
+            security_token: '%api.security_token%'
             cache_enabled: true
 
 twig:
-    form:
-        resources:
-            - 'TmsMediaClientBundle:Form:fields.html.twig'
+    form_themes:
+        - 'TmsMediaClientBundle:Form:fields.html.twig'
