@@ -19,6 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\ValidatorInterface;
 use Tms\Bundle\MediaClientBundle\StorageProvider\TmsMediaStorageProvider;
 use Tms\Bundle\MediaClientBundle\Model\Media;
+use Tms\Bundle\MediaClientBundle\Form\DataTransformer\MediaUploadTransformer;
 
 class TmsMediaUploadType extends AbstractType
 {
@@ -82,6 +83,8 @@ class TmsMediaUploadType extends AbstractType
             ))*/
         ;
 
+        $builder->addModelTransformer(new MediaUploadTransformer());
+
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
             function (FormEvent $event) use ($options) {
@@ -117,7 +120,8 @@ class TmsMediaUploadType extends AbstractType
                 }
 
                 $media = $form->getData();
-                if (null === $media) {
+
+                if (null === $media || null === $media->getUploadedFile()) {
                     return false;
                 }
                 /*if ($form->get('toDelete')->getData()) {
