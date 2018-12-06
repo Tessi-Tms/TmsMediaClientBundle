@@ -8,9 +8,26 @@
 namespace Tms\Bundle\MediaClientBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
+use Tms\Bundle\MediaClientBundle\Model\Media;
 
 class MediaUploadTransformer implements DataTransformerInterface
 {
+    /**
+     * Transforms.
+     *
+     * @param object|null $media
+     *
+     * @return object
+     */
+    public function transform($media)
+    {
+        if (null !== $media) {
+            return $media;
+        }
+
+        return new Media();
+    }
+
     /**
      * Reverse transforms.
      *
