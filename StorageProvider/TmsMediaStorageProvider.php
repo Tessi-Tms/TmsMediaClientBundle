@@ -2,11 +2,13 @@
 
 /**
  * @author:  Gabriel BONDAZ <gabriel.bondaz@idci-consulting.fr>
+ * @author:  Nabil Mansouri <nabil.mansouri@tessi.fr>
  * @license: MIT
  */
 
 namespace Tms\Bundle\MediaClientBundle\StorageProvider;
 
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Da\ApiClientBundle\Exception\ApiHttpResponseException;
 use Tms\Bundle\MediaClientBundle\Model\Media;
 
@@ -143,5 +145,39 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
         } catch (ApiHttpResponseException $e) {
             return false;
         }
+    }
+
+    /**
+     * Clone media
+     *
+     * @param Media the media to clone
+     *
+     * @return Media the media cloned
+     */
+    public function cloneMedia(Media $media)
+    {
+        $mediaCloned = clone $media;
+        $tmpMediaName = uniqid().'_copy_'.$media->providerData()->name;
+        $tmpMediaPath = sprintf('%s/%s.%s',
+            sys_get_temp_dir(),
+            $tmpMediaName,
+            $media->getExtension()
+        );
+
+        $tmpMediaContent = file_get_contents('http:'.$media->getPublicUri());
+        file_put_contents($tmpMediaPath, $tmpMediaContent);
+
+        $uploadedFile = new UploadedFile(
+            $tmpMediaPath,
+            $tmpMediaName,
+            $media->getProviderData()->size,
+            $media->getMimeType()
+        );
+        $mediaCloned->setUploadedFile($uploadedFile);
+
+        $this->add($mediaCloned);
+        unlink($tmpMediaPath);
+
+        return $mediaCloned;
     }
 }
