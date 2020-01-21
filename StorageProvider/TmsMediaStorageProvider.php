@@ -84,29 +84,7 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
         }
 
         if (null !== $media->getUploadedFile()) {
-            $response = $this
-                ->getMediaApiClient()
-                ->post('/media', array(
-                    'source' => $this->getSourceName(),
-                    'name' => $media->getUploadedFile()->getClientOriginalName(),
-                    'metadata' => $media->getMetadata(),
-                    'media' => curl_file_create(
-                        $media->getUploadedFile()->getPathName(),
-                        $media->getUploadedFile()->getMimeType(),
-                        $media->getUploadedFile()->getClientOriginalName()
-                    ),
-                ))
-            ;
-
-            $apiMedia = json_decode($response->getContent(), true);
-
-            $media->setProviderData($apiMedia);
-            $media->setMimeType($apiMedia['mimeType']);
-            $media->setProviderReference($apiMedia['reference']);
-            $media->setExtension($apiMedia['extension']);
-            $media->setPublicUri($apiMedia['publicUri']);
-
-            return true;
+            return $this->createMedia($media);
         }
 
         return false;
@@ -148,6 +126,46 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
     }
 
     /**
+     * Create media on MediaManager
+     *
+     * @param Media the media to create
+     *
+     * @return bool
+     */
+    private function createMedia($media)
+    {
+        try {
+            $response = $this
+                ->getMediaApiClient()
+                ->post('/media', array(
+                    'source' => $this->getSourceName(),
+                    'name' => $media->getUploadedFile()->getClientOriginalName(),
+                    'metadata' => $media->getMetadata(),
+                    'media' => curl_file_create(
+                        $media->getUploadedFile()->getPathName(),
+                        $media->getUploadedFile()->getMimeType(),
+                        $media->getUploadedFile()->getClientOriginalName()
+                    ),
+                ))
+            ;
+
+            $apiMedia = json_decode($response->getContent(), true);
+
+            $media->setProviderData($apiMedia);
+            $media->setMimeType($apiMedia['mimeType']);
+            $media->setProviderReference($apiMedia['reference']);
+            $media->setExtension($apiMedia['extension']);
+            $media->setPublicUri($apiMedia['publicUri']);
+
+            return true;
+
+        } catch (\Exception $e) {
+        }
+
+        return false;
+    }
+
+    /**
      * Clone media
      *
      * @param Media the media to clone
@@ -175,7 +193,7 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
         );
         $mediaCloned->setUploadedFile($uploadedFile);
 
-        $this->add($mediaCloned);
+        $this->createMedia($mediaCloned);
         unlink($tmpMediaPath);
 
         return $mediaCloned;
