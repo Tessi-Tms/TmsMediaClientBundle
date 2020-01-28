@@ -182,7 +182,12 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
             $media->getExtension()
         );
 
-        $tmpMediaContent = file_get_contents('http:'.$media->getPublicUri());
+        $tmpMediaContent = file_get_contents(sprintf(
+            '%s/media/%s',
+            $this->getMediaApiClient()->getEndpointRoot(),
+            $media->getProviderReference()
+        ));
+
         file_put_contents($tmpMediaPath, $tmpMediaContent);
 
         $uploadedFile = new UploadedFile(
@@ -194,6 +199,7 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
         $mediaCloned->setUploadedFile($uploadedFile);
 
         $this->createMedia($mediaCloned);
+        $mediaCloned->unsetUploadedFile();
         unlink($tmpMediaPath);
 
         return $mediaCloned;

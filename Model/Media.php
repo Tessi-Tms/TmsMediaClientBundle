@@ -235,6 +235,18 @@ class Media implements \Serializable
     }
 
     /**
+     * Unset uploaded file.
+     *
+     * @return Media
+     */
+    public function unsetUploadedFile()
+    {
+        $this->uploadedFile = null;
+
+        return $this;
+    }
+
+    /**
      * Returns uploaded file.
      *
      * @return UploadedFile
