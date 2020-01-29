@@ -175,7 +175,8 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
     public function cloneMedia(Media $media)
     {
         $mediaCloned = clone $media;
-        $tmpMediaName = uniqid().'_copy_'.$media->providerData()->name;
+        $providerData = $media->getProviderData();
+        $tmpMediaName = uniqid().'_copy_'.$providerData['name'];
         $tmpMediaPath = sprintf('%s/%s.%s',
             sys_get_temp_dir(),
             $tmpMediaName,
@@ -193,7 +194,7 @@ class TmsMediaStorageProvider extends AbstractStorageProvider
         $uploadedFile = new UploadedFile(
             $tmpMediaPath,
             $tmpMediaName,
-            $media->getProviderData()->size,
+            $providerData['size'],
             $media->getMimeType()
         );
         $mediaCloned->setUploadedFile($uploadedFile);
