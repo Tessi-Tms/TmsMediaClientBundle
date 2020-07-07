@@ -1,0 +1,4 @@
+tms_media_client:
+    resource: "@TmsMediaClientBundle/Controller/"
+    type:     annotation
+    prefix:   /tmsmediaclient

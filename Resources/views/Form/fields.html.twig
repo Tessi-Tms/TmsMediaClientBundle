@@ -105,6 +105,94 @@
     {% endspaceless %}
 {% endblock %}
 
+{% block tms_ajax_media_upload_widget %}
+    {% spaceless %}
+        {{- block('collection_widget') -}}
+    {% endspaceless %}
+
+    <script type="text/javascript">
+        function getJquery(callback) {
+            if (!window.jQuery) {
+                var sJquery = document.getElementById('tms_jquery');
+                if (!sJquery) {
+                    sJquery = document.createElement("script");
+                    sJquery.id = "tms_jquery";
+                    sJquery.src = "{{ asset('bundles/tmsmediaclient/js/jquery-1.11.3.min.js') }}";
+                    sJquery.type = "text/javascript";
+
+                    var head = document.getElementsByTagName('head')[0].appendChild(sJquery);
+                }
+
+                var onload = sJquery.onload;
+                sJquery.onload = sJquery.onreadystatechange = function() {
+                    if (typeof onload == 'function') {
+                        onload();
+                    }
+                    callback(window.jQuery);
+                }
+            } else {
+                callback(window.jQuery);
+            }
+        };
+
+        getJquery(function($) {
+            // Transform the file input to an hidden file.
+            var $input = $('input#{{ id }}_uploadedFile').attr({
+                type: 'hidden'
+            });
+
+            // Add the 'choose file' button
+            var $button = $('<button>')
+                .text('Choose file')
+                .on('click', function() {
+                    $('<input>')
+                        .attr({
+                            type: 'file',
+                        })
+                        .on('change', function() {
+                            var $parent = $input.parent()
+                                .addClass('loading')
+                            ;
+
+                            // Ignore without files
+                            if ($(this)[0].files.length == 0 ) {
+                                return true;
+                            }
+
+                            // Create the formData
+                            var data = new FormData();
+                            data.append('tms_ajax_media_upload[uploadedFile]', $(this)[0].files[0]);
+
+                            // Send the response
+                            $.ajax({
+                                url: {{ path('tms_media_client_ajax_upload', {field: id})|json_encode|raw }},
+                                type: 'post',
+                                data: data,
+                                contentType: false,
+                                processData: false,
+                                success: function(response) {
+                                    $input.val(response.id);
+
+                                    console.log('success', response);
+                                },
+                                error: function(response) {
+                                    console.log('error', response);
+                                },
+                                complete: function(response) {
+                                    $parent.removeClass('loading');
+                                }
+                            });
+                        })
+                        .trigger('click');
+
+                    return false;
+                })
+                .insertAfter($input)
+            ;
+        });
+    </script>
+{% endblock %}
+
 {% block tms_media_upload_widget %}
     {% spaceless %}
         {{ block('collection_widget') }}
