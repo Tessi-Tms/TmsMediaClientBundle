@@ -183,11 +183,13 @@ class TmsAjaxMediaUploadType extends AbstractType
                                 ))
                             );
 
-                            foreach ($violations as $violation) {
-                                $form->addError(new FormError($violation->getMessage()));
-                            }
+                            if (count($violations)) {
+                                foreach ($violations as $violation) {
+                                    $form->addError(new FormError($violation->getMessage()));
+                                }
 
-                            return false;
+                                return false;
+                            }
                         }
 
                         // Add the media metadata
