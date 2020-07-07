@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Tms\Bundle\MediaClientBundle\StorageProvider\TmsMediaStorageProvider;
@@ -38,6 +39,13 @@ class TmsAjaxMediaUploadType extends AbstractType
     protected $storageProvider;
 
     /**
+     * Instance of TranslatorInterface.
+     *
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
      * Instance of ValidatorInterface.
      *
      * @var ValidatorInterface
@@ -54,10 +62,12 @@ class TmsAjaxMediaUploadType extends AbstractType
     public function __construct(
         SessionInterface $session,
         TmsMediaStorageProvider $storageProvider,
+        TranslatorInterface $translator,
         ValidatorInterface $validator
     ) {
         $this->session = $session;
         $this->storageProvider = $storageProvider;
+        $this->translator = $translator;
         $this->validator = $validator;
     }
 
@@ -88,6 +98,35 @@ class TmsAjaxMediaUploadType extends AbstractType
                 ),
             )
         ));
+
+        // Generate the plugin options
+        $pluginOptions = array_intersect_key($cleanedOptions, array(
+            'maxSize' => null,
+            'maxSizeMessage' => null,
+            'mimeTypes' => null,
+            'mimeTypesMessage' => null,
+            'imagesMimeTypes' => null,
+            'imageMaxWidth' => null,
+            'imageMaxHeight' => null,
+            'buttonChooseLabel' => null,
+            'buttonUpdateLabel' => null,
+        ));
+
+        // Translate error messages
+        $pluginOptions['maxSizeMessage'] = $this->translator->trans($pluginOptions['maxSizeMessage'], array(
+            '{{ size }}' => '__SIZE__',
+            '{{ suffix }}' => '__SUFFIX__',
+            '{{ limit }}' => '__LIMIT__',
+        ), 'validators');
+        $pluginOptions['mimeTypesMessage'] = $this->translator->trans($pluginOptions['mimeTypesMessage'], array(
+            '{{ type }}' => '__TYPE__',
+            '{{ types }}' => '__TYPES__',
+        ), 'validators');
+        $pluginOptions['buttonChooseLabel'] = $this->translator->trans($pluginOptions['buttonChooseLabel']);
+        $pluginOptions['buttonUpdateLabel'] = $this->translator->trans($pluginOptions['buttonUpdateLabel']);
+
+        // Add the plugin options to the view
+        $view->vars['pluginOptions'] = $pluginOptions;
     }
 
     /**
@@ -228,7 +267,16 @@ class TmsAjaxMediaUploadType extends AbstractType
                 'maxSize' => '5M',
                 'maxSizeMessage' => 'The file is too large ({{ size }} {{ suffix }}). Allowed maximum size is {{ limit }} {{ suffix }}.',
                 'mimeTypes' => null,
-                'mimeTypesMessage' => 'The mime type of the file is invalid ({{ type }}). Allowed mime types are {{ types }}.'
+                'mimeTypesMessage' => 'The mime type of the file is invalid ({{ type }}). Allowed mime types are {{ types }}.',
+                'imagesMimeTypes' => array(
+                    'image/gif',
+                    'image/jpeg',
+                    'image/png'
+                ),
+                'imageMaxWidth' => null,
+                'imageMaxHeight' => null,
+                'buttonChooseLabel' => 'Choose file',
+                'buttonUpdateLabel' => 'Update file'
 
             ))
             ->setAllowedTypes('metadata', array('array'))
@@ -236,6 +284,11 @@ class TmsAjaxMediaUploadType extends AbstractType
             ->setAllowedTypes('maxSizeMessage', array('string'))
             ->setAllowedTypes('mimeTypes', array('null', 'array'))
             ->setAllowedTypes('mimeTypesMessage', array('string'))
+            ->setAllowedTypes('imagesMimeTypes', array('array'))
+            ->setAllowedTypes('imageMaxWidth', array('null', 'string', 'integer'))
+            ->setAllowedTypes('imageMaxHeight', array('null', 'string', 'integer'))
+            ->setAllowedTypes('buttonChooseLabel', array('string'))
+            ->setAllowedTypes('buttonUpdateLabel', array('string'))
         ;
     }
 

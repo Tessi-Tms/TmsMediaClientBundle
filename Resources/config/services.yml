@@ -36,7 +36,7 @@ services:
 
     tms_media_client.form_type.tms_ajax_media_upload:
         class: Tms\Bundle\MediaClientBundle\Form\Type\TmsAjaxMediaUploadType
-        arguments: ['@session', '@tms_media_client.storage_provider.tms_media', '@validator']
+        arguments: ['@session', '@tms_media_client.storage_provider.tms_media', '@translator', '@validator']
         tags:
             - { name: form.type, alias: tms_ajax_media_upload }
 

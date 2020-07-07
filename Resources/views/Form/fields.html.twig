@@ -110,6 +110,7 @@
         {{- block('collection_widget') -}}
     {% endspaceless %}
 
+
     <script type="text/javascript">
         function getJquery(callback) {
             if (!window.jQuery) {
@@ -136,59 +137,104 @@
         };
 
         getJquery(function($) {
-            // Transform the file input to an hidden file.
-            var $input = $('input#{{ id }}_uploadedFile').attr({
-                type: 'hidden'
-            });
+            // Ajax loader
+            $.fn.loadAjaxUpload = function(options) {
+                // Merge default options
+                options = $.extend({
+                    maxSize: null,
+                    maxSizeMessage: null,
+                    mimeTypes: [],
+                    mimeTypesMessage: null,
+                    imagesMimeTypes: null,
+                    imageMaxWidth: null,
+                    imageMaxHeight: null,
+                    buttonChooseLabel: 'Choose file',
+                    buttonUpdateLabel: 'Update file',
+                }, options);
 
-            // Add the 'choose file' button
-            var $button = $('<button>')
-                .text('Choose file')
-                .on('click', function() {
-                    $('<input>')
-                        .attr({
-                            type: 'file',
-                        })
-                        .on('change', function() {
-                            var $parent = $input.parent()
-                                .addClass('loading')
-                            ;
+                /**
+                 * Do the file upload.
+                 */
+                var uploadFile = function()
+                {
+                    // Ignore without files
+                    if ($file[0].files.length == 0 ) {
+                        return true;
+                    }
 
-                            // Ignore without files
-                            if ($(this)[0].files.length == 0 ) {
-                                return true;
-                            }
+                    // Add the loader to the input parent
+                    var $parent = $input
+                        .parent()
+                        .addClass('loading')
+                    ;
 
-                            // Create the formData
-                            var data = new FormData();
-                            data.append('tms_ajax_media_upload[uploadedFile]', $(this)[0].files[0]);
+                    // Create the formData
+                    var data = new FormData();
+                    data.append('tms_ajax_media_upload[uploadedFile]', $file[0].files[0]);
 
-                            // Send the response
-                            $.ajax({
-                                url: {{ path('tms_media_client_ajax_upload', {field: id})|json_encode|raw }},
-                                type: 'post',
-                                data: data,
-                                contentType: false,
-                                processData: false,
-                                success: function(response) {
-                                    $input.val(response.id);
+                    // Send the response
+                    $.ajax({
+                        url: {{ path('tms_media_client_ajax_upload', {field: id})|json_encode|raw }},
+                        type: 'post',
+                        data: data,
+                        contentType: false,
+                        processData: false,
+                        success: function(response) {
+                            $input.val(response.id);
 
-                                    console.log('success', response);
-                                },
-                                error: function(response) {
-                                    console.log('error', response);
-                                },
-                                complete: function(response) {
-                                    $parent.removeClass('loading');
-                                }
-                            });
-                        })
-                        .trigger('click');
+                            console.log('success', response);
+                        },
+                        error: function(response) {
+                            console.log('error', response);
+                        },
+                        complete: function(response) {
+                            $parent.removeClass('loading');
+                        }
+                    });
+                }
 
-                    return false;
-                })
-                .insertAfter($input)
-            ;
+                /**
+                 * Update the button text.
+                 */
+                var updateButtonText = function()
+                {
+                    $button.text($file[0].files.length == 0 ? options.buttonChooseLabel : options.buttonUpdateLabel);
+                };
+
+                // The initial input
+                var $input = $(this)
+                    .attr({
+                        type: 'hidden'
+                    })
+                ;
+
+                // The file to upload
+                var $file = $('<input>')
+                    .attr({
+                        type: 'file',
+                    })
+                    .on('change', function(){
+                        updateButtonText();
+                        uploadFile();
+
+                        return false;
+                    })
+                ;
+
+                // The upload button
+                var $button = $('<button>')
+                    .on('click', function(){
+                        $file.trigger('click');
+
+                        return false;
+                    })
+                    .insertAfter($input);
+                ;
+                updateButtonText();
+            };
+
+            // Transform the file field
+            $('input#{{ id }}_uploadedFile').loadAjaxUpload({{ form.vars.pluginOptions|json_encode|raw }});
         });
     </script>
 {% endblock %}
