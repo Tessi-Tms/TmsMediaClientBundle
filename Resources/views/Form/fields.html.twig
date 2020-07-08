@@ -141,7 +141,7 @@
 
         getJquery(function($) {
             // Ajax loader
-            $.fn.loadAjaxUpload = function(options) {
+            $.fn.loadAjaxUpload_{{ id }} = function(options) {
                 // The initial input
                 var $input = $(this);
 
@@ -635,7 +635,7 @@
             };
 
             // Transform the file field
-            $('input#{{ id }}_uploadedFile').loadAjaxUpload({{ form.vars.pluginOptions|json_encode|raw }});
+            $('input#{{ id }}_uploadedFile').loadAjaxUpload_{{ id }}({{ form.vars.pluginOptions|json_encode|raw }});
         });
     </script>
 {% endblock %}
