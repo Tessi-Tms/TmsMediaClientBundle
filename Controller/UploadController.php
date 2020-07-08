@@ -63,15 +63,17 @@ class UploadController extends Controller
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
+                $media = $form->getData();
+
                 // Save the media response
                 $data[$field]['uploads'] = array(
-                    $uniqId => $form->getData()->getPublicData(),
+                    $uniqId => $media->getPublicData(),
                 );
                 $session->set(TmsAjaxMediaUploadType::sessionName, $data);
 
-                return new JsonResponse(array(
+                return new JsonResponse(array_merge($media->getPublicData(), array(
                     'id' => $uniqId,
-                ), JsonResponse::HTTP_OK);
+                )), JsonResponse::HTTP_OK);
             }
 
             // Return the first error message

@@ -193,7 +193,7 @@
                             if (files.length == 0 ) {
                                 $resetButton.hide();
                                 $button.text(options.buttonChooseLabel);
-                                previewFile(null);
+                                previewFile(null, null, null);
 
                                 return false;
                             }
@@ -208,11 +208,22 @@
                             $resetButton.show();
 
                             // Upload the file
-                            previewFile(files[0]);
-                            uploadFile(files[0], function() {
+                            uploadFile(files[0], function(result) {
                                 $button.attr({
                                     disabled: null,
-                                })
+                                });
+
+                                if (null == result) {
+                                    return true;
+                                }
+
+                                if (200 == result.status) {
+                                    previewFile(
+                                        result.responseJSON.publicUri,
+                                        files[0].name,
+                                        result.responseJSON.mimeType
+                                    );
+                                }
                             });
 
                             return false;
@@ -253,7 +264,11 @@
 
                     {% if form.vars.data.publicUri|default -%}
                         // Default preview
-                        previewFile({{ form.vars.data.publicUri|json_encode|raw }});
+                        previewFile(
+                            {{ form.vars.data.publicUri|json_encode|raw }},
+                            null,
+                            {{ form.vars.data.mimeType|json_encode|raw }}
+                        );
                     {%- endif %}
                 };
 
@@ -277,16 +292,25 @@
                  *
                  * @param Object file
                  */
-                var previewFile = function(file)
+                var previewFile = function(url, label, mimeType)
                 {
                     // Retrieve the DOM element
                     var $previewContainer = $input.siblings('.preview');
 
                     // Default preview method
-                    var previewDisplay = function(src, name) {
+                    var previewDisplay = function(src, link, name) {
                         $previewContainer.html('');
                         if (null != src) {
-                            $previewContainer.prepend(
+                            var $imageContainer = $previewContainer;
+                            if (null != link) {
+                                $imageContainer = $('<a>')
+                                    .attr({
+                                        href: link,
+                                        target: '_blank'
+                                    });
+                                $previewContainer.append($imageContainer);
+                            }
+                            $imageContainer.append(
                                 $('<img>').attr({
                                     src: src,
                                     alt: name,
@@ -307,30 +331,20 @@
 
                     // Reinitialize the preview
                     $previewContainer.removeClass('loading');
-                    previewDisplay(null, null);
+                    previewDisplay(null, null, null);
 
-                    // Ignore without file
-                    if (null == file) {
+                    // Ignore without url
+                    if ('string' != typeof url) {
                         return false;
                     }
 
-                    // No file just an URL
-                    if ('string' == typeof file) {
-                        previewDisplay(file, null);
-
-                        return true;
+                    var img = url;
+                    if (options.imagesMimeTypes.indexOf(mimeType) < 0) {
+                        img = "{{ asset('bundles/tmsmediaclient/images/nopreview.png') }}";
                     }
+                    previewDisplay(img, url, label);
 
-                    // Read the selected file
-                    var reader = new FileReader();
-                    reader.readAsDataURL(file);
-                    reader.onload = function(e) {
-                        // Display the preview
-                        $previewContainer.removeClass('loading');
-                        previewDisplay(e.target.result, file.name);
-                    };
-
-                    $previewContainer.addClass('loading');
+                    return true;
                 }
 
                 /**
@@ -459,7 +473,7 @@
                         // Validate the file
                         if (false == validateFile(file)) {
                             $parent.removeClass('loading');
-                            callback();
+                            callback(null);
 
                             return false;
                         }
@@ -475,18 +489,17 @@
                             data: data,
                             contentType: false,
                             processData: false,
-                            success: function(response) {
-                                $input.val(response.id);
-
-                                console.log('success', response);
-                            },
-                            error: function(response) {
-                                console.log('error', response);
-                            },
                             complete: function(response) {
                                 $parent.removeClass('loading');
 
-                                callback();
+                                if (200 == response.status) {
+                                    $input.val(response.responseJSON.id);
+                                } else {
+                                    $input.val(null);
+                                    console.log('error', response.responseJSON.message)
+                                }
+
+                                callback(response);
                             }
                         });
 
