@@ -202,12 +202,21 @@
                             }
 
                             // Update the button text
-                            $button.text(options.buttonUpdateLabel);
+                            $button
+                                .text(options.buttonUpdateLabel)
+                                .attr({
+                                    disabled: 'disabled',
+                                })
+                            ;
                             $resetButton.show();
 
                             // Upload the file
                             previewFile(files[0]);
-                            uploadFile(files[0]);
+                            uploadFile(files[0], function() {
+                                $button.attr({
+                                    disabled: null,
+                                })
+                            });
 
                             return false;
                         })
@@ -420,7 +429,7 @@
                 /**
                  * Do the file upload.
                  */
-                var uploadFile = function(file)
+                var uploadFile = function(file, callback)
                 {
                     // Add the loader to the input parent
                     var $parent = $input
@@ -433,6 +442,7 @@
                         // Validate the file
                         if (false == validateFile(file)) {
                             $parent.removeClass('loading');
+                            callback();
 
                             return false;
                         }
@@ -458,6 +468,8 @@
                             },
                             complete: function(response) {
                                 $parent.removeClass('loading');
+
+                                callback();
                             }
                         });
 
