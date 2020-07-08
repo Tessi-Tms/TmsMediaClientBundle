@@ -168,12 +168,20 @@
                     // Retrieve the existing DOM elements
                     var $buttonContainer = $input.siblings('.buttons');
 
-
                     // Transform the file input to an hidden type
-                    $input.attr({
-                        type: 'hidden',
-                    });
-
+                    $input
+                        .attr({
+                            type: 'text',
+                            required: {{ form.vars.required|json_encode }},
+                        })
+                        .css({
+                            border: 'none',
+                            height: '1px',
+                            margin: 0,
+                            padding: 0,
+                            width: '1px',
+                        })
+                    ;
 
                     // The file to upload
                     var $file = $('<input>')
