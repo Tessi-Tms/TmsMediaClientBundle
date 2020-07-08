@@ -194,6 +194,7 @@
 
                             // Ignore without files
                             if (files.length == 0 ) {
+                                $resetButton.hide();
                                 $button.text(options.buttonChooseLabel);
                                 previewFile(null);
 
@@ -202,6 +203,7 @@
 
                             // Update the button text
                             $button.text(options.buttonUpdateLabel);
+                            $resetButton.show();
 
                             // Upload the file
                             previewFile(files[0]);
@@ -213,14 +215,35 @@
 
                     // The upload button
                     var $button = $('<button>')
+                        .addClass('select')
                         .text(options.button{{ form.vars.data|default ? 'Update' : 'Choose' }}Label)
                         .on('click', function(){
                             $file.trigger('click');
 
                             return false;
                         })
-                        .insertAfter($input);
                     ;
+                    $buttonContainer.append($button);
+
+                    // The reset button
+                    var $resetButton = $('<button>')
+                        .addClass('reset')
+                        .text(options.resetButton)
+                        .on('click', function() {
+                            // Reinitialise the inputs
+                            $input.val(null);
+                            $file.val(null).trigger('change');
+
+                            return false;
+                        })
+                    ;
+                    {% if not form.vars.data|default -%}
+                        $resetButton.hide();
+                    {%- endif %}
+
+                    if (options.resetButton) {
+                        $buttonContainer.append($resetButton);
+                    }
                 };
 
                 /**

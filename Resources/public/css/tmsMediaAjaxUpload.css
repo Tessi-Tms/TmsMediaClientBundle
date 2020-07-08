@@ -1,3 +1,13 @@
+form .ajax_media_upload .buttons {
+    text-align: left;
+}
+form .ajax_media_upload .buttons button{
+    display: inline-block;
+}
+form .ajax_media_upload .buttons button:not(:first-child) {
+    margin-left: 1em;
+}
+
 form .ajax_media_upload .preview {
     text-align: center;
     margin: 0 auto 1em auto;

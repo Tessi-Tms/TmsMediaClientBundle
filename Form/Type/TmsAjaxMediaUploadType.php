@@ -110,6 +110,7 @@ class TmsAjaxMediaUploadType extends AbstractType
             'imageMaxHeight' => null,
             'buttonChooseLabel' => null,
             'buttonUpdateLabel' => null,
+            'resetButton' => null,
         ));
 
         // Translate error messages
@@ -276,7 +277,8 @@ class TmsAjaxMediaUploadType extends AbstractType
                 'imageMaxWidth' => null,
                 'imageMaxHeight' => null,
                 'buttonChooseLabel' => 'Choose file',
-                'buttonUpdateLabel' => 'Update file'
+                'buttonUpdateLabel' => 'Update file',
+                'resetButton' => false,
 
             ))
             ->setAllowedTypes('metadata', array('array'))
@@ -289,6 +291,7 @@ class TmsAjaxMediaUploadType extends AbstractType
             ->setAllowedTypes('imageMaxHeight', array('null', 'string', 'integer'))
             ->setAllowedTypes('buttonChooseLabel', array('string'))
             ->setAllowedTypes('buttonUpdateLabel', array('string'))
+            ->setAllowedTypes('resetButton', array('boolean', 'string'))
         ;
     }
 
