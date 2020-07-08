@@ -105,12 +105,14 @@
     {% endspaceless %}
 {% endblock %}
 
-{% block tms_ajax_media_upload_widget %}
+{% block tms_ajax_media_upload_row %}
     <link href="{{ asset('bundles/tmsmediaclient/css/tmsMediaAjaxUpload.css') }}" rel="stylesheet" type="text/css" />
-    <div class="ajax_media_upload">
-        {{- form(form.uploadedFile) -}}
+    <div id="{{ form.vars.id }}" class="ajax_media_upload">
+        {{- form_label(form) -}}
+        {{- form_widget(form.uploadedFile) -}}
         <div class="buttons"></div>
         <div class="preview"></div>
+        <div class="errors">{{- form_errors(form) -}}</div>
     </div>
     <script type="text/javascript">
         function getJquery(callback) {
@@ -156,6 +158,7 @@
                     buttonUpdateLabel: 'Update file',
                     resetButton: false,
                     previewMethod: null,
+                    errorDisplay: null,
                 }, options);
 
                 /**
@@ -189,11 +192,14 @@
                             // Get the input files
                             var files = $(this)[0].files;
 
+                            // Reset the view
+                            $resetButton.hide();
+                            $button.text(options.buttonChooseLabel);
+                            previewFile(null, null, null);
+                            addError(false, {});
+
                             // Ignore without files
                             if (files.length == 0 ) {
-                                $resetButton.hide();
-                                $button.text(options.buttonChooseLabel);
-                                previewFile(null, null, null);
 
                                 return false;
                             }
@@ -214,6 +220,9 @@
                                 });
 
                                 if (null == result) {
+                                    $button.text(options.buttonChooseLabel);
+                                    previewFile(null, null, null);
+
                                     return true;
                                 }
 
@@ -223,6 +232,9 @@
                                         files[0].name,
                                         result.responseJSON.mimeType
                                     );
+                                } else {
+                                    $button.text(options.buttonChooseLabel);
+                                    previewFile(null, null, null);
                                 }
                             });
 
@@ -278,13 +290,38 @@
                 * @param string message
                 * @param array  options
                 */
-                var addError = function(message, options)
+                var addError = function(message, parameters)
                 {
-                    for (var key in options) {
-                        message = message.replace(new RegExp(key, 'g'), options[key]);
+                    for (var key in parameters) {
+                        message = message.replace(new RegExp(key, 'g'), parameters[key]);
                     }
 
-                    console.log(message);
+                    // Default error method
+                    var errorDisplay = function(message) {
+                        var $errorsContainer = $input.siblings('.errors');
+
+                        if (false == message) {
+                            $errorsContainer.html('');
+
+                            return true;
+                        }
+
+                        var $list = $errorsContainer.find('ul');
+                        if (! $list.length) {
+                            $list = $('<ul>');
+                            $errorsContainer.append($list);
+                        }
+
+                        var $item = $('<li>').text(message);
+                        $list.append($item);
+                    };
+
+                    // Retrieve the user preview method
+                    if (options.errorDisplay) {
+                        eval('errorDisplay = ' + options.errorDisplay);
+                    }
+
+                    errorDisplay(message);
                 };
 
                 /**
@@ -473,6 +510,8 @@
                         // Validate the file
                         if (false == validateFile(file)) {
                             $parent.removeClass('loading');
+                            $input.val(null);
+
                             callback(null);
 
                             return false;
@@ -496,7 +535,12 @@
                                     $input.val(response.responseJSON.id);
                                 } else {
                                     $input.val(null);
-                                    console.log('error', response.responseJSON.message)
+
+                                    try {
+                                        addError(response.responseJSON.message, {});
+                                    } catch (e) {
+                                        addError(response.statusText, {});
+                                    }
                                 }
 
                                 callback(response);

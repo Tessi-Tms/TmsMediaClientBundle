@@ -1,8 +1,10 @@
 form .ajax_media_upload .buttons {
     text-align: left;
+    margin: 0 0 1em 0;
 }
 form .ajax_media_upload .buttons button {
     display: inline-block;
+    margin: 0;
 }
 form .ajax_media_upload .buttons button.select:disabled {
     position: relative;
@@ -10,16 +12,13 @@ form .ajax_media_upload .buttons button.select:disabled {
 form .ajax_media_upload .buttons button:not(:first-child) {
     margin-left: 1em;
 }
-
 form .ajax_media_upload .preview {
     text-align: center;
-    margin: 0 auto 1em auto;
-    min-height: 2em;
+    margin: 0 auto;
 }
 form .ajax_media_upload .preview.loading {
     position: relative;
 }
-
 form .ajax_media_upload .buttons button.select:disabled::before,
 form .ajax_media_upload .buttons button.select:disabled::after,
 form .ajax_media_upload .preview.loading::before,

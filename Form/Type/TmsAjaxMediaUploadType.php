@@ -112,6 +112,7 @@ class TmsAjaxMediaUploadType extends AbstractType
             'buttonUpdateLabel' => null,
             'resetButton' => null,
             'previewDisplay' => null,
+            'errorDisplay' => null,
         ));
 
         // Translate error messages
@@ -281,6 +282,8 @@ class TmsAjaxMediaUploadType extends AbstractType
                 'buttonUpdateLabel' => 'Update file',
                 'resetButton' => false,
                 'previewDisplay' => null,
+                'errorDisplay' => null,
+                'error_bubbling' => false,
             ))
             ->setAllowedTypes('metadata', array('array'))
             ->setAllowedTypes('maxSize', array('string'))
@@ -294,6 +297,7 @@ class TmsAjaxMediaUploadType extends AbstractType
             ->setAllowedTypes('buttonUpdateLabel', array('string'))
             ->setAllowedTypes('resetButton', array('boolean', 'string'))
             ->setAllowedTypes('previewDisplay', array('null', 'string'))
+            ->setAllowedTypes('errorDisplay', array('null', 'string'))
         ;
     }
 
