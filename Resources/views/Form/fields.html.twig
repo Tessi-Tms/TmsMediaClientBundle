@@ -106,11 +106,9 @@
 {% endblock %}
 
 {% block tms_ajax_media_upload_widget %}
-    {% spaceless %}
-        {{- block('collection_widget') -}}
-    {% endspaceless %}
-
-
+    <div class="ajax_media_upload">
+        {{- form(form.uploadedFile) -}}
+    </div>
     <script type="text/javascript">
         function getJquery(callback) {
             if (!window.jQuery) {
@@ -153,13 +151,123 @@
                 }, options);
 
                 /**
+                 * Validate the file size and mimetype.
+                 * Will display an error for each violations.
+                 *
+                 * @param object file The file to analyse
+                 *
+                 * @return boolean
+                 */
+                var validateFile = function(file)
+                {
+                    // Check the mimetype constraint
+                    if (options.mimeTypes.indexOf(file.type) < 0) {
+                        addError(options.mimeTypesMessage, {
+                            __TYPES__: options.mimeTypes.join(', '),
+                            __TYPE__: $file[0].files[0].type,
+                        });
+
+                        return false;
+                    }
+
+                    // Check the maxSize constraint
+                    if (realSize(options.maxSize) < $file[0].files[0].size) {
+                        var unit = options.maxSize.replace(/[^a-zA-Z]+/, '').toLowerCase();
+                        var units = {
+                            k: 'Ko',
+                            m: 'Mo',
+                            g: 'Go',
+                            p: 'Po'
+                        };
+
+                        addError(options.maxSizeMessage, {
+                            __SIZE__: unixSize($file[0].files[0].size, unit),
+                            __SUFFIX__: 'undefined' == typeof units[unit] ? unit : units[unit],
+                            __LIMIT__: unixSize(realSize(options.maxSize), unit),
+                        });
+
+                        return false;
+                    }
+
+                    return true;
+                };
+
+                /**
+                 * Prepare the file for the upload.
+                 *
+                 * @return Object
+                 */
+                var prepareFile = function(file, callback)
+                {
+                    // Resize enabled
+                    if (
+                        options.imagesMimeTypes.indexOf(file.type) >= 0 &&
+                        (options.imageMaxHeight || options.imageMaxWidth)
+                    ) {
+                        // Read the selected file
+                        var reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        reader.onload = function(e) {
+                            // Load the image
+                            var img = new Image();
+                            img.src = e.target.result;
+                            img.onload = function () {
+                                // Create the canvas to resize the image
+                                var canvas = document.createElement('canvas');
+                                var ctx = canvas.getContext("2d");
+
+                                // get the image dimentions
+                                var width = img.width;
+                                var height = img.height;
+
+                                // Smaller image than the max dimentions
+                                if (
+                                    (null == options.imageMaxWidth || width <= options.imageMaxWidth) &&
+                                    (null == options.imageMaxHeight || height <= options.imageMaxHeight)
+                                ) {
+                                    callback(file, file.type);
+
+                                    return true;
+                                }
+
+                                // Calculate image new dimentions
+                                if (null != options.imageMaxWidth && width > options.imageMaxWidth) {
+                                    height *= options.imageMaxWidth / width;
+                                    width = options.imageMaxWidth;
+                                }
+                                if (null != options.imageMaxHeight && height > options.imageMaxHeight) {
+                                    width *= options.imageMaxHeight / height;
+                                    height = options.imageMaxHeight;
+                                }
+
+                                // Resize the image
+                                canvas.width = width;
+                                canvas.height = height;
+                                var ctx = canvas.getContext("2d");
+                                ctx.drawImage(img, 0, 0, width, height);
+
+                                callback(dataURLtoBlob(canvas.toDataURL(), file.type));
+
+                                return true;
+                            };
+                        };
+
+                        return true;
+                    }
+
+                    callback(file);
+
+                    return true;
+                }
+
+                /**
                  * Do the file upload.
                  */
                 var uploadFile = function()
                 {
                     // Ignore without files
                     if ($file[0].files.length == 0 ) {
-                        return true;
+                        return false;
                     }
 
                     // Add the loader to the input parent
@@ -168,38 +276,136 @@
                         .addClass('loading')
                     ;
 
-                    // Create the formData
-                    var data = new FormData();
-                    data.append('tms_ajax_media_upload[uploadedFile]', $file[0].files[0]);
-
-                    // Send the response
-                    $.ajax({
-                        url: {{ path('tms_media_client_ajax_upload', {field: id})|json_encode|raw }},
-                        type: 'post',
-                        data: data,
-                        contentType: false,
-                        processData: false,
-                        success: function(response) {
-                            $input.val(response.id);
-
-                            console.log('success', response);
-                        },
-                        error: function(response) {
-                            console.log('error', response);
-                        },
-                        complete: function(response) {
+                    // Prepare the file for the upload
+                    prepareFile($file[0].files[0], function(file) {
+                        // Validate the file
+                        if (false == validateFile(file)) {
                             $parent.removeClass('loading');
+
+                            return false;
                         }
+
+                        // Create the formData
+                        var data = new FormData();
+                        data.append('tms_ajax_media_upload[uploadedFile]', file);
+
+                        // Upload the file
+                        $.ajax({
+                            url: {{ path('tms_media_client_ajax_upload', {field: id})|json_encode|raw }},
+                            type: 'post',
+                            data: data,
+                            contentType: false,
+                            processData: false,
+                            success: function(response) {
+                                $input.val(response.id);
+
+                                console.log('success', response);
+                            },
+                            error: function(response) {
+                                console.log('error', response);
+                            },
+                            complete: function(response) {
+                                $parent.removeClass('loading');
+                            }
+                        });
+
+                        return true;
                     });
                 }
 
                 /**
-                 * Update the button text.
+                 * Add an error message.
+                 *
+                 * @param string message
+                 * @param array  options
                  */
-                var updateButtonText = function()
+                var addError = function(message, options)
                 {
-                    $button.text($file[0].files.length == 0 ? options.buttonChooseLabel : options.buttonUpdateLabel);
+                    for (var key in options) {
+                        message = message.replace(new RegExp(key, 'g'), options[key]);
+                    }
+
+                    console.log(message);
                 };
+
+                /**
+                 * Calculate the real size from a unix notation.
+                 *
+                 * @param string size
+                 *
+                 * @return integer
+                 */
+                var realSize = function(size)
+                {
+                    var realSize = parseInt(size.replace(/[^0-9.,]+/, ''));
+                    var unit = size.replace(/[^a-zA-Z]+/, '').toLowerCase();
+                    if ('k' == unit) {
+                        realSize = realSize * 1024;
+                    }
+                    if ('m' == unit) {
+                        realSize = realSize * 1024 * 1024;
+                    }
+                    if ('g' == unit) {
+                        realSize = realSize * 1024 * 1024 * 1024;
+                    }
+                    if ('p' == unit) {
+                        realSize = realSize * 1024 * 1024 * 1024 * 1024;
+                    }
+
+                    return realSize;
+                };
+
+                /**
+                 * Return the size for the given unit.
+                 *
+                 * @param integer size
+                 * @param string unit
+                 */
+                var unixSize = function(size, unit)
+                {
+                    size = parseInt(size);
+                    unit = unit.toLowerCase();
+
+                    if ('k' == unit) {
+                        size = size / 1024;
+                    }
+                    if ('m' == unit) {
+                        size = size / (1024 * 1024);
+                    }
+                    if ('g' == unit) {
+                        size = size / (1024 * 1024 * 1024);
+                    }
+                    if ('p' == unit) {
+                        size = size / (1024 * 1024 * 1024 * 1024);
+                    }
+
+                    return Math.round(size*100) / 100;
+                };
+
+                /**
+                 * Convert a dataURL to a Blob.
+                 *
+                 * @param string dataURL
+                 * @param string mimeType
+                 *
+                 * @return Blob
+                 */
+                var dataURLtoBlob = function(dataURL, mimeType)
+                {
+                    // Decode the dataURL
+                    binary = atob(dataURL.split(',')[1]);
+
+                    // Create 8-bit unsigned array
+                    var array = [];
+                    var i = 0;
+                    while (i < binary.length) {
+                        array.push(binary.charCodeAt(i));
+                        i++;
+                    }
+
+                    // Return our Blob object
+                    return new Blob([new Uint8Array(array)], { type: mimeType });
+                }
 
                 // The initial input
                 var $input = $(this)
@@ -214,7 +420,14 @@
                         type: 'file',
                     })
                     .on('change', function(){
-                        updateButtonText();
+                        // Update the button text
+                        $button.text(
+                            $(this)[0].files.length == 0 ?
+                            options.buttonChooseLabel :
+                            options.buttonUpdateLabel
+                        );
+
+                        // Upload the file
                         uploadFile();
 
                         return false;
@@ -223,6 +436,7 @@
 
                 // The upload button
                 var $button = $('<button>')
+                    .text(options.button{{ form.vars.data|default ? 'Update' : 'Choose' }}Label)
                     .on('click', function(){
                         $file.trigger('click');
 
@@ -230,7 +444,6 @@
                     })
                     .insertAfter($input);
                 ;
-                updateButtonText();
             };
 
             // Transform the file field
