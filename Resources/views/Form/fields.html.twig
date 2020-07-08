@@ -110,11 +110,7 @@
     <div class="ajax_media_upload">
         {{- form(form.uploadedFile) -}}
         <div class="buttons"></div>
-        <div class="preview">
-            {%- if form.vars.data.publicUri|default -%}
-                <img src="{{ form.vars.data.publicUri }}" alt="{{ form.vars.data.providerReference|default }}"/>
-            {%- endif -%}
-        </div>
+        <div class="preview"></div>
     </div>
     <script type="text/javascript">
         function getJquery(callback) {
@@ -159,6 +155,7 @@
                     buttonChooseLabel: 'Choose file',
                     buttonUpdateLabel: 'Update file',
                     resetButton: false,
+                    previewMethod: null,
                 }, options);
 
                 /**
@@ -253,6 +250,11 @@
                     if (options.resetButton) {
                         $buttonContainer.append($resetButton);
                     }
+
+                    {% if form.vars.data.publicUri|default -%}
+                        // Default preview
+                        previewFile({{ form.vars.data.publicUri|json_encode|raw }});
+                    {%- endif %}
                 };
 
                 /**
@@ -280,40 +282,55 @@
                     // Retrieve the DOM element
                     var $previewContainer = $input.siblings('.preview');
 
+                    // Default preview method
+                    var previewDisplay = function(src, name) {
+                        $previewContainer.html('');
+                        if (null != src) {
+                            $previewContainer.prepend(
+                                $('<img>').attr({
+                                    src: src,
+                                    alt: name,
+                                })
+                            );
+                        }
+                        if (null != src) {
+                            $previewContainer.append(
+                                $('<label>').text(name)
+                            );
+                        }
+                    };
+
+                    // Retrieve the user preview method
+                    if (options.previewDisplay) {
+                        eval('previewDisplay = ' + options.previewDisplay);
+                    }
+
                     // Reinitialize the preview
-                    $previewContainer
-                        .removeClass('loading')
-                        .html('')
-                    ;
+                    $previewContainer.removeClass('loading');
+                    previewDisplay(null, null);
 
                     // Ignore without file
                     if (null == file) {
                         return false;
                     }
 
-                    // Display the file name
-                    $previewContainer
-                        .addClass('loading')
-                        .append(
-                            $('<label>').text(file.name)
-                        )
-                    ;
+                    // No file just an URL
+                    if ('string' == typeof file) {
+                        previewDisplay(file, null);
+
+                        return true;
+                    }
 
                     // Read the selected file
                     var reader = new FileReader();
                     reader.readAsDataURL(file);
                     reader.onload = function(e) {
                         // Display the preview
-                        $previewContainer
-                            .removeClass('loading')
-                            .prepend(
-                                $('<img>').attr({
-                                    src: e.target.result,
-                                    alt: file.name,
-                                })
-                            )
-                        ;
+                        $previewContainer.removeClass('loading');
+                        previewDisplay(e.target.result, file.name);
                     };
+
+                    $previewContainer.addClass('loading');
                 }
 
                 /**
