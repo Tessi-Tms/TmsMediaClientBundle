@@ -3,6 +3,11 @@ form .uploaded_area {
     padding: 3px 0;
 }
 
+form .uploaded_area {
+    margin: 5px;
+    padding: 3px 0;
+}
+
 form .uploaded_area > .item {
     height: 90px;
     margin: 0 0 5px;

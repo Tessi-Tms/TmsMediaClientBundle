@@ -1,0 +1,45 @@
+form .ajax_media_upload .preview {
+    text-align: center;
+    margin: 0 auto 1em auto;
+    min-height: 2em;
+}
+form .ajax_media_upload .preview.loading {
+    position: relative;
+}
+form .ajax_media_upload .preview.loading::before,
+form .ajax_media_upload .preview.loading::after {
+    content: "";
+    display: block;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+form .ajax_media_upload .preview.loading::before {
+    background: #FFFFFF;
+    z-index: 1;
+
+    -webkit-opacity: .75;
+     -khtml-opacity: .75;
+       -moz-opacity: .75;
+            opacity: .75;
+
+    -ms-filter: ~"progid:DXImageTransform.Microsoft.Alpha(opacity=75)";
+        filter: ~"alpha(opacity=75)";
+}
+form .ajax_media_upload .preview.loading::after {
+    background: url(../images/loader.gif) no-repeat center center;
+    z-index: 2;
+}
+form .ajax_media_upload .preview img {
+    display: block;
+    margin: 0 auto;
+    max-height: 200px;
+    max-width: 200px;
+}
+form .ajax_media_upload .preview label {
+    display: block;
+    font-style: italic;
+    margin: .5em 0 0 0;
+}
