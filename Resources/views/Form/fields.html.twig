@@ -143,6 +143,20 @@
                     // The initial input
                     var $input = $(this);
 
+                    // Retrieve or create the DOM elements
+                    var $errorsContainer = $input.siblings('.errors');
+                    if (! $errorsContainer.length) {
+                        $errorsContainer = $('<div>').addClass('errors').insertAfter($input);
+                    }
+                    var $previewContainer = $input.siblings('.preview');
+                    if (! $previewContainer.length) {
+                        $previewContainer = $('<div>').addClass('preview').insertAfter($input);
+                    }
+                    var $buttonContainer = $input.siblings('.buttons');
+                    if (!$buttonContainer.length) {
+                        $buttonContainer = $('<div>').addClass('buttons').insertAfter($input);
+                    }
+
                     // Merge default options
                     options = $.extend({
                         maxSize: null,
@@ -163,8 +177,7 @@
                      * Initialize the ajax upload.
                      */
                     var init = function() {
-                        // Retrieve the existing DOM elements
-                        var $buttonContainer = $input.parents('.ajax_media_upload').find('.buttons');
+                        $input.parent().addClass('ajax_media_upload');
 
                         // Transform the file input to an hidden type
                         $input
@@ -290,14 +303,13 @@
                     */
                     var addError = function(message, parameters)
                     {
+
                         for (var key in parameters) {
                             message = message.replace(new RegExp(key, 'g'), parameters[key]);
                         }
 
                         // Default error method
                         var errorDisplay = function(message) {
-                            var $errorsContainer = $input.parents('.ajax_media_upload').find('.errors');
-
                             if (false == message) {
                                 $errorsContainer.html('');
 
@@ -329,9 +341,6 @@
                      */
                     var previewFile = function(url, label, mimeType)
                     {
-                        // Retrieve the DOM element
-                        var $previewContainer = $input.parents('.ajax_media_upload').find('.preview');
-
                         // Default preview method
                         var previewDisplay = function(src, link, name) {
                             $previewContainer.html('');
@@ -347,7 +356,7 @@
                                 }
                                 $imageContainer.append(
                                     $('<img>').attr({
-                                        src: src,
+                                        src: src + (src == link ? '.png?resize=1&maxwidth=150&maxheight=150' : ''),
                                         alt: name,
                                     })
                                 );
@@ -636,7 +645,6 @@
                 $('input#{{ id }}_uploadedFile').loadAjaxUpload_{{ id }}({{ form.vars.pluginOptions|json_encode|raw }});
             });
         </script>
-    </div>
 {% endblock %}
 
 {% block tms_media_upload_widget %}
@@ -678,7 +686,7 @@
             $.fn.loadUploadedArea = function(url, mimeType, name, media) {
                 var $that = $(this);
 
-                var $uploadedArea = $(this).parents('.ajax_media_upload').find('.uploaded_area');
+                var $uploadedArea = $(this).siblings('.uploaded_area');
                 if ($uploadedArea.length === 0) {
                     $uploadedArea = $('<div class="uploaded_area"></div>');
                     $that.after($uploadedArea);
