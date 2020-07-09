@@ -106,545 +106,541 @@
 {% endblock %}
 
 {% block tms_ajax_media_upload_widget %}
-    <div id="{{ form.vars.id }}" class="ajax_media_upload">
-        <link href="{{ asset('bundles/tmsmediaclient/css/tmsMediaAjaxUpload.css') }}" rel="stylesheet" type="text/css" />
-        {{- block('collection_widget') -}}
-        <div class="buttons"></div>
-        <div class="preview"></div>
-        <div class="errors"></div>
-        <script type="text/javascript">
-            function getJquery(callback) {
-                if (!window.jQuery) {
-                    var sJquery = document.getElementById('tms_jquery');
-                    if (!sJquery) {
-                        sJquery = document.createElement("script");
-                        sJquery.id = "tms_jquery";
-                        sJquery.src = "{{ asset('bundles/tmsmediaclient/js/jquery-1.11.3.min.js') }}";
-                        sJquery.type = "text/javascript";
+    {{- block('collection_widget') -}}
+    <link href="{{ asset('bundles/tmsmediaclient/css/tmsMediaAjaxUpload.css') }}" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        function getJquery(callback) {
+            if (!window.jQuery) {
+                var sJquery = document.getElementById('tms_jquery');
+                if (!sJquery) {
+                    sJquery = document.createElement("script");
+                    sJquery.id = "tms_jquery";
+                    sJquery.src = "{{ asset('bundles/tmsmediaclient/js/jquery-1.11.3.min.js') }}";
+                    sJquery.type = "text/javascript";
 
-                        var head = document.getElementsByTagName('head')[0].appendChild(sJquery);
-                    }
+                    var head = document.getElementsByTagName('head')[0].appendChild(sJquery);
+                }
 
-                    var onload = sJquery.onload;
-                    sJquery.onload = sJquery.onreadystatechange = function() {
-                        if (typeof onload == 'function') {
-                            onload();
-                        }
-                        callback(window.jQuery);
+                var onload = sJquery.onload;
+                sJquery.onload = sJquery.onreadystatechange = function() {
+                    if (typeof onload == 'function') {
+                        onload();
                     }
-                } else {
                     callback(window.jQuery);
                 }
-            };
+            } else {
+                callback(window.jQuery);
+            }
+        };
 
-            getJquery(function($) {
-                // Ajax loader
-                $.fn.loadAjaxUpload_{{ id }} = function(options) {
-                    // The initial input
-                    var $input = $(this);
+        getJquery(function($) {
+            // Ajax loader
+            $.fn.loadAjaxUpload_{{ id }} = function(options) {
+                // The initial input
+                var $input = $(this);
 
-                    // Retrieve or create the DOM elements
-                    var $errorsContainer = $input.siblings('.errors');
-                    if (! $errorsContainer.length) {
-                        $errorsContainer = $('<div>').addClass('errors').insertAfter($input);
-                    }
-                    var $previewContainer = $input.siblings('.preview');
-                    if (! $previewContainer.length) {
-                        $previewContainer = $('<div>').addClass('preview').insertAfter($input);
-                    }
-                    var $buttonContainer = $input.siblings('.buttons');
-                    if (!$buttonContainer.length) {
-                        $buttonContainer = $('<div>').addClass('buttons').insertAfter($input);
-                    }
+                // Retrieve or create the DOM elements
+                var $errorsContainer = $input.siblings('.errors');
+                if (! $errorsContainer.length) {
+                    $errorsContainer = $('<div>').addClass('errors').insertAfter($input);
+                }
+                var $previewContainer = $input.siblings('.preview');
+                if (! $previewContainer.length) {
+                    $previewContainer = $('<div>').addClass('preview').insertAfter($input);
+                }
+                var $buttonContainer = $input.siblings('.buttons');
+                if (!$buttonContainer.length) {
+                    $buttonContainer = $('<div>').addClass('buttons').insertAfter($input);
+                }
 
-                    // Merge default options
-                    options = $.extend({
-                        maxSize: null,
-                        maxSizeMessage: null,
-                        mimeTypes: [],
-                        mimeTypesMessage: null,
-                        imagesMimeTypes: null,
-                        imageMaxWidth: null,
-                        imageMaxHeight: null,
-                        buttonChooseLabel: 'Choose file',
-                        buttonUpdateLabel: 'Update file',
-                        resetButton: false,
-                        previewMethod: null,
-                        errorDisplay: null,
-                    }, options);
+                // Merge default options
+                options = $.extend({
+                    maxSize: null,
+                    maxSizeMessage: null,
+                    mimeTypes: [],
+                    mimeTypesMessage: null,
+                    imagesMimeTypes: null,
+                    imageMaxWidth: null,
+                    imageMaxHeight: null,
+                    buttonChooseLabel: 'Choose file',
+                    buttonUpdateLabel: 'Update file',
+                    resetButton: false,
+                    previewMethod: null,
+                    errorDisplay: null,
+                }, options);
 
-                    /**
-                     * Initialize the ajax upload.
-                     */
-                    var init = function() {
-                        $input.parent().addClass('ajax_media_upload');
+                /**
+                 * Initialize the ajax upload.
+                 */
+                var init = function() {
+                    $input.parent().addClass('ajax_media_upload');
 
-                        // Transform the file input to an hidden type
-                        $input
-                            .attr({
-                                type: 'text',
-                                required: {{ form.vars.required|json_encode }},
-                            })
-                            .css({
-                                border: 'none',
-                                height: '1px',
-                                margin: 0,
-                                padding: 0,
-                                width: '1px',
-                            })
-                        ;
+                    // Transform the file input to an hidden type
+                    $input
+                        .attr({
+                            type: 'text',
+                            required: {{ form.vars.required|json_encode }},
+                        })
+                        .css({
+                            border: 'none',
+                            height: '1px',
+                            margin: 0,
+                            padding: 0,
+                            width: '1px',
+                        })
+                    ;
 
-                        // The file to upload
-                        var $file = $('<input>')
-                            .attr({
-                                type: 'file',
-                            })
-                            .on('change', function(){
-                                // Get the input files
-                                var files = $(this)[0].files;
+                    // The file to upload
+                    var $file = $('<input>')
+                        .attr({
+                            type: 'file',
+                        })
+                        .on('change', function(){
+                            // Get the input files
+                            var files = $(this)[0].files;
 
-                                // Reset the view
-                                $resetButton.hide();
-                                $button.text(options.buttonChooseLabel);
-                                previewFile(null, null, null);
-                                addError(false, {});
-
-                                // Ignore without files
-                                if (files.length == 0 ) {
-
-                                    return false;
-                                }
-
-                                // Update the button text
-                                $button
-                                    .text(options.buttonUpdateLabel)
-                                    .attr({
-                                        disabled: 'disabled',
-                                    })
-                                ;
-                                $resetButton.show();
-
-                                // Upload the file
-                                uploadFile(files[0], function(result) {
-                                    $button.attr({
-                                        disabled: null,
-                                    });
-
-                                    if (null == result) {
-                                        $button.text(options.buttonChooseLabel);
-                                        previewFile(null, null, null);
-
-                                        return true;
-                                    }
-
-                                    if (200 == result.status) {
-                                        previewFile(
-                                            result.responseJSON.publicUri,
-                                            files[0].name,
-                                            result.responseJSON.mimeType
-                                        );
-                                    } else {
-                                        $button.text(options.buttonChooseLabel);
-                                        previewFile(null, null, null);
-                                    }
-                                });
-
-                                return false;
-                            })
-                        ;
-
-                        // The upload button
-                        var $button = $('<button>')
-                            .addClass('select')
-                            .text(options.button{{ form.vars.data|default ? 'Update' : 'Choose' }}Label)
-                            .on('click', function(){
-                                $file.trigger('click');
-
-                                return false;
-                            })
-                        ;
-                        $buttonContainer.append($button);
-
-                        // The reset button
-                        var $resetButton = $('<button>')
-                            .addClass('reset')
-                            .text(options.resetButton)
-                            .on('click', function() {
-                                // Reinitialise the inputs
-                                $input.val(null);
-                                $file.val(null).trigger('change');
-
-                                return false;
-                            })
-                        ;
-                        {% if not form.vars.data|default -%}
+                            // Reset the view
                             $resetButton.hide();
-                        {%- endif %}
+                            $button.text(options.buttonChooseLabel);
+                            previewFile(null, null, null);
+                            addError(false, {});
 
-                        if (options.resetButton) {
-                            $buttonContainer.append($resetButton);
-                        }
-
-                        {% if form.vars.data.publicUri|default -%}
-                            // Default preview
-                            previewFile(
-                                {{ form.vars.data.publicUri|json_encode|raw }},
-                                null,
-                                {{ form.vars.data.mimeType|json_encode|raw }}
-                            );
-                        {%- endif %}
-                    };
-
-                    /**
-                    * Add an error message.
-                    *
-                    * @param string message
-                    * @param array  options
-                    */
-                    var addError = function(message, parameters)
-                    {
-
-                        for (var key in parameters) {
-                            message = message.replace(new RegExp(key, 'g'), parameters[key]);
-                        }
-
-                        // Default error method
-                        var errorDisplay = function(message) {
-                            if (false == message) {
-                                $errorsContainer.html('');
-
-                                return true;
-                            }
-
-                            var $list = $errorsContainer.find('ul');
-                            if (! $list.length) {
-                                $list = $('<ul>');
-                                $errorsContainer.append($list);
-                            }
-
-                            var $item = $('<li>').text(message);
-                            $list.append($item);
-                        };
-
-                        // Retrieve the user preview method
-                        if (options.errorDisplay) {
-                            eval('errorDisplay = ' + options.errorDisplay);
-                        }
-
-                        errorDisplay(message);
-                    };
-
-                    /**
-                     * Display a preview of the selected file.
-                     *
-                     * @param Object file
-                     */
-                    var previewFile = function(url, label, mimeType)
-                    {
-                        // Default preview method
-                        var previewDisplay = function(src, link, name) {
-                            $previewContainer.html('');
-                            if (null != src) {
-                                var $imageContainer = $previewContainer;
-                                if (null != link) {
-                                    $imageContainer = $('<a>')
-                                        .attr({
-                                            href: link,
-                                            target: '_blank'
-                                        });
-                                    $previewContainer.append($imageContainer);
-                                }
-                                $imageContainer.append(
-                                    $('<img>').attr({
-                                        src: src + (src == link ? '.png?resize=1&maxwidth=150&maxheight=150' : ''),
-                                        alt: name,
-                                    })
-                                );
-                            }
-                            if (null != src) {
-                                $previewContainer.append(
-                                    $('<label>').text(name)
-                                );
-                            }
-                        };
-
-                        // Retrieve the user preview method
-                        if (options.previewDisplay) {
-                            eval('previewDisplay = ' + options.previewDisplay);
-                        }
-
-                        // Reinitialize the preview
-                        $previewContainer.removeClass('loading');
-                        previewDisplay(null, null, null);
-
-                        // Ignore without url
-                        if ('string' != typeof url) {
-                            return false;
-                        }
-
-                        var img = url;
-                        if (options.imagesMimeTypes.indexOf(mimeType) < 0) {
-                            img = "{{ asset('bundles/tmsmediaclient/images/nopreview.png') }}";
-                        }
-                        previewDisplay(img, url, label);
-
-                        return true;
-                    }
-
-                    /**
-                     * Prepare the file for the upload.
-                     *
-                     * @return Object
-                     */
-                    var prepareFile = function(file, callback)
-                    {
-                        // Resize enabled
-                        if (
-                            options.imagesMimeTypes.indexOf(file.type) >= 0 &&
-                            (options.imageMaxHeight || options.imageMaxWidth)
-                        ) {
-                            // Read the selected file
-                            var reader = new FileReader();
-                            reader.readAsDataURL(file);
-                            reader.onload = function(e) {
-                                // Load the image
-                                var img = new Image();
-                                img.src = e.target.result;
-                                img.onload = function () {
-                                    // Create the canvas to resize the image
-                                    var canvas = document.createElement('canvas');
-                                    var ctx = canvas.getContext("2d");
-
-                                    // get the image dimentions
-                                    var width = img.width;
-                                    var height = img.height;
-
-                                    // Smaller image than the max dimentions
-                                    if (
-                                        (null == options.imageMaxWidth || width <= options.imageMaxWidth) &&
-                                        (null == options.imageMaxHeight || height <= options.imageMaxHeight)
-                                    ) {
-                                        callback(file, file.type);
-
-                                        return true;
-                                    }
-
-                                    // Calculate image new dimentions
-                                    if (null != options.imageMaxWidth && width > options.imageMaxWidth) {
-                                        height *= options.imageMaxWidth / width;
-                                        width = options.imageMaxWidth;
-                                    }
-                                    if (null != options.imageMaxHeight && height > options.imageMaxHeight) {
-                                        width *= options.imageMaxHeight / height;
-                                        height = options.imageMaxHeight;
-                                    }
-
-                                    // Resize the image
-                                    canvas.width = width;
-                                    canvas.height = height;
-                                    var ctx = canvas.getContext("2d");
-                                    ctx.drawImage(img, 0, 0, width, height);
-
-                                    callback(dataURLtoBlob(canvas.toDataURL(), file.type));
-
-                                    return true;
-                                };
-                            };
-
-                            return true;
-                        }
-
-                        callback(file);
-
-                        return true;
-                    };
-
-                    /**
-                    * Validate the file size and mimetype.
-                    * Will display an error for each violations.
-                    *
-                    * @param object file The file to analyse
-                    *
-                    * @return boolean
-                    */
-                    var validateFile = function(file)
-                    {
-                        // Check the mimetype constraint
-                        if (options.mimeTypes.indexOf(file.type) < 0) {
-                            addError(options.mimeTypesMessage, {
-                                __TYPES__: options.mimeTypes.join(', '),
-                                __TYPE__: file.type,
-                            });
-
-                            return false;
-                        }
-
-                        // Check the maxSize constraint
-                        if (realSize(options.maxSize) < file.size) {
-                            var unit = options.maxSize.replace(/[^a-zA-Z]+/, '').toLowerCase();
-                            var units = {
-                                k: 'Ko',
-                                m: 'Mo',
-                                g: 'Go',
-                                p: 'Po'
-                            };
-
-                            addError(options.maxSizeMessage, {
-                                __SIZE__: unixSize(file.size, unit),
-                                __SUFFIX__: 'undefined' == typeof units[unit] ? unit : units[unit],
-                                __LIMIT__: unixSize(realSize(options.maxSize), unit),
-                            });
-
-                            return false;
-                        }
-
-                        return true;
-                    };
-
-                    /**
-                     * Do the file upload.
-                     */
-                    var uploadFile = function(file, callback)
-                    {
-                        // Add the loader to the input parent
-                        var $parent = $input
-                            .parent()
-                            .addClass('loading')
-                        ;
-
-                        // Prepare the file for the upload
-                        prepareFile(file, function(file) {
-                            // Validate the file
-                            if (false == validateFile(file)) {
-                                $parent.removeClass('loading');
-                                $input.val(null);
-
-                                callback(null);
+                            // Ignore without files
+                            if (files.length == 0 ) {
 
                                 return false;
                             }
 
-                            // Create the formData
-                            var data = new FormData();
-                            data.append('tms_ajax_media_upload[uploadedFile]', file);
+                            // Update the button text
+                            $button
+                                .text(options.buttonUpdateLabel)
+                                .attr({
+                                    disabled: 'disabled',
+                                })
+                            ;
+                            $resetButton.show();
 
                             // Upload the file
-                            $.ajax({
-                                url: {{ path('tms_media_client_ajax_upload', {field: id})|json_encode|raw }},
-                                type: 'post',
-                                data: data,
-                                contentType: false,
-                                processData: false,
-                                complete: function(response) {
-                                    $parent.removeClass('loading');
+                            uploadFile(files[0], function(result) {
+                                $button.attr({
+                                    disabled: null,
+                                });
 
-                                    if (200 == response.status) {
-                                        $input.val(response.responseJSON.id);
-                                    } else {
-                                        $input.val(null);
+                                if (null == result) {
+                                    $button.text(options.buttonChooseLabel);
+                                    previewFile(null, null, null);
 
-                                        try {
-                                            addError(response.responseJSON.message, {});
-                                        } catch (e) {
-                                            addError(response.statusText, {});
-                                        }
-                                    }
+                                    return true;
+                                }
 
-                                    callback(response);
+                                if (200 == result.status) {
+                                    previewFile(
+                                        result.responseJSON.publicUri,
+                                        files[0].name,
+                                        result.responseJSON.mimeType
+                                    );
+                                } else {
+                                    $button.text(options.buttonChooseLabel);
+                                    previewFile(null, null, null);
                                 }
                             });
 
-                            return true;
-                        });
-                    };
+                            return false;
+                        })
+                    ;
 
-                    /**
-                     * Calculate the real size from a unix notation.
-                     *
-                     * @param string size
-                     *
-                     * @return integer
-                     */
-                    var realSize = function(size)
-                    {
-                        var realSize = parseInt(size.replace(/[^0-9.,]+/, ''));
-                        var unit = size.replace(/[^a-zA-Z]+/, '').toLowerCase();
-                        if ('k' == unit) {
-                            realSize = realSize * 1024;
-                        }
-                        if ('m' == unit) {
-                            realSize = realSize * 1024 * 1024;
-                        }
-                        if ('g' == unit) {
-                            realSize = realSize * 1024 * 1024 * 1024;
-                        }
-                        if ('p' == unit) {
-                            realSize = realSize * 1024 * 1024 * 1024 * 1024;
-                        }
+                    // The upload button
+                    var $button = $('<button>')
+                        .addClass('select')
+                        .text(options.button{{ form.vars.data|default ? 'Update' : 'Choose' }}Label)
+                        .on('click', function(){
+                            $file.trigger('click');
 
-                        return realSize;
-                    };
+                            return false;
+                        })
+                    ;
+                    $buttonContainer.append($button);
 
-                    /**
-                     * Return the size for the given unit.
-                     *
-                     * @param integer size
-                     * @param string unit
-                     */
-                    var unixSize = function(size, unit)
-                    {
-                        size = parseInt(size);
-                        unit = unit.toLowerCase();
+                    // The reset button
+                    var $resetButton = $('<button>')
+                        .addClass('reset')
+                        .text(options.resetButton)
+                        .on('click', function() {
+                            // Reinitialise the inputs
+                            $input.val(null);
+                            $file.val(null).trigger('change');
 
-                        if ('k' == unit) {
-                            size = size / 1024;
-                        }
-                        if ('m' == unit) {
-                            size = size / (1024 * 1024);
-                        }
-                        if ('g' == unit) {
-                            size = size / (1024 * 1024 * 1024);
-                        }
-                        if ('p' == unit) {
-                            size = size / (1024 * 1024 * 1024 * 1024);
-                        }
+                            return false;
+                        })
+                    ;
+                    {% if not form.vars.data|default -%}
+                        $resetButton.hide();
+                    {%- endif %}
 
-                        return Math.round(size*100) / 100;
-                    };
+                    if (options.resetButton) {
+                        $buttonContainer.append($resetButton);
+                    }
 
-                    /**
-                     * Convert a dataURL to a Blob.
-                     *
-                     * @param string dataURL
-                     * @param string mimeType
-                     *
-                     * @return Blob
-                     */
-                    var dataURLtoBlob = function(dataURL, mimeType)
-                    {
-                        // Decode the dataURL
-                        binary = atob(dataURL.split(',')[1]);
-
-                        // Create 8-bit unsigned array
-                        var array = [];
-                        var i = 0;
-                        while (i < binary.length) {
-                            array.push(binary.charCodeAt(i));
-                            i++;
-                        }
-
-                        // Return our Blob object
-                        return new Blob([new Uint8Array(array)], { type: mimeType });
-                    };
-
-                    // Initialize the plugin
-                    init();
+                    {% if form.vars.data.publicUri|default -%}
+                        // Default preview
+                        previewFile(
+                            {{ form.vars.data.publicUri|json_encode|raw }},
+                            null,
+                            {{ form.vars.data.mimeType|json_encode|raw }}
+                        );
+                    {%- endif %}
                 };
 
-                // Transform the file field
-                $('input#{{ id }}_uploadedFile').loadAjaxUpload_{{ id }}({{ form.vars.pluginOptions|json_encode|raw }});
-            });
-        </script>
+                /**
+                * Add an error message.
+                *
+                * @param string message
+                * @param array  options
+                */
+                var addError = function(message, parameters)
+                {
+
+                    for (var key in parameters) {
+                        message = message.replace(new RegExp(key, 'g'), parameters[key]);
+                    }
+
+                    // Default error method
+                    var errorDisplay = function(message) {
+                        if (false == message) {
+                            $errorsContainer.html('');
+
+                            return true;
+                        }
+
+                        var $list = $errorsContainer.find('ul');
+                        if (! $list.length) {
+                            $list = $('<ul>');
+                            $errorsContainer.append($list);
+                        }
+
+                        var $item = $('<li>').text(message);
+                        $list.append($item);
+                    };
+
+                    // Retrieve the user preview method
+                    if (options.errorDisplay) {
+                        eval('errorDisplay = ' + options.errorDisplay);
+                    }
+
+                    errorDisplay(message);
+                };
+
+                /**
+                 * Display a preview of the selected file.
+                 *
+                 * @param Object file
+                 */
+                var previewFile = function(url, label, mimeType)
+                {
+                    // Default preview method
+                    var previewDisplay = function(src, link, name) {
+                        $previewContainer.html('');
+                        if (null != src) {
+                            var $imageContainer = $previewContainer;
+                            if (null != link) {
+                                $imageContainer = $('<a>')
+                                    .attr({
+                                        href: link,
+                                        target: '_blank'
+                                    });
+                                $previewContainer.append($imageContainer);
+                            }
+                            $imageContainer.append(
+                                $('<img>').attr({
+                                    src: src + (src == link ? '.png?resize=1&maxwidth=150&maxheight=150' : ''),
+                                    alt: name,
+                                })
+                            );
+                        }
+                        if (null != src) {
+                            $previewContainer.append(
+                                $('<label>').text(name)
+                            );
+                        }
+                    };
+
+                    // Retrieve the user preview method
+                    if (options.previewDisplay) {
+                        eval('previewDisplay = ' + options.previewDisplay);
+                    }
+
+                    // Reinitialize the preview
+                    $previewContainer.removeClass('loading');
+                    previewDisplay(null, null, null);
+
+                    // Ignore without url
+                    if ('string' != typeof url) {
+                        return false;
+                    }
+
+                    var img = url;
+                    if (options.imagesMimeTypes.indexOf(mimeType) < 0) {
+                        img = "{{ asset('bundles/tmsmediaclient/images/nopreview.png') }}";
+                    }
+                    previewDisplay(img, url, label);
+
+                    return true;
+                }
+
+                /**
+                 * Prepare the file for the upload.
+                 *
+                 * @return Object
+                 */
+                var prepareFile = function(file, callback)
+                {
+                    // Resize enabled
+                    if (
+                        options.imagesMimeTypes.indexOf(file.type) >= 0 &&
+                        (options.imageMaxHeight || options.imageMaxWidth)
+                    ) {
+                        // Read the selected file
+                        var reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        reader.onload = function(e) {
+                            // Load the image
+                            var img = new Image();
+                            img.src = e.target.result;
+                            img.onload = function () {
+                                // Create the canvas to resize the image
+                                var canvas = document.createElement('canvas');
+                                var ctx = canvas.getContext("2d");
+
+                                // get the image dimentions
+                                var width = img.width;
+                                var height = img.height;
+
+                                // Smaller image than the max dimentions
+                                if (
+                                    (null == options.imageMaxWidth || width <= options.imageMaxWidth) &&
+                                    (null == options.imageMaxHeight || height <= options.imageMaxHeight)
+                                ) {
+                                    callback(file, file.type);
+
+                                    return true;
+                                }
+
+                                // Calculate image new dimentions
+                                if (null != options.imageMaxWidth && width > options.imageMaxWidth) {
+                                    height *= options.imageMaxWidth / width;
+                                    width = options.imageMaxWidth;
+                                }
+                                if (null != options.imageMaxHeight && height > options.imageMaxHeight) {
+                                    width *= options.imageMaxHeight / height;
+                                    height = options.imageMaxHeight;
+                                }
+
+                                // Resize the image
+                                canvas.width = width;
+                                canvas.height = height;
+                                var ctx = canvas.getContext("2d");
+                                ctx.drawImage(img, 0, 0, width, height);
+
+                                callback(dataURLtoBlob(canvas.toDataURL(), file.type));
+
+                                return true;
+                            };
+                        };
+
+                        return true;
+                    }
+
+                    callback(file);
+
+                    return true;
+                };
+
+                /**
+                * Validate the file size and mimetype.
+                * Will display an error for each violations.
+                *
+                * @param object file The file to analyse
+                *
+                * @return boolean
+                */
+                var validateFile = function(file)
+                {
+                    // Check the mimetype constraint
+                    if (options.mimeTypes.indexOf(file.type) < 0) {
+                        addError(options.mimeTypesMessage, {
+                            __TYPES__: options.mimeTypes.join(', '),
+                            __TYPE__: file.type,
+                        });
+
+                        return false;
+                    }
+
+                    // Check the maxSize constraint
+                    if (realSize(options.maxSize) < file.size) {
+                        var unit = options.maxSize.replace(/[^a-zA-Z]+/, '').toLowerCase();
+                        var units = {
+                            k: 'Ko',
+                            m: 'Mo',
+                            g: 'Go',
+                            p: 'Po'
+                        };
+
+                        addError(options.maxSizeMessage, {
+                            __SIZE__: unixSize(file.size, unit),
+                            __SUFFIX__: 'undefined' == typeof units[unit] ? unit : units[unit],
+                            __LIMIT__: unixSize(realSize(options.maxSize), unit),
+                        });
+
+                        return false;
+                    }
+
+                    return true;
+                };
+
+                /**
+                 * Do the file upload.
+                 */
+                var uploadFile = function(file, callback)
+                {
+                    // Add the loader to the input parent
+                    var $parent = $input
+                        .parent()
+                        .addClass('loading')
+                    ;
+
+                    // Prepare the file for the upload
+                    prepareFile(file, function(file) {
+                        // Validate the file
+                        if (false == validateFile(file)) {
+                            $parent.removeClass('loading');
+                            $input.val(null);
+
+                            callback(null);
+
+                            return false;
+                        }
+
+                        // Create the formData
+                        var data = new FormData();
+                        data.append('tms_ajax_media_upload[uploadedFile]', file);
+
+                        // Upload the file
+                        $.ajax({
+                            url: {{ path('tms_media_client_ajax_upload', {field: id})|json_encode|raw }},
+                            type: 'post',
+                            data: data,
+                            contentType: false,
+                            processData: false,
+                            complete: function(response) {
+                                $parent.removeClass('loading');
+
+                                if (200 == response.status) {
+                                    $input.val(response.responseJSON.id);
+                                } else {
+                                    $input.val(null);
+
+                                    try {
+                                        addError(response.responseJSON.message, {});
+                                    } catch (e) {
+                                        addError(response.statusText, {});
+                                    }
+                                }
+
+                                callback(response);
+                            }
+                        });
+
+                        return true;
+                    });
+                };
+
+                /**
+                 * Calculate the real size from a unix notation.
+                 *
+                 * @param string size
+                 *
+                 * @return integer
+                 */
+                var realSize = function(size)
+                {
+                    var realSize = parseInt(size.replace(/[^0-9.,]+/, ''));
+                    var unit = size.replace(/[^a-zA-Z]+/, '').toLowerCase();
+                    if ('k' == unit) {
+                        realSize = realSize * 1024;
+                    }
+                    if ('m' == unit) {
+                        realSize = realSize * 1024 * 1024;
+                    }
+                    if ('g' == unit) {
+                        realSize = realSize * 1024 * 1024 * 1024;
+                    }
+                    if ('p' == unit) {
+                        realSize = realSize * 1024 * 1024 * 1024 * 1024;
+                    }
+
+                    return realSize;
+                };
+
+                /**
+                 * Return the size for the given unit.
+                 *
+                 * @param integer size
+                 * @param string unit
+                 */
+                var unixSize = function(size, unit)
+                {
+                    size = parseInt(size);
+                    unit = unit.toLowerCase();
+
+                    if ('k' == unit) {
+                        size = size / 1024;
+                    }
+                    if ('m' == unit) {
+                        size = size / (1024 * 1024);
+                    }
+                    if ('g' == unit) {
+                        size = size / (1024 * 1024 * 1024);
+                    }
+                    if ('p' == unit) {
+                        size = size / (1024 * 1024 * 1024 * 1024);
+                    }
+
+                    return Math.round(size*100) / 100;
+                };
+
+                /**
+                 * Convert a dataURL to a Blob.
+                 *
+                 * @param string dataURL
+                 * @param string mimeType
+                 *
+                 * @return Blob
+                 */
+                var dataURLtoBlob = function(dataURL, mimeType)
+                {
+                    // Decode the dataURL
+                    binary = atob(dataURL.split(',')[1]);
+
+                    // Create 8-bit unsigned array
+                    var array = [];
+                    var i = 0;
+                    while (i < binary.length) {
+                        array.push(binary.charCodeAt(i));
+                        i++;
+                    }
+
+                    // Return our Blob object
+                    return new Blob([new Uint8Array(array)], { type: mimeType });
+                };
+
+                // Initialize the plugin
+                init();
+            };
+
+            // Transform the file field
+            $('input#{{ id }}_uploadedFile').loadAjaxUpload_{{ id }}({{ form.vars.pluginOptions|json_encode|raw }});
+        });
+    </script>
 {% endblock %}
 
 {% block tms_media_upload_widget %}
