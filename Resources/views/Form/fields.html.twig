@@ -212,13 +212,10 @@
                             }
 
                             // Update the button text
-                            $button
-                                .text(options.buttonUpdateLabel)
-                                .attr({
-                                    disabled: 'disabled',
-                                })
-                            ;
-                            $resetButton.show();
+                            $button.attr({
+                                disabled: 'disabled',
+                            });
+
 
                             // Upload the file
                             uploadFile(files[0], function(result) {
@@ -226,23 +223,21 @@
                                     disabled: null,
                                 });
 
-                                if (null == result) {
-                                    $button.text(options.buttonChooseLabel);
-                                    previewFile(null, null, null);
+                                try {
+                                    if (200 == result.status) {
+                                        $resetButton.show();
+                                        $button.text(options.buttonUpdateLabel);
+                                        previewFile(
+                                            result.responseJSON.publicUri,
+                                            files[0].name,
+                                            result.responseJSON.mimeType
+                                        );
 
-                                    return true;
-                                }
+                                        return true;
+                                    }
+                                } catch(e) {}
 
-                                if (200 == result.status) {
-                                    previewFile(
-                                        result.responseJSON.publicUri,
-                                        files[0].name,
-                                        result.responseJSON.mimeType
-                                    );
-                                } else {
-                                    $button.text(options.buttonChooseLabel);
-                                    previewFile(null, null, null);
-                                }
+                                previewFile(null, null, null);
                             });
 
                             return false;
