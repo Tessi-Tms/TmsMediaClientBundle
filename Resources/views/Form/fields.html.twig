@@ -267,7 +267,7 @@
                         .text(options.resetButton)
                         .on('click', function() {
                             // Reinitialise the inputs
-                            $input.val(null);
+                            $input.val(null).trigger('change');
                             $file.val(null).trigger('change');
 
                             return false;
@@ -513,7 +513,7 @@
                         // Validate the file
                         if (false == validateFile(file)) {
                             $parent.removeClass('loading');
-                            $input.val(null);
+                            $input.val(null).trigger('change');
 
                             callback(null);
 
@@ -535,9 +535,9 @@
                                 $parent.removeClass('loading');
 
                                 if (200 == response.status) {
-                                    $input.val(response.responseJSON.id);
+                                    $input.val(response.responseJSON.id).trigger('change');
                                 } else {
-                                    $input.val(null);
+                                    $input.val(null).trigger('change');
 
                                     try {
                                         addError(response.responseJSON.message, {});
