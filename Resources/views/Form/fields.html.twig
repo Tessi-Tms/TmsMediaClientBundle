@@ -440,6 +440,12 @@
 
                                 return true;
                             };
+                            // Handle wrong mimeTypes
+                            img.onerror = function(error) {
+                                callback(file);
+
+                                return true;
+                            };
                         };
 
                         return true;
