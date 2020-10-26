@@ -101,6 +101,7 @@ class TmsAjaxMediaUploadType extends AbstractType
 
         // Generate the plugin options
         $pluginOptions = array_intersect_key($cleanedOptions, array(
+            'required' => false,
             'maxSize' => null,
             'maxSizeMessage' => null,
             'mimeTypes' => null,

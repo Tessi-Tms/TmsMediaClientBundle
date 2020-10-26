@@ -155,6 +155,7 @@
 
                 // Merge default options
                 options = $.extend({
+                    required: false,
                     maxSize: null,
                     maxSizeMessage: null,
                     mimeTypes: [],
@@ -265,11 +266,18 @@
                             $input.val(null).trigger('change');
                             $file.val(null).trigger('change');
 
+
+                            if (options.required) {
+                                $input.attr('required', 'required');
+                            }
+
                             return false;
                         })
                     ;
                     {% if not form.vars.data|default -%}
                         $resetButton.hide();
+                    {%- else -%}
+                        $input.attr('required', false);
                     {%- endif %}
 
                     if (options.resetButton) {
