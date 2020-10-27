@@ -180,7 +180,7 @@
                     $input
                         .attr({
                             type: 'text',
-                            required: {{ form.vars.required|json_encode }},
+                            required: options.required,
                         })
                         .css({
                             border: 'none',
@@ -647,6 +647,12 @@
             };
 
             // Transform the file field
+            if (0 === $('input#{{ id }}_uploadedFile').length) {
+                $('#{{ id }}').append($('<input />').attr({
+                    id: '{{ id }}_uploadedFile',
+                    name: '{{form.vars.full_name }}[uploadedFile]',
+                }));
+            }
             $('input#{{ id }}_uploadedFile').loadAjaxUpload_{{ id|replace({'-': ''}) }}({{ form.vars.pluginOptions|json_encode|raw }});
         });
     </script>

@@ -76,6 +76,12 @@ class TmsAjaxMediaUploadType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
+        // Get the form ID
+        $id = $view->vars['id'];
+
+        // Retrieve the saved session
+        $session = $this->session->get(self::sessionName, array());
+
         // Remove the null or complexe options
         $cleanedOptions = array();
         foreach ($options as $key => $value) {
@@ -90,14 +96,11 @@ class TmsAjaxMediaUploadType extends AbstractType
         }
 
         // Keep the form options in the session
-        $this->session->set(self::sessionName, array_merge(
-            $this->session->get(self::sessionName, array()),
-            array(
-                $view->vars['id'] => array(
-                    'options' => $cleanedOptions,
-                ),
-            )
-        ));
+        $this->session->set(self::sessionName, array_merge($session, array(
+            $id => array_merge(isset($session[$id]) ? $session[$id] : array(), array(
+                'options' => $cleanedOptions,
+            ))
+        )));
 
         // Generate the plugin options
         $pluginOptions = array_intersect_key($cleanedOptions, array(
@@ -172,41 +175,60 @@ class TmsAjaxMediaUploadType extends AbstractType
                     $form = $event->getForm();
 
                     $media = $data;
-                    if (is_array($data) && isset($data['uploadedFile'])) {
-                        $uploadedFile = $data['uploadedFile'];
+                    if (is_array($data)) {
+                        if (isset($data['uploadedFile'])) {
+                            $uploadedFile = $data['uploadedFile'];
 
-                        if ($uploadedFile instanceof UploadedFile) {
-                            $media = new Media();
-                            $media->setUploadedFile($data['uploadedFile']);
-                        } elseif (is_string($uploadedFile)) {
-                            $event->setData(array());
-
-                            $ajaxUpload = $session->get(TmsAjaxMediaUploadType::sessionName, array());
-                            $field = preg_replace('/^(.*)_[^_]+$/', "$1", $uploadedFile);
-                            if (isset($ajaxUpload[$field]['uploads'][$uploadedFile])) {
-                                $file = $ajaxUpload[$field]['uploads'][$uploadedFile];
-
+                            if ($uploadedFile instanceof UploadedFile) {
                                 $media = new Media();
-                                if (isset($file['providerName'])) {
-                                    $media->setProviderName($file['providerName']);
-                                }
-                                if (isset($file['providerReference'])) {
-                                    $media->setProviderReference($file['providerReference']);
-                                }
-                                if (isset($file['publicUri'])) {
-                                    $media->setPublicUri($file['publicUri']);
-                                }
-                                if (isset($file['extension'])) {
-                                    $media->setExtension($file['extension']);
-                                }
-                                if (isset($file['mimeType'])) {
-                                    $media->setMimeType($file['mimeType']);
-                                }
-                            }
+                                $media->setUploadedFile($data['uploadedFile']);
+                            } elseif (is_string($uploadedFile)) {
+                                $event->setData(array());
 
-                            // Clean the session
-                            unset($ajaxUpload[$field]['uploads'][$uploadedFile]);
-                            $session->set(TmsAjaxMediaUploadType::sessionName, $ajaxUpload);
+                                $ajaxUpload = $session->get(TmsAjaxMediaUploadType::sessionName, array());
+                                $field = preg_replace('/^(.*)_[^_]+$/', "$1", $uploadedFile);
+                                if (isset($ajaxUpload[$field]['uploads'][$uploadedFile])) {
+                                    $file = $ajaxUpload[$field]['uploads'][$uploadedFile];
+
+                                    $media = new Media();
+                                    if (isset($file['providerName'])) {
+                                        $media->setProviderName($file['providerName']);
+                                    }
+                                    if (isset($file['providerReference'])) {
+                                        $media->setProviderReference($file['providerReference']);
+                                    }
+                                    if (isset($file['publicUri'])) {
+                                        $media->setPublicUri($file['publicUri']);
+                                    }
+                                    if (isset($file['extension'])) {
+                                        $media->setExtension($file['extension']);
+                                    }
+                                    if (isset($file['mimeType'])) {
+                                        $media->setMimeType($file['mimeType']);
+                                    }
+                                }
+
+                                // Clean the session
+                                unset($ajaxUpload[$field]['uploads'][$uploadedFile]);
+                                $session->set(TmsAjaxMediaUploadType::sessionName, $ajaxUpload);
+                            }
+                        } else {
+                            $media = new Media();
+                            if (isset($data['providerName'])) {
+                                $media->setProviderName($data['providerName']);
+                            }
+                            if (isset($data['providerReference'])) {
+                                $media->setProviderReference($data['providerReference']);
+                            }
+                            if (isset($data['publicUri'])) {
+                                $media->setPublicUri($data['publicUri']);
+                            }
+                            if (isset($data['extension'])) {
+                                $media->setExtension($data['extension']);
+                            }
+                            if (isset($data['mimeType'])) {
+                                $media->setMimeType($data['mimeType']);
+                            }
                         }
                     }
 
