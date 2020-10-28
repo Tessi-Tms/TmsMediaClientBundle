@@ -176,7 +176,7 @@ class TmsAjaxMediaUploadType extends AbstractType
 
                     $media = $data;
                     if (is_array($data)) {
-                        if (isset($data['uploadedFile'])) {
+                        if (isset($data['uploadedFile']) && $data['uploadedFile']) {
                             $uploadedFile = $data['uploadedFile'];
 
                             if ($uploadedFile instanceof UploadedFile) {
