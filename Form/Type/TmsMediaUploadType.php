@@ -7,6 +7,7 @@
 
 namespace Tms\Bundle\MediaClientBundle\Form\Type;
 
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type as Types;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -66,6 +67,42 @@ class TmsMediaUploadType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->addModelTransformer(new CallbackTransformer(
+                function ($data) {
+                    if (is_string($data)) {
+                        // Decode the data
+                        $decodedData = json_decode($data, true);
+                        if (is_null($decodedData)) {
+                            return $data;
+                        }
+
+                        // Create a new instance of Media
+                        $media = new Media();
+                        if (isset($decodedData['providerName'])) {
+                            $media->setProviderName($decodedData['providerName']);
+                        }
+                        if (isset($decodedData['providerReference'])) {
+                            $media->setProviderReference($decodedData['providerReference']);
+                        }
+                        if (isset($decodedData['publicUri'])) {
+                            $media->setPublicUri($decodedData['publicUri']);
+                        }
+                        if (isset($decodedData['extension'])) {
+                            $media->setExtension($decodedData['extension']);
+                        }
+                        if (isset($decodedData['mimeType'])) {
+                            $media->setMimeType($decodedData['mimeType']);
+                        }
+
+                        return $media;
+                    }
+
+                    return $data;
+                },
+                function ($data) {
+                    return $data;
+                }
+            ))
             ->add('publicUri', Types\HiddenType::class, array(
                 'required' => false,
             ))
