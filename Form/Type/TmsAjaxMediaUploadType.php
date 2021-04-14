@@ -150,23 +150,39 @@ class TmsAjaxMediaUploadType extends AbstractType
             ->addEventListener(
                 FormEvents::POST_SET_DATA,
                 function(FormEvent $event) use ($options) {
+                    $data = $event->getData();
+                    $form = $event->getForm();
+
                     $isUploadedFileRequired = $options['required'];
-                    if (null !== $event->getData()) {
+                    if (null !== $data) {
                         $isUploadedFileRequired = false;
                     }
 
                     // Add the upload file
-                    $event
-                        ->getForm()
+                    $form
                         ->add(
                             'uploadedFile',
                             Types\FileType::class,
                             array(
                                 'label' => false,
-                                'required' => $isUploadedFileRequired
+                                'required' => $isUploadedFileRequired,
                             )
                         )
                     ;
+
+                    if (is_array($data)) {
+                        foreach ($data as $key => $value) {
+                            $form
+                                ->add(
+                                    $key,
+                                    Types\HiddenType::class,
+                                    array(
+                                        'data' => $value,
+                                    )
+                                )
+                            ;
+                        }
+                    }
                 })
             ->addEventListener(
                 FormEvents::PRE_SUBMIT,
