@@ -69,13 +69,13 @@ class TmsMediaUploadType extends AbstractType
         $builder
             ->addModelTransformer(new CallbackTransformer(
                 function ($data) {
-                    if (is_string($data)) {
+                    $decodedData = $data;
+                    if (is_string($decodedData)) {
                         // Decode the data
-                        $decodedData = json_decode($data, true);
-                        if (is_null($decodedData)) {
-                            return $data;
-                        }
+                        $decodedData = json_decode($decodedData, true);
+                    }
 
+                    if (is_array($decodedData)) {
                         // Create a new instance of Media
                         $media = new Media();
                         if (isset($decodedData['providerName'])) {
