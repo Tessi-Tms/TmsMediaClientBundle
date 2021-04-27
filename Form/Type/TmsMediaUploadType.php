@@ -97,6 +97,11 @@ class TmsMediaUploadType extends AbstractType
                         return $media;
                     }
 
+                    // Failed transformation ?
+                    if (is_string($decodedData)) {
+                        return null;
+                    }
+
                     return $data;
                 },
                 function ($data) {
